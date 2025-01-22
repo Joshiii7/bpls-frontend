@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,28 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'frontend';
+  withNavigation: boolean = false;
+  isSidebarOpen: boolean = true;
+
+  constructor(private router: Router) {  }
+
+  ngOnInit(): void {
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.withNavigation = !event.url.includes('');
+      });
+  }
+
+  onRouteChange(componentInstance: any): void {
+    if (componentInstance && 'emitNavigationState' in componentInstance) {
+      componentInstance.emitNavigationState.subscribe((value: boolean) => {
+        this.withNavigation = value;
+      });
+    }
+  }
+
+  close() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
 }

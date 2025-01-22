@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -8,13 +9,39 @@ import { Component } from '@angular/core';
 export class HeaderComponent {
   title = 'Business Permit and Licensing System';
   isLoggedIn = localStorage.getItem('loggedIn') !== null;
+  currentTime: any;
   
   dropDownMenu: boolean = false;
 
-  constructor() {  }
+  constructor(private router: Router) {  }
 
   ngOnInit():void {
     // console.log(this.isLoggedIn);
+    this.updateTime();
+    setInterval(() => this.updateTime(), 1000);
+  }
+
+  updateTime(): void {
+    const now = new Date();
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    const dateString = now.toLocaleDateString('en-US', {
+      timeZone: timeZone,
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+
+    const timeString = now.toLocaleTimeString('en-US', {
+      timeZone: timeZone,
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    });
+
+    this.currentTime = `${dateString}, ${timeString}`;
   }
 
   dropDown() {

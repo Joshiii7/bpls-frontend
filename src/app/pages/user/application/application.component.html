@@ -1,0 +1,30 @@
+<div class="py-6 md:px-8 px-2">
+    <section class="py-5 px-8">
+        <div *ngIf="applications && applications.length <= 0">
+            <h2 class="font-bold text-xl lg:text-start text-center">No Application yet</h2>
+        </div>
+        <div *ngIf="applications && applications.length >= 1" class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3">
+            <div *ngFor="let application of applications" class="p-5 bg-[#E0E0E0] rounded-md flex flex-col justify-between gap-3">
+                <h2 class="font-bold text-xl text-start border-b border-gray-500 pb-3 w-full">{{ application.business_name }}</h2>
+                <div class="grid grid-cols-2 gap-3 g-3">
+                    <div class="font-bold text-md flex flex-col">Owner's Name: <span class="font-normal text-sm">{{ application.first_name }} {{ application.last_name }}</span></div>
+                    <div class="font-bold text-md flex flex-col">Owner's Number: <span class="font-normal text-sm">{{ application.number }}</span></div>
+                    <div class="font-bold text-md flex flex-col">Business Address: <span class="font-normal text-sm">{{ application.business_operation.baranggay_id.brgy_name }}, {{ application.business_operation.city_id.city_name }}, {{ application.business_operation.province_id.province_name }}</span></div>
+                    <div class="font-bold text-md flex flex-col">Business Type: <span class="font-normal text-sm">{{ application.business_type.business_name }}</span></div>
+                </div>
+                <div [ngClass]="{
+                    'bg-blue-800': application.status == 'Pending', 
+                    'bg-green-700': application.status == 'Approved', 
+                    'bg-red-700': application.status == 'Declined'
+                }" class="w-full text-white p-1.5 rounded-md text-center">{{ application.status }}</div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+    <div class="text-center">
+        <i class="fa-solid fa-spinner fa-spin text-4xl text-white"></i>
+        <p class="mt-4 text-white text-lg">Loading, please wait...</p>
+    </div>
+</div>

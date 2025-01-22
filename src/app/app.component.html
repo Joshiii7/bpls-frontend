@@ -1,1 +1,14 @@
-<router-outlet></router-outlet>
+<div class="flex flex-col md:flex-row">
+    <aside class="sticky top-0 md:h-screen h-14 z-20" *ngIf="withNavigation">
+        <app-sidebar [isSideBarOpen]="isSidebarOpen"></app-sidebar>
+        <button (click)="close()" class="bg-white border-4 border-gray-800 absolute translate-x-6 right-0 top-5 p-2 w-[3rem] h-[3rem] flex items-center justify-center rounded-full hidden lg:inline transition-all duration-300 ease-in-out">
+            <i class="fa-solid fa-bars fa-xl"></i>
+            <!-- <i class="fa-solid fa-bars fa-spin fa-spin-reverse"></i> -->
+        </button>
+    </aside>
+    <!-- <div class="w-screen ms-[18.75%] transition-all duration-300 ease-in-out"> -->
+    <div class="w-full">
+        <app-header *ngIf="withNavigation"></app-header>
+        <router-outlet (activate)="onRouteChange($event)"></router-outlet>
+    </div>
+</div>

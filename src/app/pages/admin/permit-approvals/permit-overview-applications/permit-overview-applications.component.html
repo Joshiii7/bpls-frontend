@@ -1,0 +1,204 @@
+<main class="py-5 md:px-8 px-4">
+    <section class="w-full flex flex-col md:flex-row md:gap-0 gap-4 justify-between items-center mb-4 mt-1">
+        <div>
+            <h3 class="text-lg font-semibold text-slate-800">Business Permit Applications</h3>
+            <p class="text-slate-500 text-sm">Overview of business permit applications currently under review.</p>
+        </div>
+        
+        <div class="md:w-[25rem] w-full">
+            <div class="w-full relative">
+                <div class="relative">
+                    <input
+                    class="bg-white w-full rounded-md pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded transition duration-200 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md"
+                    placeholder="Search for business name"
+                    (input)="onInputChange($event)"
+                    />
+                    <i class="fa fa-search absolute top-1/2 right-3 transform -translate-y-1/2 text-slate-400"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
+        <table class="w-full text-left table-auto min-w-max">
+            <thead>
+                <tr>
+                    <th class="p-4 border-b border-slate-200 bg-blue-100">
+                        <p class="block font-semibold text-sm text-slate-800">
+                            Business Owner
+                        </p>
+                    </th>
+                    <th class="p-4 border-b border-slate-200 bg-blue-100">
+                        <p class="block font-semibold text-sm text-slate-800">
+                            Business Name
+                        </p>
+                    </th>
+                    <th class="p-4 border-b border-slate-200 bg-blue-100">
+                        <p class="block font-semibold text-sm text-slate-800">
+                            Business Type
+                        </p>
+                    </th>
+                    <th class="p-4 border-b border-slate-200 bg-blue-100">
+                        <p class="block font-semibold text-sm text-slate-800">
+                            Status
+                        </p>
+                    </th>
+                    <th class="p-4 border-b border-slate-200 bg-blue-100">
+                        <p class="block font-semibold text-sm text-slate-800">
+                            Date Issued
+                        </p>
+                    </th>
+                    <th class="p-4 border-b border-slate-200 bg-blue-100">
+                        <p class="block font-semibold text-sm text-slate-800">
+                            Action
+                        </p>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngIf="businesses.length === 0" class="text-center">
+                    <td colspan="6" class="p-4 py-4 text-sm text-slate-500">
+                        No new business permit applications available.
+                    </td>
+                </tr>
+                <tr *ngFor="let business of businesses; let i = index;" class="hover:bg-slate-50 border-b border-slate-200">
+                    <td class="p-4 py-4">
+                        <p class="text-sm text-slate-900 font-semibold">{{ business.first_name }} {{ business.last_name }}</p>
+                    </td>
+                    <td class="p-4 py-4">
+                        <p class="text-sm text-slate-500">{{ business.business_name }}</p>
+                    </td>
+                    <td class="p-4 py-4">
+                        <p class="text-sm text-slate-500">{{ business.business_type.business_name }}</p>
+                    </td>
+                    <td class="p-4 py-4">
+                        <span [ngClass]="getBadgeClass(business.isNew)" class="px-2 py-1 text-sm font-semibold rounded">
+                          {{ business.isNew }}
+                        </span>
+                    </td>
+                    <td class="p-4 py-4">
+                        <p class="text-sm text-slate-500">{{ business.created_at | date: 'longDate' }}</p>
+                    </td>
+                    <td class="p-4 py-4 flex gap-1">
+                        <!-- View Button -->
+                        <div class="relative group">
+                            <button 
+                                (click)="viewButton(business.uuid)" 
+                                class="bg-blue-600 hover:bg-blue-900 text-white p-1 rounded-md w-10">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <span 
+                                class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                View
+                            </span>
+                        </div>
+                      
+                        <!-- Decline Button -->
+                        <div class="relative group">
+                            <button 
+                                (click)="declineButton(business.id)" 
+                                class="bg-red-600 hover:bg-red-900 text-white p-1 rounded-md w-10">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                            <span 
+                                class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                Decline
+                            </span>
+                        </div>
+                      
+                        <!-- Approve Button -->
+                        <div class="relative group">
+                            <button 
+                                (click)="approveButton(business.id)" 
+                                class="bg-green-600 hover:bg-green-900 text-white p-1 rounded-md w-10">
+                                <!-- <i class="fas fa-check"></i> -->
+                                <span>✔</span>
+                            </button>
+                            <span 
+                                class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                Approve
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="flex justify-between items-center py-3">
+        <div class="text-sm text-slate-500">
+            Showing 
+            <span class="font-semibold">
+                {{ total > 0 ? start + '-' + end : '0' }} 
+            </span> 
+            of {{ total > 0 ? total : '0' }} entries
+        </div>
+        <div class="flex space-x-1">
+
+            <!-- Prev Button -->
+            <button (click)="changePage(currentPage - 1)" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease">
+                Prev
+            </button>
+
+            <!-- Page Numbers -->
+            <ng-container *ngFor="let page of getVisiblePages();">
+                <button 
+                    (click)="changePage(page)" 
+                    [class]="page === currentPage 
+                        ? 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-white bg-slate-800 border border-slate-800 rounded' 
+                        : 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease'"
+                >
+                    {{ page }}
+                </button>
+            </ng-container>
+
+            <!-- Next Button -->
+            <button (click)="changePage(currentPage + 1)"  class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease">
+                Next
+            </button>
+        </div>
+    </section>
+</main>
+<p-toast></p-toast>
+
+
+<!-- Confirmation Dialog -->
+<div (click)="handleCancel()" *ngIf="confirmationMessage" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+    <div class="bg-gray-100 text-center p-6 rounded-xl shadow-lg max-w-xs w-full">
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-lg font-semibold">Confirmation</h1>
+            <button (click)="handleCancel()" class="rounded-full w-[2rem] h-[2rem] hover:bg-gray-200">
+                <i class="fa-solid fa-x text-xs cursor-pointer"></i>
+            </button>
+        </div>
+
+        <div class="flex justify-between items-center">
+            <i 
+                [class]="actionToConfirm === 'decline' ? 'fa-solid fa-circle-exclamation fa-beat text-2xl' : 'fa-solid fa-triangle-exclamation fa-beat-fade text-2xl'">
+            </i>
+            <p class="text-sm">{{ confirmationMessage }}</p>
+        </div>
+
+        <div class="mt-4 flex justify-end gap-2">
+            <button 
+                (click)="handleCancel()"
+                class="border border-gray-600 text-gray-600 px-2 py-1 rounded-md">
+                <div class="text-sm">Cancel</div>
+            </button>
+            <button 
+                (click)="handleConfirm()"
+                class="bg-gray-900 text-white px-2 py-1 rounded-md">
+                <div class="text-sm">Confirm</div>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Loading -->
+<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+    <div class="text-center">
+        <i class="fa-solid fa-spinner fa-spin text-4xl text-white"></i>
+        <p class="mt-4 text-white text-lg">Loading, please wait...</p>
+    </div>
+</div>

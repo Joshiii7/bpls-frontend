@@ -1,0 +1,12 @@
+.drops {
+    transform: all 2s ease;
+}
+
+.drops:hover {
+    /* background-color: white; */
+    /* color: #1F2937; */
+    /* border: none; */
+    padding: 1.1rem;
+    border-radius: 5px;
+    font-weight: bold;
+}
