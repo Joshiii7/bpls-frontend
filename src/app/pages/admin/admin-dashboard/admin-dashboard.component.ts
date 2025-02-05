@@ -38,6 +38,11 @@ export class AdminDashboardComponent {
   displayApproved: string = '0';
   displayDeclined: string = '0';
 
+  totalBusiness: number = 0;
+  pendingPercentage: number = 0;
+  approvedPercentage: number = 0;
+  declinedPercentage: number = 0;
+
   chartData: ChartData = {
     issued: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0 },
     renewed: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0 },
@@ -50,8 +55,57 @@ export class AdminDashboardComponent {
 
   ngOnInit():void {
     this.emitNavigationState.emit(true);
+
+    setInterval(() => {
+      this.loadBusinessTotalPermits();
+    }, 1000);
     this.loadBusinesses();
     this.getUser();
+  }
+
+  loadBusinessTotalPermits() {
+    this.apiService.allBusiness().subscribe({
+      next: (response: any) => {
+        this.totalPending = response.totalPending;
+        this.totalApproved = response.totalApproved;
+        this.totalDeclined = response.totalDeclined;
+        this.animateNumberPending();
+        this.animateNumberApproved();
+        this.animateNumberDeclined();
+        this.totalBusiness = response.totalBusiness;
+
+        this.calculatePendingPercentage();
+        this.calculateApprovePercentage();
+        this.calculateDeclinePercentage();
+      },
+      error: (error: any) => {
+        console.log('error fetching business', error);
+      }
+    });
+  }
+
+  calculatePendingPercentage() {
+    if (this.totalBusiness > 0) {
+      this.pendingPercentage = (this.totalPending / this.totalBusiness) * 100;
+    } else {
+      this.pendingPercentage = 0;
+    }
+  }
+
+  calculateApprovePercentage() {
+    if (this.totalBusiness > 0) {
+      this.approvedPercentage = (this.totalApproved / this.totalBusiness) * 100;
+    } else {
+      this.approvedPercentage = 0;
+    }
+  }
+
+  calculateDeclinePercentage() {
+    if (this.totalBusiness > 0) {
+      this.declinedPercentage = (this.totalDeclined / this.totalBusiness) * 100;
+    } else {
+      this.declinedPercentage = 0;
+    }
   }
 
   getUser() {
@@ -70,7 +124,6 @@ export class AdminDashboardComponent {
   loadBusinesses(): void {
     this.apiService.getBusinesses(this.currentPage, this.perPage).subscribe({
       next: (response: any) => {
-        console.log(response);
         if (response) {
           this.isLoading = false;
         }
@@ -121,17 +174,6 @@ export class AdminDashboardComponent {
         });
 
         this.createAgeChart(labels, values);
-
-
-        this.totalPending = response.totalPending;
-        // this.totalPending = 1234;
-        this.totalApproved = response.totalApproved;
-        // this.totalApproved = 1234;
-        this.totalDeclined = response.totalDeclined;
-        // this.totalDeclined = 1234;
-        this.animateNumberPending();
-        this.animateNumberApproved();
-        this.animateNumberDeclined();
       },
       error: (error: any) => {
         console.log('Error fetching paginated page:', error);
@@ -176,7 +218,7 @@ export class AdminDashboardComponent {
     gradient3.addColorStop(1, 'rgba(255, 193, 7, 0.5)'); 
   
     this.chart = new Chart(ctx, {
-      type: 'pie',
+      type: 'doughnut',
       data: {
         labels: labels,
         datasets: [

@@ -1,35 +1,45 @@
-import { Component, Input } from '@angular/core';
+import { Component, HostListener, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService as Auth0Service } from '@auth0/auth0-angular';
 import { SidebarService } from 'src/app/sidebar.service';
 
 @Component({
-  selector: 'app-sidebar',
-  templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.css']
+  selector: 'app-sample-sidebar',
+  templateUrl: './sample-sidebar.component.html',
+  styleUrls: ['./sample-sidebar.component.css']
 })
-export class SidebarComponent {
-  @Input('isSideBarOpen') isSidebarOpen: boolean = true;
-  // sideMenu = localStorage.getItem('sn');
-  // sideMenuNumber: number = 1;
+export class SampleSidebarComponent {
+  // @Input('isSideBarOpen') isSidebarOpen: boolean = true;
+  isSidebarOpen: boolean = true;
+  isMdOrBelow = false;
   sideMenu: any;
   default: any;
-  isHovered: boolean = false;
-  // isSidebarOpen: boolean = true;
-
-  // default is user role
   roleID: any;
-  constructor(
-    private router: Router, 
-    private auth: Auth0Service,
-    private sidebarService: SidebarService
-  ) {  }
+  isDropdownOpen: boolean = false;
+  isHovered: boolean = false;
 
-  ngOnInit(): void {
+  dropdownHeight: number = 0;
+
+  constructor(
+    private router: Router,
+    private auth: Auth0Service,
+    private sidebarService: SidebarService,
+  ) {}
+
+  ngOnInit() {
     this.sidebarService.sidebarState$.subscribe((state) => {
       this.isSidebarOpen = state;
     });
 
+    const storedDropdownState = localStorage.getItem('ddOpen');
+    this.isDropdownOpen = storedDropdownState === 'true';
+
+    this.isMdOrBelow = window.innerWidth < 1024;
+
+    this.defaultSidebar();
+  }
+
+  defaultSidebar() {
     const role = localStorage.getItem('r');
     const sn = localStorage.getItem('sn');
     if (role == '1') {
@@ -43,13 +53,24 @@ export class SidebarComponent {
     this.getRoleFunction();
   }
 
-  onHover(hoverState: boolean): void {
-    this.isHovered = hoverState;
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    // console.log(event.target.innerWidth);
+    this.isMdOrBelow = event.target.innerWidth < 1024;
   }
 
-  close() {
+  onHover(state: boolean) {
+    this.isHovered = state;
+  }
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+    localStorage.setItem('ddOpen', this.isDropdownOpen.toString());
+  }
+
+  toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
-    // console.log(this.isSidebarOpen);
+    this.sidebarService.toggleSidebar();
   }
 
   getRoleFunction() {

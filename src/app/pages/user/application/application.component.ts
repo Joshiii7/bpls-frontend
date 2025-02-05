@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { timestamp } from 'rxjs';
 import { ApiServicesService } from 'src/app/api-services.service';
 
 @Component({
@@ -18,6 +19,9 @@ export class ApplicationComponent {
   ngOnInit():void {
     this.emitNavigationState.emit(true);
     this.getAppFunction();
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 2000);
   }
 
   getAppFunction() {

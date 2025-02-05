@@ -24,10 +24,17 @@
             [suffix]="suffix"
             [email]="email"
             [number]="number"
+
+            [operationalBarangay]="operationalBarangay"
+            [operationalCity]="operationalCity"
+            [operationalProvince]="operationalProvince"
+            [operationalZipCode]="operationalZipCode"
+
             [barangay]="barangay"
             [city]="city"
             [province]="province"
             [zipCode]="zipCode"
+
             [businessArea]="businessArea"
             [totalFemale]="totalFemale"
             [totalMale]="totalMale"
@@ -36,11 +43,43 @@
             [paymentType]="paymentType"
             [businessType]="businessType"
             [gender]="gender"
+            [registrationDate]="dti_registration_date"
+            [isNew]="isNew"
         >
         </app-form>
     </section>
+
+    <!-- Buttons -->
+    <div class="col-span-12 flex justify-end mt-4">
+      <!-- Previous Button -->
+      <button type="button" class="focus:outline-none text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-gray-600 dark:hover:bg-gray-800 dark:focus:ring-gray-800">
+          Decline
+      </button>
+      
+      <!-- Next Button -->
+      <button (click)="approve()" type="button" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-green-600 dark:hover:bg-green-800 dark:focus:ring-green-800">
+          Approve
+      </button>
+    </div>
 </div>
-  
+
+<p-dialog 
+  header="Header" 
+  [modal]="true" 
+  [(visible)]="visible" 
+  [style]="{ width: '50rem' }" 
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" 
+  [maximizable]="true"
+>
+  <p>
+      Lorem ipsum dolor sit amet...
+  </p>
+  <div>
+    <label for="comment">Comment here!</label>
+    <input type="text" id="comment">
+  </div>
+</p-dialog>
+
 <!-- Loading -->
 <div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
 <div class="text-center">

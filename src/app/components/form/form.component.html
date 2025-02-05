@@ -135,13 +135,17 @@
 
           <!-- Address -->
           <section class="flex flex-col justify-center items-between p-1 border border-gray-900 h-[5rem] text-sm">
-              <div class="flex justify-between">
+              <div class="flex justify-between w-full relative">
                   <h6 class="w-[20%]">Main Office Address:</h6>
                   <div class="flex w-full">
                       <h6 class="me-1">House/Bldg.# ____________</h6>
+                      <h6 class="absolute left-[27.5%] -translate-y-1 font-semibold">{{ house_no }}</h6>
                       <h6 class="me-1">Name of Building _________________</h6>
+                      <h6 class="absolute left-[49.5%] -translate-y-1 font-semibold">{{ name_building }}</h6>
                       <h6 class="me-1">Lot No. _______________</h6>
+                      <h6 class="absolute left-[67.5%] -translate-y-1 font-semibold">{{ lot_no }}</h6>
                       <h6 class="me-1">Block No. ________________</h6>
+                      <h6 class="absolute left-[87.5%] -translate-y-1 font-semibold">{{ block_no }}</h6>
                   </div>
               </div>
               <div class="flex justify-between w-full relative">
@@ -150,6 +154,7 @@
                   <h6 class="me-1">Barangay __________________________________</h6>
                   <h6 class="absolute left-[40.5%] -translate-y-1 font-semibold">{{ barangay }}</h6>
                   <h6 class="me-1">Subdivision __________________________________</h6>
+                  <h6 class="absolute left-[76.5%] -translate-y-1 font-semibold">{{ subdivision }}</h6>
               </div>
               <div class="flex justify-between w-full relative">
                   <h6 class="me-1">City/Municipality ___________________________</h6>
@@ -252,6 +257,7 @@
                   <h6>Business Area (in sq.m.) ______</h6>
                   <h6 class="absolute top-0 left-[60%] font-semibold">{{ businessArea }}</h6>
                   <h6>Total Floor Area (in sq.m.) ______</h6>
+                  <h6 class="absolute top-[50%] left-[65%] font-semibold">{{ businessFloorArea }}</h6>
               </div>
               <div class="flex flex-col justify-around col-span-1">
                   <h6>Total No. of Employees in Establishment</h6>
@@ -269,9 +275,11 @@
               </div>
               <div class="flex flex-col justify-around col-span-1 items-end">
                   <h6># Delivery Vehicles (if applicable)</h6>
-                  <div class="flex">
+                  <div class="flex relative">
                       <h6>__________ Van/Truck</h6>
+                      <h6 class="absolute -translate-y-1 left-[10%] font-semibold">{{ no_van }}</h6>
                       <h6>__________ Motorcycle</h6>
+                      <h6 class="absolute -translate-y-1 left-[55%] font-semibold">{{ no_motor }}</h6>
                   </div>
               </div>
           </section>
@@ -294,29 +302,35 @@
                       </div>
                   </div>
               </div>
-              <div class="flex justify-between">
+                <div class="flex justify-between w-full relative">
                   <h6 class="w-[20%] text-[.7rem]">Business Office Address:</h6>
-                  <div class="flex w-full">
-                      <h6 class="me-1">House/Bldg.# ____________</h6>
-                      <h6 class="me-1">Name of Building _________________</h6>
-                      <h6 class="me-1">Lot No. _______________</h6>
-                      <h6 class="me-1">Block No. ________________</h6>
-                  </div>
-              </div>
-              <div class="flex justify-between w-full relative">
-                  <h6 class="me-1">Street __________________________________</h6>
-                  <h6 class="me-1">Barangay __________________________________</h6>
-                  <h6 class="absolute left-[40.5%] -translate-y-1 font-semibold">{{ barangay }}</h6>
-                  <h6 class="me-1">Subdivision __________________________________</h6>
-              </div>
-              <div class="flex justify-between w-full relative">
-                  <h6 class="me-1">City/Municipality ___________________________</h6>
-                  <h6 class="absolute left-[13.5%] -translate-y-1 font-semibold">{{ city }}</h6>
-                  <h6 class="me-1">Province ______________________________________________</h6>
-                  <h6 class="absolute left-[42%] -translate-y-1 font-semibold">{{ province }}</h6>
-                  <h6 class="me-1">Zip Code ______________________</h6>
-                  <h6 class="absolute left-[84.5%] -translate-y-1 font-semibold">{{ zipCode }}</h6>
-              </div>
+                    <div class="flex w-full">
+                        <h6 class="me-1">House/Bldg.# ____________</h6>
+                        <h6 class="absolute left-[27.5%] -translate-y-1 font-semibold">{{ operational_house_no }}</h6>
+                        <h6 class="me-1">Name of Building _________________</h6>
+                        <h6 class="absolute left-[49.5%] -translate-y-1 font-semibold">{{ operational_name_building }}</h6>
+                        <h6 class="me-1">Lot No. _______________</h6>
+                        <h6 class="absolute left-[67.5%] -translate-y-1 font-semibold">{{ operational_lot_no }}</h6>
+                        <h6 class="me-1">Block No. ________________</h6>
+                        <h6 class="absolute left-[87.5%] -translate-y-1 font-semibold">{{ operational_block_no }}</h6>
+                    </div>
+                </div>
+                <div class="flex justify-between w-full relative">
+                    <h6 class="me-1">Street __________________________________</h6>
+                    <h6 class="absolute left-[5.5%] -translate-y-1 font-semibold">{{ operationalStreet }}</h6>
+                    <h6 class="me-1">Barangay __________________________________</h6>
+                    <h6 class="absolute left-[40.5%] -translate-y-1 font-semibold">{{ operationalBarangay }}</h6>
+                    <h6 class="me-1">Subdivision __________________________________</h6>
+                    <h6 class="absolute left-[76.5%] -translate-y-1 font-semibold">{{ operational_subdivision }}</h6>
+                </div>
+                <div class="flex justify-between w-full relative">
+                    <h6 class="me-1">City/Municipality ___________________________</h6>
+                    <h6 class="absolute left-[13%] -translate-y-1 font-semibold">{{ operationalCity }}</h6>
+                    <h6 class="me-1">Province ______________________________________________</h6>
+                    <h6 class="absolute left-[42%] -translate-y-1 font-semibold">{{ operationalProvince }}</h6>
+                    <h6 class="me-1">Zip Code ______________________</h6>
+                    <h6 class="absolute left-[84.5%] -translate-y-1 font-semibold">{{ operationalZipCode }}</h6>
+                </div>
           </section>
 
           <!-- Owned? -->

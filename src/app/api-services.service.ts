@@ -68,6 +68,10 @@ export class ApiServicesService {
     return this.http.get(`${this.Root_URL}/myApplications`, { headers: this.getHeaders() });
   }
 
+  allBusiness() {
+    return this.http.get(`${this.Root_URL}/allBusiness`, { headers: this.getHeaders() });
+  }
+
   getBusinesses(page: number = 1, perPage: number = 5): Observable<any> {
     return this.http.get<any>(`${this.Root_URL}/businesses?page=${page}&per_page=${perPage}`, { headers: this.getHeaders() });
   }

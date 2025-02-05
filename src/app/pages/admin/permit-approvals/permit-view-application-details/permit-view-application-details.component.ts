@@ -8,7 +8,6 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./permit-view-application-details.component.css']
 })
 export class PermitViewApplicationDetailsComponent {
-  @Output() emitNavigationState = new EventEmitter<boolean>();
   isLoading: boolean = true;
   application_id = localStorage.getItem('vad');
   uuid!: string
@@ -16,6 +15,7 @@ export class PermitViewApplicationDetailsComponent {
   businessName: any;
   franchiseName: any;
   dtiNumber: any;
+  dti_registration_date: any;
   tinNumber: any;
   surname: any;
   givenname: any;
@@ -23,28 +23,36 @@ export class PermitViewApplicationDetailsComponent {
   suffix: any;
   email: any;
   number: any;
-  barangay: any;
-  city: any;
-  province: any;
-  zipCode: any;
   businessArea: any;
   totalMale: any;
   totalFemale: any;
   totalEmployee: any;
   gender: any;
+ 
+  barangay: any;
+  city: any;
+  province: any;
+  zipCode: any;
+
+  operationalBarangay: any;
+  operationalCity: any;
+  operationalProvince: any;
+  operationalZipCode: any;
 
   paymentType: number = 0;
   businessType: number = 0;
   businessActivity: number = 0;
+  isNew: number = 0;
+
+  visible: boolean = false;
   
   constructor(private apiService: ApiServicesService, private route: ActivatedRoute) {  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       this.uuid = params.get('uuid')!;
-      console.log('Application UUID:', this.uuid);
+      // console.log('Application UUID:', this.uuid);
     });
-    this.emitNavigationState.emit(true);
     this.getApplicationDetail();
   }
 
@@ -65,24 +73,37 @@ export class PermitViewApplicationDetailsComponent {
         this.suffix = response.permit[0].suffix;
         this.email = response.permit[0].email;
         this.number = response.permit[0].number;
-        this.barangay = response.permit[0].business_operation.baranggay_id.brgy_name;
-        this.city = response.permit[0].business_operation.city_id.city_name;
-        this.province = response.permit[0].business_operation.province_id.province_name;
-        this.zipCode = response.permit[0].business_operation.zip_code;
         this.businessArea = response.permit[0].business_operation.business_area;
         this.totalFemale = response.permit[0].business_operation.total_female;
         this.totalMale = response.permit[0].business_operation.total_male;
+        
+        this.operationalBarangay = response.permit[0].business_operation.baranggay_id.brgy_name;
+        this.operationalCity = response.permit[0].business_operation.city_id.city_name;
+        this.operationalProvince = response.permit[0].business_operation.province_id.province_name;
+        this.operationalZipCode = response.permit[0].business_operation.zip_code;
+        
+        this.barangay = response.permit[0].baranggay_id.brgy_name;
+        this.city = response.permit[0].city_id.city_name;
+        this.province = response.permit[0].province_id.province_name;
+        this.zipCode = response.permit[0].zip_code;
         
         this.totalEmployee = response.permit[0].business_operation.no_employee;
         this.businessActivity = response.permit[0].business_operation.business_activity_id;
         this.paymentType = response.permit[0].payment_type_id;
         this.businessType = response.permit[0].business_type_id;
         this.gender = response.permit[0].gender;
-        // console.log(this.gender);
+        this.dti_registration_date = response.permit[0].dti_registration_date;
+        this.isNew = response.permit[0].isNew;
+
+        this.isNew = (response.permit[0].isNew == 'New') ? 1 : 2;
       },
       error: (error: any) => {
         console.log('error fetching application detail:', error);
       }
     });
+  }
+
+  approve() {
+    this.visible = true;
   }
 }

@@ -12,7 +12,6 @@ import { RealTimeService } from 'src/app/real-time.service';
   providers: [MessageService, DatePipe]
 })
 export class PermitOverviewApplicationsComponent {
-  @Output() emitNavigationState = new EventEmitter<boolean>();
   searchText: string = '';
   isLoading: boolean = true; 
 
@@ -24,17 +23,99 @@ export class PermitOverviewApplicationsComponent {
   currentPage: number = 1;
   perPage: number = 5;
   total: number = 0;
-
+  
   start: number = 1;
   end: number = 5;
   totalPages: number = Math.ceil(this.total / this.perPage);
-  
+
+  selectedBusinessType: string = '';
+
+  allBusinesses: any[] = [];
+  filteredBusinesses: any[] = [];
+
+  currentTab: number = 1;
+  Math = Math;
+
+  businessTypes = [
+    { id: 1, business_name: "Sole Proprietorship" },
+    { id: 2, business_name: "One Person Corporation" },
+    { id: 3, business_name: "Partnership" },
+    { id: 4, business_name: "Corporation" },
+    { id: 5, business_name: "Cooperative" }
+  ];
+
   constructor(private apiService: ApiServicesService, private router: Router, private messageService: MessageService, private datePipe: DatePipe, private realTimeService: RealTimeService) {  }
 
   ngOnInit():void {
-    this.emitNavigationState.emit(true);
     this.loadBusinesses();
     this.realTimeService.listenForUpdates();
+
+    this.allBusiness();
+
+    this.businesses = this.getMockBusinesses();
+    this.total = this.businesses.length;
+  }
+
+  getMockBusinesses() {
+    return Array.from({ length: 30 }, (_, i) => ({
+      id: i + 1,
+      name: `Business ${i + 1}`,
+    }));
+  }
+
+  detectRowValue(e: Event) {
+    const selectElement = e.target as HTMLSelectElement;
+    const selectedValue = selectElement.value;
+    this.perPage = +selectedValue;
+    this.currentPage = 1;
+    this.updateRange();
+  }
+
+  allBusiness() {
+    this.apiService.allBusiness().subscribe({
+      next: (response: any) => {
+        this.allBusinesses = response.businessess;
+        this.filteredBusinesses = this.allBusinesses;
+      },
+      error: (error: any) => {
+        console.log('error fetching data:', error);
+      }
+    });
+  }
+
+  filterBusinesses(event: Event | null = null): void {
+    const inputValue = event ? (event.target as HTMLInputElement)?.value : '';
+    const searchValue = inputValue.toLowerCase();
+  
+    this.filteredBusinesses = this.allBusinesses.filter(business => {
+      const matchesSearch = 
+        business.business_name.toLowerCase().includes(searchValue) ||
+        business.first_name.toLowerCase().includes(searchValue) ||
+        business.last_name.toLowerCase().includes(searchValue);
+  
+      let matchesTab = true;
+      if (this.currentTab === 2) {
+        matchesTab = business.isNew === 'New';
+      } else if (this.currentTab === 3) {
+        matchesTab = business.isNew === 'Renewal';
+      }
+  
+      let matchesBusinessType = true;
+        if (this.selectedBusinessType && this.selectedBusinessType !== '') {
+            matchesBusinessType = business.business_type_id == this.selectedBusinessType;
+        }
+
+        return matchesSearch && matchesTab && matchesBusinessType;
+    });
+  
+    this.total = this.filteredBusinesses.length;
+    this.totalPages = Math.ceil(this.total / this.perPage);
+    this.updateRange();
+  }
+  
+  tabIndex(number: any) {
+    this.currentTab = number;
+    this.filterBusinesses();
   }
 
   onInputChange(event: Event): void {
@@ -59,16 +140,16 @@ export class PermitOverviewApplicationsComponent {
   }
 
   loadBusinesses(): void {
-    this.apiService.getBusinesses(this.currentPage, this.perPage).subscribe({
+    this.apiService.getBusinesses().subscribe({
       next: (response: any) => {
-        console.log(response);
+        // console.log(response);
         if (response) {
           this.isLoading = false;
         }
         this.businesses = response.data;
         this.totalPages = response.pagination.last_page;
         this.total = response.pagination.total;
-        console.log(this.total);
+        // console.log(this.total);
         // console.log(this.totalPages);
       },
       error: (error: any) => {
@@ -81,7 +162,7 @@ export class PermitOverviewApplicationsComponent {
     if (page > 0 && page <= this.totalPages) {
         this.currentPage = page;
         this.updateRange();
-        this.loadBusinesses();
+        // this.loadBusinesses();
     }
   }
 
@@ -93,8 +174,11 @@ export class PermitOverviewApplicationsComponent {
   getVisiblePages(): number[] {
     const pages: number[] = [];
     const maxPagesToShow = 5;
+
+    const totalPages = Math.ceil(this.total / this.perPage);
+
     let startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
+    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
 
     if (endPage - startPage + 1 < maxPagesToShow) {
         startPage = Math.max(1, endPage - maxPagesToShow + 1);
