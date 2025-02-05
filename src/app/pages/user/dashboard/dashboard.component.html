@@ -1,6 +1,6 @@
 <main class="py-5 md:px-8 px-5">
     <!-- Information Cards -->
-    <section class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-2">
+    <section class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3">
         <button (click)="applyButton()" class="p-5 bg-white/80 shadow-md rounded-md rounded-lg flex justify-between items-center">
             <p class="font-bold text-xl text-start">Apply for Business Permit</p>
             <div class="w-4/12 max-w-full px-3 ml-auto text-right flex-0">
@@ -24,12 +24,32 @@
                 </div> -->
             </div>
         </button>
+
+        <button disabled class="cursor-not-allowed p-5 bg-white/80 shadow-md rounded-md rounded-lg flex justify-between items-center">
+            <p class="font-bold text-xl text-start">Renew Business Permit</p>
+            <div class="w-4/12 max-w-full px-3 ml-auto text-right flex-0">
+                <svg class="w-10" viewBox="0 0 24 24" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                        <defs>
+                            <style>.cls-1{fill:none;stroke:#020202;stroke-miterlimit:10;stroke-width:1.91px;}</style>
+                        </defs>
+                        <polygon class="cls-1" points="16.77 8.18 16.77 22.5 3.41 22.5 3.41 5.32 16.77 5.32 16.77 8.18"></polygon>
+                        <line class="cls-1" x1="6.27" y1="13.91" x2="13.91" y2="13.91"></line>
+                        <line class="cls-1" x1="6.27" y1="10.09" x2="13.91" y2="10.09"></line>
+                        <line class="cls-1" x1="6.27" y1="17.73" x2="12" y2="17.73"></line>
+                        <polyline class="cls-1" points="20.59 19.64 20.59 4.36 20.59 1.5 6.27 1.5"></polyline>
+                    </g>
+                </svg>
+            </div>
+        </button>
     </section>
 </main>
 
-<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+<!-- <div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
     <div class="text-center">
         <i class="fa-solid fa-spinner fa-spin text-4xl text-white"></i>
         <p class="mt-4 text-white text-lg">Loading, please wait...</p>
     </div>
-</div>
+</div> -->

@@ -3,21 +3,17 @@ import Point from '@mapbox/point-geometry';
 import * as maplibregl from 'maplibre-gl';
 
 @Component({
-  selector: 'app-map',
-  templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css']
+  selector: 'app-review-map',
+  templateUrl: './review-map.component.html',
+  styleUrls: ['./review-map.component.css']
 })
-export class MapComponent {
+export class ReviewMapComponent {
   @ViewChild('map', { static: true }) mapContainer!: ElementRef;
   map: maplibregl.Map | undefined;
   marker!: maplibregl.Marker;
   savedLocation: { lng: number; lat: number } | null = null;
 
   ngOnInit(): void {
-    this.initializeMap();
-  }
-
-  initializeMap() {
     this.map = new maplibregl.Map({
       container: document.getElementById('map')!, 
       // style: 'https://demotiles.maplibre.org/style.json',
@@ -25,8 +21,6 @@ export class MapComponent {
       center: [126.3162286437666, 8.217509410444645],
       zoom: 10
     });
-
-    // console.log(this.map?.getPaintProperty('roadname_minor', 'text-color'));
     
     this.map?.on('load', () => {
       this.map?.setPaintProperty('background', 'background-color', '#ECECEC');
@@ -82,9 +76,10 @@ export class MapComponent {
         this.marker.setLngLat(center);
       }
     });
+
   }
 
-  saveLocation() {
+  saveLocation(): void {
     const position = this.marker.getLngLat();
     this.savedLocation = { lng: position.lng, lat: position.lat };
 

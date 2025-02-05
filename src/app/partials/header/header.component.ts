@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { SidebarService } from 'src/app/sidebar.service';
 
 @Component({
   selector: 'app-header',
@@ -12,8 +13,9 @@ export class HeaderComponent {
   currentTime: any;
   
   dropDownMenu: boolean = false;
+  isSidebarOpen = true;
 
-  constructor(private router: Router) {  }
+  constructor(private router: Router, private sidebarService: SidebarService) {  }
 
   ngOnInit():void {
     // console.log(this.isLoggedIn);
@@ -46,5 +48,10 @@ export class HeaderComponent {
 
   dropDown() {
     this.dropDownMenu =! this.dropDownMenu;
+  }
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+    this.sidebarService.toggleSidebar();
   }
 }

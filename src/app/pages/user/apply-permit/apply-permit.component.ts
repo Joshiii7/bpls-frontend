@@ -28,6 +28,8 @@ export class ApplyPermitComponent {
   currentProvinceRegister: any;
   currentCityRegister: any;
   currentBarangayRegister: any;
+
+  operationBarangayRegister: any;
   
   payments = [
     { id: 1, payment: 'Annually' },
@@ -138,6 +140,7 @@ export class ApplyPermitComponent {
     baranggays: ['', [Validators.required]],
     activity: ['', [Validators.required]],
     businessArea: ['', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.min(1)]],
+    businessFloorArea: ['', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.min(1)]],
     employees: ['', [Validators.required]],
     no_male: ['', [Validators.required]],
     no_female: ['', [Validators.required]],
@@ -150,7 +153,7 @@ export class ApplyPermitComponent {
     name_building: [''],
     lot_no: [''],
     block_no: [''],
-    street: [''],
+    street: ['', [Validators.required]],
     subdivision: [''],
   });
 
@@ -213,13 +216,17 @@ export class ApplyPermitComponent {
     if (event.target.checked) {
       const provinceValue = this.permitForm.get('registerProvince')?.value;
       const cityValue = this.permitForm.get('registerCities')?.value;
+      const barangayId = this.permitForm.get('registerBaranggays')?.value;
+
+      const barangay = this.baranggaysArray.find((b) => b.id == barangayId);
+
+      // console.log(barangay?.brgy_name);
+      this.operationBarangayRegister = barangay?.brgy_name
 
       // console.log(provinceValue, cityValue)
       if (provinceValue == 87 && cityValue == 1624) {
         this.permitOperationForm.patchValue({
-          province: this.permitForm.get('registerProvince')?.value,
-          city: this.permitForm.get('registerCities')?.value,
-          baranggays: this.permitForm.get('registerBaranggays')?.value,
+          baranggays: barangayId,
           zip_code: this.permitForm.get('zip_code')?.value,
           street: this.permitForm.get('street')?.value,
           house: this.permitForm.get('house')?.value,
@@ -232,8 +239,8 @@ export class ApplyPermitComponent {
       } else {
         this.messageService.add({
           severity: 'error',
-          summary: 'Invalid Selection',
-          detail: 'This functionality is only available for Bislig City. Please select the correct province and city.'
+          summary: 'Invalid Zone Selection',
+          detail: 'This functionality is only available for businesses compliant with the designated zoning regulations. Please select a valid business zone and city.'
         });
       }
     }
@@ -294,7 +301,6 @@ export class ApplyPermitComponent {
         next: (response: any) => {
           // console.log(response);
           this.barangays = response.barangays;
-          this.barangayValue(this.barangays);
         },
         error: (error: any) => {
           console.log('error fetching baranggays:', error);
@@ -303,9 +309,21 @@ export class ApplyPermitComponent {
     }
   }
 
-  barangayValue(barangay: any) {
-    console.log(barangay);
-    console.log(this.permitForm.get('registerBaranggays')?.value)
+  getBarangay(event: Event) {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const barangayName = selectedOption?.text; 
+    // console.log(barangayName);
+    this.currentBarangayRegister = barangayName;
+  }
+
+  operationalBaranggay(event: Event) {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const barangayName = selectedOption?.text; 
+
+    // console.log(barangayName);
+    this.operationBarangayRegister = barangayName;
   }
 
   getBusinessCity() {
@@ -347,16 +365,33 @@ export class ApplyPermitComponent {
     });
   }
 
-  proceed() {
-    if (this.permitForm.invalid) {
-      this.messageService.add({ 
-        severity: 'error', 
-        summary: 'Form Submission Error', 
-        detail: 'Please ensure that all required fields are filled out correctly before proceeding. Missing or invalid information needs to be completed or corrected.' 
-      });
-    } else {
-      this.currentTab = 2;
-      // console.log(this.permitForm.value);
+  back(number: number) {
+    this.currentTab = number;
+  }
+
+  proceed(number: number) {
+    if (number === 2) {
+      if (this.permitForm.invalid) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Form Submission Error', 
+          detail: 'Please ensure that all required fields are filled out correctly before proceeding. Missing or invalid information needs to be completed or corrected.' 
+        });
+      } else {
+        this.currentTab = 2;
+      }
+    } else if (number === 3) {
+      if (this.permitOperationForm.invalid) {
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Form Submission Error', 
+          detail: 'Please ensure that all required fields are filled out correctly before proceeding. Missing or invalid information needs to be completed or corrected.' 
+        });
+      } else {
+        this.currentTab = 3;
+      } 
+    } else if (number === 4) {
+      this.currentTab = 4;
     }
   }
 
@@ -410,39 +445,39 @@ export class ApplyPermitComponent {
     });
   }
 
-  // drag and drop image
+  // drag and drop image functionality
   triggerFileInput(inputId: string): void {
     const fileInput = document.getElementById(inputId) as HTMLInputElement;
     if (fileInput) {
         fileInput.click();
     }
-}
+  }
 
-onFileSelect(event: Event, field: string): void {
+  onFileSelect(event: Event, field: string): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
         this.validateAndPreviewFile(input.files[0], field);
     }
-}
+  }
 
-onFileDrop(event: DragEvent, field: string): void {
+  onFileDrop(event: DragEvent, field: string): void {
     event.preventDefault();
     if (event.dataTransfer && event.dataTransfer.files.length > 0) {
         this.validateAndPreviewFile(event.dataTransfer.files[0], field);
     }
-}
+  }
 
-onDragOver(event: DragEvent): void {
+  onDragOver(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-}
+  }
 
-onDragLeave(event: DragEvent): void {
+  onDragLeave(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-}
+  }
 
-validateAndPreviewFile(file: File, field: string): void {
+  validateAndPreviewFile(file: File, field: string): void {
     const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
     if (!validTypes.includes(file.type)) {
         alert('Invalid file type. Only JPEG, PNG, or JPG are allowed.');

@@ -1,9 +1,15 @@
 <nav class="bg-green-800">
   <div class="py-3 px-8 md:py-2">
     <div class="flex flex-col md:flex-row py-3 md:px-0 px-3 md:items-center items-start justify-between">
-      <div class="flex items-center justify-between mb-2 md:mb-0">
+      <div class="flex items-center justify-between gap-3 mb-2 md:mb-0">
+        <button
+            class="bg-white p-2 rounded-full w-[2.7rem] h-[2.7rem] shadow-md hover:bg-gray-200 transition z-10"
+            (click)="toggleSidebar()"
+        >
+          <i class="fa-solid fa-bars text-xl"></i>
+        </button>
         <img src="../../../assets/images/logo/bislig lgu logo.png" alt="Municipality Seal" class="w-12 h-12">
-        <div class="ml-3">
+        <div>
           <h1 class="text-white text-lg font-semibold">
             Business Permit
           </h1>

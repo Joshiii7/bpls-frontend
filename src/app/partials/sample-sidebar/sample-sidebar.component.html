@@ -1,0 +1,281 @@
+<!-- Sidebar for lg and above -->
+<div
+  *ngIf="!isMdOrBelow"
+  id="sidebar"
+  class="flex flex-col bg-gray-800 text-white h-full transition-all duration-300 sticky top-0"
+  [ngClass]="{
+    'w-64': isSidebarOpen || isHovered,
+    'w-16': !isSidebarOpen && !isHovered,
+  }"
+  (mouseenter)="onHover(true)"
+  (mouseleave)="onHover(false)"
+>
+  <div class="flex flex-col gap-4 justify-between items-center">
+    <div class="mt-5">
+      <img class="w-12" src="../../../assets/images/logo/bislig lgu logo.png" alt="bislig logo">
+    </div>
+    <div class="w-full ps-5 h-10">
+        <div *ngIf="isSidebarOpen || isHovered">
+          <h1 class="text-white text-sm font-semibold">Business Permit</h1>
+          <p class="text-xs">City of Bislig, Surigao del Sur</p>
+        </div>
+    </div>
+  </div>
+
+  <!-- Sidebar for admin -->
+  <nav *ngIf="roleID == 1" class="mt-5">
+    <ul>
+      <li (click)="sidebarMenu(5)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-700" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 5}">
+        <div>
+          <span *ngIf="isSidebarOpen || isHovered">
+            <i class="fa-solid fa-house text-sm me-2"></i>
+            Dashboard
+          </span>
+          <span *ngIf="!isSidebarOpen && !isHovered">
+            <i class="fa-solid fa-house text-sm"></i>
+          </span>
+        </div>
+      </li>
+      <li class="text-sm cursor-pointer" [ngClass]="{'bg-gray-900' : isDropdownOpen}">
+        <div (click)="toggleDropdown()" class="px-5 py-2 flex justify-between items-center hover:bg-green-700">
+          <span *ngIf="isSidebarOpen || isHovered">
+            <i class="fa-regular fa-file text-lg me-2"></i>
+            Applications
+          </span>
+          <span *ngIf="!isSidebarOpen && !isHovered">
+            <i class="fa-regular fa-file text-lg"></i>
+          </span>
+          <!-- Dropdown indicator -->
+          <div *ngIf="isSidebarOpen || isHovered">
+            <i [class]="isDropdownOpen ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" class="ml-2 text-xs transition-transform duration-300"></i>
+          </div>
+        </div>
+
+        <!-- Dropdown menu -->
+        <ul *ngIf="isDropdownOpen && isSidebarOpen" class="text-sm">
+          <li class="cursor-pointer hover:bg-green-700 ps-[3.5rem] py-3" (click)="sidebarMenu(6)" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 6}">
+            New Application
+          </li>
+          <li class="cursor-pointer hover:bg-green-700 ps-[3.5rem] py-3" (click)="sidebarMenu(7)" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 7}">
+            Approved Application
+          </li>
+          <li class="cursor-pointer hover:bg-green-700 ps-[3.5rem] py-3" (click)="sidebarMenu(8)" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 8}">
+            Declined Application
+          </li>
+        </ul>
+      </li>
+      <li (click)="sidebarMenu(3)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 9}">
+        <div>
+          <span *ngIf="isSidebarOpen || isHovered">
+            <i class="fa-solid fa-gear text-md me-2"></i>
+            Settings
+          </span>
+          <span *ngIf="!isSidebarOpen && !isHovered">
+            <i class="fa-solid fa-gear text-md"></i>
+          </span>
+        </div>
+      </li>
+      <li (click)="sidebarMenu(4)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 4}">
+        <div>
+          <span *ngIf="isSidebarOpen || isHovered">
+            <i class="fas fa-sign-out-alt text-md me-2"></i>
+            Logout
+          </span>
+          <span *ngIf="!isSidebarOpen && !isHovered">
+            <i class="fas fa-sign-out-alt text-md"></i>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Sidebar for business owners -->
+  <nav *ngIf="roleID == 2" class="mt-5">
+    <ul>
+      <li (click)="sidebarMenu(1)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-700" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 1}">
+        <div>
+          <span *ngIf="isSidebarOpen || isHovered">
+            <i class="fa-solid fa-house text-sm me-2"></i>
+            Dashboard
+          </span>
+          <span *ngIf="!isSidebarOpen && !isHovered">
+            <i class="fa-solid fa-house text-sm"></i>
+          </span>
+        </div>
+      </li>
+      <li (click)="sidebarMenu(2)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 2}">
+        <div>
+          <span *ngIf="isSidebarOpen || isHovered">
+            <i class="fa-regular fa-file text-lg me-2"></i>
+            My Applications
+          </span>
+          <span *ngIf="!isSidebarOpen && !isHovered">
+            <i class="fa-regular fa-file text-lg"></i>
+          </span>
+        </div>
+      </li>
+      <li (click)="sidebarMenu(3)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 3}">
+        <div>
+          <span *ngIf="isSidebarOpen || isHovered">
+            <i class="fa-solid fa-gear text-md me-2"></i>
+            Settings
+          </span>
+          <span *ngIf="!isSidebarOpen && !isHovered">
+            <i class="fa-solid fa-gear text-md"></i>
+          </span>
+        </div>
+      </li>
+      <li (click)="sidebarMenu(4)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 4}">
+        <div>
+          <span *ngIf="isSidebarOpen || isHovered">
+            <i class="fas fa-sign-out-alt text-md me-2"></i>
+            Logout
+          </span>
+          <span *ngIf="!isSidebarOpen && !isHovered">
+            <i class="fas fa-sign-out-alt text-md"></i>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <div
+    [ngClass]="{
+        'hidden opacity-0 max-h-0 max-w-0 overflow-hidden duration-0': !isHovered && !isSidebarOpen,
+        'opacity-100 max-h-24 duration-1000': isHovered || isSidebarOpen
+    }"
+    class="w-full mt-auto p-3 flex flex-col items-center text-xs text-gray-400"
+  >
+    <p>&copy; 2024 Joshi Angelo Adlawan</p>
+    <p>All Rights Reserved</p>
+  </div>
+</div>
+
+<!-- Sidebar for md and below -->
+<div
+  *ngIf="isMdOrBelow"
+  id="sidebar"
+  class="bg-gray-800 text-white h-full transition-all duration-300 fixed top-0 left-0 z-50"
+  [ngClass]="{
+    'w-0': isSidebarOpen,
+    'w-64': !isSidebarOpen,
+  }"
+>
+  <div class="flex flex-col gap-4 justify-between items-center relative">
+    <button (click)="toggleSidebar()" *ngIf="!isSidebarOpen" class="absolute right-3 top-3 rounded-full w-[2rem] h-[2rem] hover:bg-gray-200">
+      <i class="fa-solid fa-x text-xs cursor-pointer"></i>
+    </button>
+
+    <div class="mt-5">
+      <img class="w-12" src="../../../assets/images/logo/bislig lgu logo.png" alt="bislig logo">
+    </div>
+
+    <div class="w-full ps-5 h-10">
+        <div *ngIf="!isSidebarOpen">
+          <h1 class="text-white text-sm font-semibold">Business Permit</h1>
+          <p class="text-xs">City of Bislig, Surigao del Sur</p>
+        </div>
+    </div>
+  </div>
+
+  <!-- Sidebar for admin -->
+  <nav *ngIf="roleID == 1" class="mt-5">
+    <ul>
+      <li *ngIf="!isSidebarOpen" (click)="sidebarMenu(5)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-700" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 5}">
+        <div>
+          <span>
+            <i class="fa-solid fa-house text-sm me-2"></i>
+            Dashboard
+          </span>
+        </div>
+      </li>
+      <li (click)="toggleDropdown()" class="text-sm cursor-pointer" [ngClass]="{'bg-gray-900' : isDropdownOpen}">
+        <div class="px-5 py-2 flex justify-between items-center hover:bg-green-700">
+          <span *ngIf="!isSidebarOpen">
+            <i class="fa-regular fa-file text-lg me-2"></i>
+            Applications
+          </span>
+          <!-- Dropdown indicator -->
+          <div *ngIf="!isSidebarOpen">
+            <i [class]="!isDropdownOpen ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" class="ml-2 text-xs transition-transform duration-300"></i>
+          </div>
+        </div>
+
+        <!-- Dropdown menu -->
+        <ul *ngIf="isDropdownOpen && !isSidebarOpen" class="mt-2 space-y-2 text-sm">
+          <li class="cursor-pointer hover:bg-green-700 ps-[3.5rem] py-3" (click)="sidebarMenu(6)">
+            New Application
+          </li>
+          <li 
+            class="cursor-pointer hover:bg-green-700 ps-[3.5rem] py-3"
+            (click)="sidebarMenu(7)"
+          >
+            Approved Application
+          </li>
+          <li class="cursor-pointer hover:bg-green-700 ps-[3.5rem] py-3" (click)="sidebarMenu(8)">
+            Declined Application
+          </li>
+        </ul>
+      </li>
+      <li *ngIf="!isSidebarOpen" (click)="sidebarMenu(3)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 9}">
+        <div>
+          <span>
+            <i class="fa-solid fa-gear text-md me-2"></i>
+            Settings
+          </span>
+        </div>
+      </li>
+      <li *ngIf="!isSidebarOpen" (click)="sidebarMenu(4)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 4}">
+        <div>
+          <span>
+            <i class="fas fa-sign-out-alt text-md me-2"></i>
+            Logout
+          </span>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Sidebar for business owners -->
+  <nav *ngIf="roleID == 2" class="mt-5">
+    <ul>
+      <li *ngIf="!isSidebarOpen" (click)="sidebarMenu(1)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-700" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 1}">
+        <div>
+          <span>
+            <i class="fa-solid fa-house text-sm me-2"></i>
+            Dashboard
+          </span>
+        </div>
+      </li>
+      <li *ngIf="!isSidebarOpen" (click)="sidebarMenu(2)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 2}">
+        <div>
+          <span>
+            <i class="fa-regular fa-file text-lg me-2"></i>
+            My Applications
+          </span>
+        </div>
+      </li>
+      <li *ngIf="!isSidebarOpen" (click)="sidebarMenu(3)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 3}">
+        <div>
+          <span>
+            <i class="fa-solid fa-gear text-md me-2"></i>
+            Settings
+          </span>
+        </div>
+      </li>
+      <li *ngIf="!isSidebarOpen" (click)="sidebarMenu(4)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 4}">
+        <div>
+          <span>
+            <i class="fas fa-sign-out-alt text-md me-2"></i>
+            Logout
+          </span>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <div *ngIf="!isSidebarOpen" class="absolute bottom-0 w-full mt-auto p-3 flex flex-col items-center text-xs text-gray-400">
+    <p>&copy; 2024 Joshi Angelo Adlawan</p>
+    <p>All Rights Reserved</p>
+  </div>
+</div>

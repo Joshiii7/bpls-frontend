@@ -36,6 +36,8 @@ import { PermitViewApplicationDetailsComponent } from './pages/admin/permit-appr
 import { ApplicationParentElementComponent } from './pages/admin/permit-approvals/application-parent-element/application-parent-element.component';
 import { AccessDeniedPageComponent } from './pages/access-denied-page/access-denied-page.component';
 import { AuthModule } from '@auth0/auth0-angular';
+import { SampleSidebarComponent } from './partials/sample-sidebar/sample-sidebar.component';
+import { ReviewMapComponent } from './components/review-map/review-map.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDteaccknTxLOY2hOXeluL5aH88B7q-ob8",
@@ -69,6 +71,8 @@ const analytics = getAnalytics(app);
     PermitViewApplicationDetailsComponent,
     ApplicationParentElementComponent,
     AccessDeniedPageComponent,
+    SampleSidebarComponent,
+    ReviewMapComponent,
   ],
   imports: [
     BrowserModule,

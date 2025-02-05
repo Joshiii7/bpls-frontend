@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectorRef } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
@@ -10,14 +10,17 @@ import { filter } from 'rxjs/operators';
 export class AppComponent {
   withNavigation: boolean = false;
   isSidebarOpen: boolean = true;
+  showHeader: boolean = true;
+  showSidebar: boolean = true;
 
-  constructor(private router: Router) {  }
+  constructor(private router: Router, private cdr: ChangeDetectorRef) {  }
 
   ngOnInit(): void {
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         this.withNavigation = !event.url.includes('');
+        this.cdr.detectChanges();
       });
   }
 
@@ -25,6 +28,7 @@ export class AppComponent {
     if (componentInstance && 'emitNavigationState' in componentInstance) {
       componentInstance.emitNavigationState.subscribe((value: boolean) => {
         this.withNavigation = value;
+        this.cdr.detectChanges();
       });
     }
   }
