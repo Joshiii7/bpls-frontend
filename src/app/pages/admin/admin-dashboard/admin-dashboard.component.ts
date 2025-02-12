@@ -230,6 +230,7 @@ export class AdminDashboardComponent {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             labels: {
@@ -301,6 +302,7 @@ export class AdminDashboardComponent {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: true,
