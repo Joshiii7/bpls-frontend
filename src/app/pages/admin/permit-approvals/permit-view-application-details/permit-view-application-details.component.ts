@@ -38,6 +38,9 @@ export class PermitViewApplicationDetailsComponent {
   operationalCity: any;
   operationalProvince: any;
   operationalZipCode: any;
+  tracking_number: any;
+  business_id_number: any;
+  date_of_receipt: any;
 
   paymentType: number = 0;
   businessType: number = 0;
@@ -94,6 +97,10 @@ export class PermitViewApplicationDetailsComponent {
         this.gender = response.permit[0].gender;
         this.dti_registration_date = response.permit[0].dti_registration_date;
         this.isNew = response.permit[0].isNew;
+
+        this.tracking_number = response.permit[0].tracking_number;
+        this.business_id_number = response.permit[0].business_id_number;
+        this.date_of_receipt = response.permit[0].created_at;
 
         this.isNew = (response.permit[0].isNew == 'New') ? 1 : 2;
       },

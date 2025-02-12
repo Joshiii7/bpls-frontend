@@ -2,3 +2,21 @@
     background-color: #1F2937;
     color: white;
 }
+
+::ng-deep .p-breadcrumb {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+::ng-deep .p-breadcrumb .p-element .p-menuitem-link,
+::ng-deep .p-breadcrumb .p-element .p-menuitem-link .p-menuitem-text {
+    color: white !important;
+    font-size: .9rem !important;
+}
+
+::ng-deep .p-breadcrumb .p-menuitem-separator .p-element {
+    color: white !important;
+}
+  
+  

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { SidebarService } from 'src/app/sidebar.service';
+import { MenuItem } from 'primeng/api';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -15,12 +17,44 @@ export class HeaderComponent {
   dropDownMenu: boolean = false;
   isSidebarOpen = true;
 
-  constructor(private router: Router, private sidebarService: SidebarService) {  }
+  items: MenuItem[] = [];
+  home!: MenuItem;
+
+  constructor(private router: Router, private activatedRoute: ActivatedRoute, private sidebarService: SidebarService) {  }
 
   ngOnInit():void {
     // console.log(this.isLoggedIn);
     this.updateTime();
     setInterval(() => this.updateTime(), 1000);
+
+    const role = localStorage.getItem('r');
+
+    this.home = { 
+      icon: 'fa-solid fa-house text-white', 
+      routerLink: role === '1' ? '/admin-dashboard' : '/dashboard' 
+    };
+
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateBreadcrumbs();
+      });
+
+    // Initial load
+    this.updateBreadcrumbs();
+  }
+
+  updateBreadcrumbs() {
+    const segments = this.router.url.split('/').filter(seg => seg);
+    let url = '';
+    this.items = segments.map(segment => {
+      url += `/${segment}`;
+      return { label: this.capitalize(segment), routerLink: url };
+    });
+  }
+
+  capitalize(text: string): string {
+    return text.charAt(0).toUpperCase() + text.slice(1);
   }
 
   updateTime(): void {

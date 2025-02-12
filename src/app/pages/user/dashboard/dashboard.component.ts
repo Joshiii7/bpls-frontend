@@ -40,7 +40,7 @@ export class DashboardComponent {
   }
 
   applyButton() {
-    this.router.navigate(['apply-permit']);
+    this.router.navigate(['dashboard/apply-permit']);
   }
 
 }

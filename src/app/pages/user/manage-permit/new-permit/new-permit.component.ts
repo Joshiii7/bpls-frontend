@@ -1,4 +1,3 @@
-import { leadingComment } from '@angular/compiler';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,13 +5,13 @@ import { MessageService } from 'primeng/api';
 import { ApiServicesService } from 'src/app/api-services.service';
 
 @Component({
-  selector: 'app-apply-permit',
-  templateUrl: './apply-permit.component.html',
-  styleUrls: ['./apply-permit.component.css'],
+  selector: 'app-new-permit',
+  templateUrl: './new-permit.component.html',
+  styleUrls: ['./new-permit.component.css'],
   providers: [MessageService]
 })
-export class ApplyPermitComponent {
-  @Output() emitNavigationState = new EventEmitter<boolean>();
+export class NewPermitComponent {
+@Output() emitNavigationState = new EventEmitter<boolean>();
 
   businessTypes: any;
   isLoading: boolean = true;
@@ -495,5 +494,4 @@ export class ApplyPermitComponent {
     };
     reader.readAsDataURL(file);
   }
-
 }

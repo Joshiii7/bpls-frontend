@@ -1,6 +1,7 @@
 import { Component, HostListener, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { AuthService as Auth0Service } from '@auth0/auth0-angular';
+import { ChangeDetectorRef } from '@angular/core';
 import { SidebarService } from 'src/app/sidebar.service';
 
 @Component({
@@ -24,6 +25,7 @@ export class SampleSidebarComponent {
     private router: Router,
     private auth: Auth0Service,
     private sidebarService: SidebarService,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -37,6 +39,18 @@ export class SampleSidebarComponent {
     this.isMdOrBelow = window.innerWidth < 1024;
 
     this.defaultSidebar();
+
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.setSideMenuFromRoute(event.url);
+      }
+    });
+
+    // Set sideMenu based on the stored value
+    const storedMenu = localStorage.getItem('sn');
+    if (storedMenu) {
+      this.sideMenu = Number(storedMenu);
+    }
   }
 
   defaultSidebar() {
@@ -81,6 +95,7 @@ export class SampleSidebarComponent {
     localStorage.setItem('sn', `${num}`);
     this.sideMenu = num;
     this.navigateToMenu(this.sideMenu);
+    this.cdRef.detectChanges();
   }
 
   navigateToMenu(num: number) {
@@ -97,6 +112,24 @@ export class SampleSidebarComponent {
     } else if (num === 9) {
       this.logout();
     }
+  }
+
+  setSideMenuFromRoute(url: string) {
+    console.log('current url:', url);
+    if (url.includes('/dashboard')) {
+      this.sideMenu = 1;
+    } else if (url.includes('/my-application')) {
+      this.sideMenu = 2;
+    } else if (url.includes('/admin-dashboard')) {
+      this.sideMenu = 5;
+    } else if (url.includes('/applications')) {
+      this.sideMenu = 6;
+    }
+
+    console.log('current sideMenu:', this.sideMenu);
+    localStorage.setItem('sn', this.sideMenu.toString());
+
+    this.cdRef.detectChanges();
   }
 
   logout() {

@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { DashboardComponent } from './pages/user/dashboard/dashboard.component';
-import { ApplyPermitComponent } from './pages/user/apply-permit/apply-permit.component';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
 import { ApplicationComponent } from './pages/user/application/application.component';
 import { AuthGuard } from './guards/auth.guard';
@@ -11,6 +10,8 @@ import { PermitOverviewApplicationsComponent } from './pages/admin/permit-approv
 import { PermitViewApplicationDetailsComponent } from './pages/admin/permit-approvals/permit-view-application-details/permit-view-application-details.component';
 import { ApplicationParentElementComponent } from './pages/admin/permit-approvals/application-parent-element/application-parent-element.component';
 import { AccessDeniedPageComponent } from './pages/access-denied-page/access-denied-page.component';
+import { PermitParentElementComponent } from './pages/user/manage-permit/permit-parent-element/permit-parent-element.component';
+import { NewPermitComponent } from './pages/user/manage-permit/new-permit/new-permit.component';
 
 const routes: Routes = [
   {
@@ -19,12 +20,30 @@ const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: DashboardComponent,
+    component: PermitParentElementComponent,
     canActivate: [AuthGuard],
-    data: { 
+    data: {
       allowedRoles: ['business_owner'],
-      breadcrumb: 'Dashboard'
+      breadcrumb: 'Dashboard',
     },
+    children: [
+      {
+        path: '',
+        component: DashboardComponent,
+        data: { 
+          allowedRoles: ['business_owner'],
+          breadcrumb: 'Dashboards',
+        }
+      },
+      {
+        path: 'apply-permit',
+        component: NewPermitComponent,
+        data: { 
+          allowedRoles: ['business_owner'],
+          breadcrumb: 'Apply for Permit' 
+        },
+      }
+    ],
   },
   {
     path: 'admin-dashboard',
@@ -42,15 +61,6 @@ const routes: Routes = [
     data: { 
       allowedRoles: ['business_owner'],
       breadcrumb: 'My Application' 
-    },
-  },
-  {
-    path: 'apply-permit',
-    component: ApplyPermitComponent,
-    canActivate: [AuthGuard],
-    data: { 
-      allowedRoles: ['business_owner'],
-      breadcrumb: 'Apply for Permit' 
     },
   },
   {

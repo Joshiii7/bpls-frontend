@@ -17,7 +17,6 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DashboardComponent } from './pages/user/dashboard/dashboard.component';
 import { SidebarModule } from 'primeng/sidebar';
 import { SidebarComponent } from './partials/sidebar/sidebar.component';
-import { ApplyPermitComponent } from './pages/user/apply-permit/apply-permit.component';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
 import { ApplicationComponent } from './pages/user/application/application.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -38,6 +37,9 @@ import { AccessDeniedPageComponent } from './pages/access-denied-page/access-den
 import { AuthModule } from '@auth0/auth0-angular';
 import { SampleSidebarComponent } from './partials/sample-sidebar/sample-sidebar.component';
 import { ReviewMapComponent } from './components/review-map/review-map.component';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { NewPermitComponent } from './pages/user/manage-permit/new-permit/new-permit.component';
+import { PermitParentElementComponent } from './pages/user/manage-permit/permit-parent-element/permit-parent-element.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDteaccknTxLOY2hOXeluL5aH88B7q-ob8",
@@ -61,7 +63,6 @@ const analytics = getAnalytics(app);
     LandingPageComponent,
     DashboardComponent,
     SidebarComponent,
-    ApplyPermitComponent,
     AdminDashboardComponent,
     ApplicationComponent,
     AuthComponent,
@@ -73,6 +74,8 @@ const analytics = getAnalytics(app);
     AccessDeniedPageComponent,
     SampleSidebarComponent,
     ReviewMapComponent,
+    NewPermitComponent,
+    PermitParentElementComponent,
   ],
   imports: [
     BrowserModule,
@@ -90,6 +93,7 @@ const analytics = getAnalytics(app);
     CountUpModule,
     BrowserAnimationsModule,
     ConfirmDialogModule,
+    BreadcrumbModule,
     AngularFireModule.initializeApp(firebaseConfig),
     AuthModule.forRoot({
       domain: 'dev-i13gsn8mlryu6ru5.us.auth0.com',
