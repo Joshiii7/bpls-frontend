@@ -25,15 +25,16 @@ export class AuthComponent {
 
   user: any;
   isAuthenticated: boolean = false;
+  showModal: boolean = false;
 
   newRequirements = [
     'Unified Application Form',
     'Barangay Clearance',
     'Zoning Clearance',
+    'Sanitary Permit',
     'Environmental Compliance Certificate',
     'BFP-Fire Safety Inspection Certificate (FSIC)',
     'Occupancy Permit Building Official',
-    'Sanitary Permit',
   ]
 
   renewalRequirements = [
@@ -72,6 +73,22 @@ export class AuthComponent {
         });
       }
     });
+
+    this.clearStorage();
+  }
+  
+  clearStorage() {
+    localStorage.clear();
+    this.auth.logout({
+      logoutParams: {
+        returnTo: window.location.origin,
+      },
+      openUrl: false,
+    });
+  }
+
+  closeModal() {
+    this.showModal = false;
   }
 
   goToProfile(): void {

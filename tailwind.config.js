@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'hero-section': "url('src/assets/images/bg-tinuy-an.jpg')",
+        'hero-section': "url('src/assets/images/cedo_background.jpg')",
         'logo': "url('src/assets/images/logo/bislig lgu logo.png')",
       },
       boxShadow: {
