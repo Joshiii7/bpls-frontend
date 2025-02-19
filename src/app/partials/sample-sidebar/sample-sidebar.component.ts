@@ -108,7 +108,11 @@ export class SampleSidebarComponent {
     } else if (num === 5) {
       this.router.navigate(['admin-dashboard']);
     } else if (num === 6) {
-      this.router.navigate(['applications'])
+      this.router.navigate(['applications']);
+    } else if (num === 7) {
+      this.router.navigate(['approved-applications']);
+    } else if (num === 8) {
+      this.router.navigate(['declined-applications']);
     } else if (num === 9) {
       this.logout();
     }

@@ -40,6 +40,12 @@ import { ReviewMapComponent } from './components/review-map/review-map.component
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { NewPermitComponent } from './pages/user/manage-permit/new-permit/new-permit.component';
 import { PermitParentElementComponent } from './pages/user/manage-permit/permit-parent-element/permit-parent-element.component';
+import { PermitApprovedApplicationComponent } from './pages/admin/permit-approved/permit-approved-application/permit-approved-application.component';
+import { PermitApprovedParentComponent } from './pages/admin/permit-approved/permit-approved-parent/permit-approved-parent.component';
+import { PermitApprovedViewApplicationComponent } from './pages/admin/permit-approved/permit-approved-view-application/permit-approved-view-application.component';
+import { PermitDeclinedApplicationsComponent } from './pages/admin/permit-declined/permit-declined-applications/permit-declined-applications.component';
+import { PermitDeclinedParentComponent } from './pages/admin/permit-declined/permit-declined-parent/permit-declined-parent.component';
+import { PermitDeclinedViewApplicationsComponent } from './pages/admin/permit-declined/permit-declined-view-applications/permit-declined-view-applications.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDteaccknTxLOY2hOXeluL5aH88B7q-ob8",
@@ -76,6 +82,12 @@ const analytics = getAnalytics(app);
     ReviewMapComponent,
     NewPermitComponent,
     PermitParentElementComponent,
+    PermitApprovedApplicationComponent,
+    PermitApprovedParentComponent,
+    PermitApprovedViewApplicationComponent,
+    PermitDeclinedApplicationsComponent,
+    PermitDeclinedParentComponent,
+    PermitDeclinedViewApplicationsComponent,
   ],
   imports: [
     BrowserModule,

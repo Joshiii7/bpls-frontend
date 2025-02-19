@@ -12,6 +12,12 @@ import { ApplicationParentElementComponent } from './pages/admin/permit-approval
 import { AccessDeniedPageComponent } from './pages/access-denied-page/access-denied-page.component';
 import { PermitParentElementComponent } from './pages/user/manage-permit/permit-parent-element/permit-parent-element.component';
 import { NewPermitComponent } from './pages/user/manage-permit/new-permit/new-permit.component';
+import { PermitApprovedParentComponent } from './pages/admin/permit-approved/permit-approved-parent/permit-approved-parent.component';
+import { PermitApprovedApplicationComponent } from './pages/admin/permit-approved/permit-approved-application/permit-approved-application.component';
+import { PermitApprovedViewApplicationComponent } from './pages/admin/permit-approved/permit-approved-view-application/permit-approved-view-application.component';
+import { PermitDeclinedParentComponent } from './pages/admin/permit-declined/permit-declined-parent/permit-declined-parent.component';
+import { PermitDeclinedApplicationsComponent } from './pages/admin/permit-declined/permit-declined-applications/permit-declined-applications.component';
+import { PermitDeclinedViewApplicationsComponent } from './pages/admin/permit-declined/permit-declined-view-applications/permit-declined-view-applications.component';
 
 const routes: Routes = [
   {
@@ -78,6 +84,42 @@ const routes: Routes = [
         path: 'application-details/:uuid',
         component: PermitViewApplicationDetailsComponent,
         data: { breadcrumb: 'Application Details' },
+      },
+    ],
+  },
+  {
+    path: 'approved-applications',
+    component: PermitApprovedParentComponent,
+    canActivate: [AuthGuard],
+    data: { allowedRoles: ['admin'] },
+    children: [
+      {
+        path: '',
+        component: PermitApprovedApplicationComponent,
+        data: { breadcrumb: 'Approved Applications' },
+      },
+      {
+        path: 'approved-application-details/:uuid',
+        component: PermitApprovedViewApplicationComponent,
+        data: { breadcrumb: 'Approved Application Details' },
+      },
+    ],
+  },
+  {
+    path: 'declined-applications',
+    component: PermitDeclinedParentComponent,
+    canActivate: [AuthGuard],
+    data: { allowedRoles: ['admin'] },
+    children: [
+      {
+        path: '',
+        component: PermitDeclinedApplicationsComponent,
+        data: { breadcrumb: 'Declined Applications' },
+      },
+      {
+        path: 'declined-application-details/:uuid',
+        component: PermitDeclinedViewApplicationsComponent,
+        data: { breadcrumb: 'Declined Application Details' },
       },
     ],
   },

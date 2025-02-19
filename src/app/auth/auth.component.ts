@@ -22,6 +22,7 @@ export class AuthComponent {
   loginSeePass: boolean = false;
   registerSeePass: boolean = false;
   registerConfirmSeePass: boolean = false;
+  isLoading: boolean = false;
 
   user: any;
   isAuthenticated: boolean = false;
@@ -106,6 +107,7 @@ export class AuthComponent {
       .subscribe(() => {
         this.auth.user$.subscribe((user) => {
           if (user) {
+            this.isLoading = true;
             console.log('User Info:', user);
   
             const userData = {

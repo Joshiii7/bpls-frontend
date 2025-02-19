@@ -251,3 +251,10 @@
 </div>
 
 <p-toast></p-toast>
+
+<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+    <div class="text-center">
+        <i class="fa-solid fa-spinner fa-spin text-4xl text-white"></i>
+        <p class="mt-4 text-white text-lg">Loading, please wait...</p>
+    </div>
+</div>

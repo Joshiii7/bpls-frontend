@@ -35,7 +35,11 @@ export class ApiServicesService {
   register(data: any) {
     return this.http.post(`${this.Root_URL}/register`, data);
   }
-  
+
+  updateStatus(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.Root_URL}/updateStatus/${id}`, data, { headers: this.getHeaders() });
+  }
+
   logout() {
     return this.http.post(`${this.Root_URL}/logout`, {}, { headers: this.getHeaders() });
   }

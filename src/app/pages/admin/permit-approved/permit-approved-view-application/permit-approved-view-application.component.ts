@@ -1,17 +1,15 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { ApiServicesService } from 'src/app/api-services.service';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { timeout } from 'rxjs';
-
+import { ApiServicesService } from 'src/app/api-services.service';
 
 @Component({
-  selector: 'app-permit-view-application-details',
-  templateUrl: './permit-view-application-details.component.html',
-  styleUrls: ['./permit-view-application-details.component.css'],
+  selector: 'app-permit-approved-view-application',
+  templateUrl: './permit-approved-view-application.component.html',
+  styleUrls: ['./permit-approved-view-application.component.css'],
   providers: [MessageService]
 })
-export class PermitViewApplicationDetailsComponent {
+export class PermitApprovedViewApplicationComponent {
   isLoading: boolean = true;
   application_id = localStorage.getItem('vad');
   uuid!: string
@@ -117,48 +115,6 @@ export class PermitViewApplicationDetailsComponent {
       },
       error: (error: any) => {
         console.log('error fetching application detail:', error);
-      }
-    });
-  }
-
-  approve() {
-    // this.visible = true;
-    this.apiService.updateStatus(this.businessID, { status: 'Approved' }).subscribe({
-      next: (response: any) => {
-        console.log(response);
-        if (response) {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfully Approved Permit' });
-          
-          setTimeout(() => {
-            this.router.navigate(['/applications']).then(() => {
-              window.location.reload();
-            });
-          }, 300);
-        }
-      },
-      error: (error: any) => {
-        console.log('error approving the status:', error);
-      }
-    });
-  }
-
-  decline() {
-    // this.visible = true;
-    this.apiService.updateStatus(this.businessID, { status: 'Declined' }).subscribe({
-      next: (response: any) => {
-        console.log(response);
-        if (response) {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfully Approved Permit' });
-          
-          setTimeout(() => {
-            this.router.navigate(['/applications']).then(() => {
-              window.location.reload();
-            });
-          }, 300);
-        }
-      },
-      error: (error: any) => {
-        console.log('error approving the status:', error);
       }
     });
   }
