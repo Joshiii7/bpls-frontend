@@ -45,13 +45,16 @@ export class HeaderComponent {
   }
 
   updateBreadcrumbs() {
-    const segments = this.router.url.split('/').filter(seg => seg);
+    const uuidRegex = /^[0-9a-fA-F-]{36}$/;
+    const segments = this.router.url.split('/').filter(seg => seg && !uuidRegex.test(seg));
+    
     let url = '';
     this.items = segments.map(segment => {
       url += `/${segment}`;
       return { label: this.capitalize(segment), routerLink: url };
     });
   }
+  
 
   capitalize(text: string): string {
     return text.charAt(0).toUpperCase() + text.slice(1);

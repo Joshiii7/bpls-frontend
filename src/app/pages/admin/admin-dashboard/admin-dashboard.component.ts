@@ -56,11 +56,27 @@ export class AdminDashboardComponent {
   ngOnInit():void {
     this.emitNavigationState.emit(true);
 
-    setInterval(() => {
-      this.loadBusinessTotalPermits();
-    }, 1000);
+    this.loadBusinessTotalPermits();
+    // setInterval(() => {
+    // }, 1000);
     this.loadBusinesses();
     this.getUser();
+  }
+
+  navigate(num: number) {
+    if (num === 1) {
+      localStorage.setItem('ddOpen', 'true');
+      localStorage.setItem('sn', '6');
+      this.router.navigate(['/applications']);
+    } else if (num === 2) {
+      localStorage.setItem('ddOpen', 'true');
+      localStorage.setItem('sn', '7');
+      this.router.navigate(['/approved-applications']);
+    } else if (num === 3) {
+      localStorage.setItem('ddOpen', 'true');
+      localStorage.setItem('sn', '8');
+      this.router.navigate(['/declined-applications']);
+    }
   }
 
   loadBusinessTotalPermits() {

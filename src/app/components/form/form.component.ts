@@ -25,7 +25,7 @@ export class FormComponent {
   @Input('no_van') no_van: string = '';
   @Input('no_motor') no_motor: string = '';
 
-  @Input('date_of_receipt') date_of_receipt: string = 'January 12, 2003';
+  @Input('date_of_receipt') date_of_receipt: string = '';
   @Input('tracking_number') tracking_number: string = '';
   @Input('business_id_number') business_id_number: string = '';
   

@@ -27,8 +27,8 @@ export class MapComponent {
     });
 
     // console.log(this.map?.getPaintProperty('roadname_minor', 'text-color'));
-    
     this.map?.on('load', () => {
+      console.log(this.map?.getStyle().layers);
       this.map?.setPaintProperty('background', 'background-color', '#ECECEC');
       this.map?.setPaintProperty('water', 'fill-color', '#8FBEE7');
       this.map?.setPaintProperty("roadname_minor", "text-color", "#000000");
@@ -57,15 +57,16 @@ export class MapComponent {
       this.map?.setPaintProperty("road_mot_case_noramp", "line-width", 3);
       this.map?.setPaintProperty("road_path", "line-color", "#FFFFFF");
       this.map?.setPaintProperty("road_path", "line-width", 1);
-      this.map?.setPaintProperty("road_service_fill", "fill-color", "#FFFFFF");
-      this.map?.setPaintProperty("road_minor_fill", "fill-color", "#FFFFFF");
-      this.map?.setPaintProperty("road_pri_fill_ramp", "fill-color", "#FFFFFF");
-      this.map?.setPaintProperty("road_trunk_fill_ramp", "fill-color", "#FFFFFF");
-      this.map?.setPaintProperty("road_mot_fill_ramp", "fill-color", "#FFFFFF");
-      this.map?.setPaintProperty("road_sec_fill_noramp", "fill-color", "#FFFFFF");
-      this.map?.setPaintProperty("road_pri_fill_noramp", "fill-color", "#FFFFFF");
-      this.map?.setPaintProperty("road_trunk_fill_noramp", "fill-color", "#FFFFFF");
-      this.map?.setPaintProperty("road_mot_fill_noramp", "fill-color", "#FFFFFF");
+      
+      // this.map?.setPaintProperty("road_service_fill", "fill-color", "#FFFFFF");
+      // this.map?.setPaintProperty("road_minor_fill", "fill-color", "#FFFFFF");
+      // this.map?.setPaintProperty("road_pri_fill_ramp", "fill-color", "#FFFFFF");
+      // this.map?.setPaintProperty("road_trunk_fill_ramp", "fill-color", "#FFFFFF");
+      // this.map?.setPaintProperty("road_mot_fill_ramp", "fill-color", "#FFFFFF");
+      // this.map?.setPaintProperty("road_sec_fill_noramp", "fill-color", "#FFFFFF");
+      // this.map?.setPaintProperty("road_pri_fill_noramp", "fill-color", "#FFFFFF");
+      // this.map?.setPaintProperty("road_trunk_fill_noramp", "fill-color", "#FFFFFF");
+      // this.map?.setPaintProperty("road_mot_fill_noramp", "fill-color", "#FFFFFF");
 
     });
 

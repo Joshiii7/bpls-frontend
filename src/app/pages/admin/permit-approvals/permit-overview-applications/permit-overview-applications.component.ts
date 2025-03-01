@@ -75,6 +75,7 @@ export class PermitOverviewApplicationsComponent {
     this.apiService.allBusiness().subscribe({
       next: (response: any) => {
         this.allBusinesses = response.businessess;
+        this.total = this.allBusinesses.length;
         this.filteredBusinesses = this.allBusinesses;
       },
       error: (error: any) => {
@@ -148,7 +149,7 @@ export class PermitOverviewApplicationsComponent {
         }
         this.businesses = response.data;
         this.totalPages = response.pagination.last_page;
-        this.total = response.pagination.total;
+        // this.total = response.pagination.total;
         // console.log(this.total);
         // console.log(this.totalPages);
       },

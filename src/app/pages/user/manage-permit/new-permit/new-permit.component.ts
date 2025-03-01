@@ -171,6 +171,14 @@ export class NewPermitComponent {
     this.getBusinessCity();
   }
 
+  confirmDetails() {
+    this.confirmation = true;
+  }
+
+  acceptTerms() {
+    console.log('1', this.permitForm, '2', this.permitOperationForm);
+  }
+
   confirmDuplicate(e: Event) {
     const event = e.target as HTMLInputElement;
     // console.log(event.value);

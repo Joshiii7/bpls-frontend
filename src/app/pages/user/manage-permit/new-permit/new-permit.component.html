@@ -442,12 +442,12 @@
         <div class="grid grid-cols-12 gap-6">
 
             <!-- Map -->
-            <div class="md:col-span-7 col-span-12 h-[60dvh]">
+            <div class="lg:col-span-7 col-span-12 h-[60dvh]">
                 <app-map></app-map>
             </div>
 
             <!-- Map Instruction -->
-            <div class="md:col-span-5 col-span-12 h-[60dvh] bg-white border border-gray-100 p-5 rounded-lg shadow-inner overflow-y-auto">
+            <div class="lg:col-span-5 col-span-12 h-[60dvh] bg-white border border-gray-100 p-5 rounded-lg shadow-inner overflow-y-auto">
                 <h3 class="text-lg font-bold mb-4">Why Do You Need the Map?</h3>
                 <p class="text-sm text-gray-700 mb-3">
                     The map is an essential feature of this system as it helps applicants and administrators visualize the location of the business. It ensures that:
@@ -654,17 +654,43 @@
             [no_van]="permitOperationForm.get('van')?.value"
             [no_motor]="permitOperationForm.get('motor')?.value"
         ></app-form>
+
+        <div class="mt-5 px-[8.5rem]">
+            <button (click)="confirmDetails()" type="button" class="w-full focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-green-600 dark:hover:bg-green-800 dark:focus:ring-green-800">
+                Submit
+            </button>
+        </div>
     </section>
 </main>
 
 <p-toast></p-toast>
 <p-dialog 
-    header="Confirm Business Permit Application Details" 
+    header="Terms and Conditions for Business Permit" 
     [modal]="true"
     [(visible)]="confirmation" 
     [style]="{ width: '50rem', position: 'absolute'}" 
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
-    <div class="grid grid-cols-2 gap-3">
-        Hello World
+    
+    <div class="grid grid-cols-2 gap-3 p-4">
+        <p class="col-span-2 text-gray-700">
+            By applying for a business permit, you agree to comply with all local regulations and requirements set forth by the governing body. Failure to adhere to these terms may result in penalties or revocation of the permit.
+        </p>
+
+        <ul class="col-span-2 list-disc list-inside text-gray-700">
+            <li>All submitted documents must be accurate and up to date.</li>
+            <li>Business operations must comply with zoning laws and safety regulations.</li>
+            <li>Payments for permits and renewals must be made within the prescribed period.</li>
+            <li>The business must adhere to environmental and labor policies.</li>
+        </ul>
+
+        <p class="col-span-2 text-gray-700 mt-2">
+            Please read these terms carefully before proceeding with your application.
+        </p>
+    </div>
+
+    <div class="flex justify-end mt-4">
+        <button (click)="acceptTerms()" class="text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5">
+            Accept & Proceed
+        </button>
     </div>
 </p-dialog>

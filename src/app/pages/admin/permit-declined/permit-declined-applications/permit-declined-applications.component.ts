@@ -12,7 +12,7 @@ import { RealTimeService } from 'src/app/real-time.service';
   providers: [MessageService, DatePipe]
 })
 export class PermitDeclinedApplicationsComponent {
-searchText: string = '';
+  searchText: string = '';
   isLoading: boolean = true; 
 
   confirmationMessage: string | null = null;
@@ -52,7 +52,7 @@ searchText: string = '';
 
     this.allBusiness();
 
-    this.businesses = this.getMockBusinesses();
+    this.allBusinesses = this.getMockBusinesses();
     this.total = this.businesses.length;
   }
 
@@ -75,6 +75,7 @@ searchText: string = '';
     this.apiService.allBusiness().subscribe({
       next: (response: any) => {
         this.allBusinesses = response.declinedBusiness;
+        this.total = this.allBusinesses.length;
         this.filteredBusinesses = this.allBusinesses;
       },
       error: (error: any) => {
@@ -148,7 +149,7 @@ searchText: string = '';
         }
         this.businesses = response.data;
         this.totalPages = response.pagination.last_page;
-        this.total = response.pagination.total;
+        // this.total = response.pagination.total;
         // console.log(this.total);
         // console.log(this.totalPages);
       },
@@ -278,7 +279,7 @@ searchText: string = '';
     // vad = view application details
     // localStorage.setItem('vad', `${uuid}`);
     // this.router.navigate(['application-details', uuid]);
-    this.router.navigate(['declined-applications/declined-application-details', uuid]);
+    this.router.navigate(['declined-applications/application-details', uuid]);
   }
 
   getBadgeClass(status: string): string {

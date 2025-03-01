@@ -75,6 +75,7 @@ export class PermitApprovedApplicationComponent {
     this.apiService.allBusiness().subscribe({
       next: (response: any) => {
         this.allBusinesses = response.approvedBusiness;
+        this.total = this.allBusinesses.length;
         this.filteredBusinesses = this.allBusinesses;
       },
       error: (error: any) => {
@@ -148,7 +149,7 @@ export class PermitApprovedApplicationComponent {
         }
         this.businesses = response.data;
         this.totalPages = response.pagination.last_page;
-        this.total = response.pagination.total;
+        // this.total = response.pagination.total;
         // console.log(this.total);
         // console.log(this.totalPages);
       },
@@ -278,7 +279,7 @@ export class PermitApprovedApplicationComponent {
     // vad = view application details
     // localStorage.setItem('vad', `${uuid}`);
     // this.router.navigate(['application-details', uuid]);
-    this.router.navigate(['approved-applications/approved-application-details', uuid]);
+    this.router.navigate(['approved-applications/application-details', uuid]);
   }
 
   getBadgeClass(status: string): string {

@@ -10,6 +10,7 @@
   (mouseenter)="onHover(true)"
   (mouseleave)="onHover(false)"
 >
+
   <div class="flex flex-col gap-4 justify-between items-center">
     <div class="mt-5">
       <img class="w-12" src="../../../assets/images/logo/bislig lgu logo.png" alt="bislig logo">
@@ -25,65 +26,112 @@
   <!-- Sidebar for admin -->
   <nav *ngIf="roleID == 1" class="mt-5">
     <ul>
-      <li (click)="sidebarMenu(5)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-700" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 5}">
-        <div>
-          <span *ngIf="isSidebarOpen || isHovered">
-            <i class="fa-solid fa-house text-sm me-2"></i>
-            Dashboard
-          </span>
-          <span *ngIf="!isSidebarOpen && !isHovered">
-            <i class="fa-solid fa-house text-sm"></i>
-          </span>
-        </div>
-      </li>
-      <li class="text-sm cursor-pointer" [ngClass]="{'bg-gray-900' : isDropdownOpen}">
-        <div (click)="toggleDropdown()" class="px-5 py-3 flex justify-between items-center hover:bg-green-700">
-          <span *ngIf="isSidebarOpen || isHovered">
-            <i class="fa-solid fa-file text-sm ms-[.1rem] me-2"></i>
-            Applications
-          </span>
-          <span *ngIf="!isSidebarOpen && !isHovered">
-            <i class="fa-solid fa-file text-sm ms-[.1rem]"></i>
-          </span>
-          <!-- Dropdown indicator -->
-          <div *ngIf="isSidebarOpen || isHovered">
-            <i [class]="isDropdownOpen ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" class="ml-2 text-xs transition-transform duration-300"></i>
+      <!-- Main Divider -->
+      <div class="px-5 py-3 text-sm bg-[#0E141C] text-white flex items-center gap-2">
+        <i class="fas fa-layer-group"></i>
+        <span *ngIf="isSidebarOpen || isHovered">Main</span>
+      </div>
+      <li class="px-2">
+        <div (click)="sidebarMenu(5)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/admin-dashboard'}">
+          <div class="relative z-10">
+            <span *ngIf="isSidebarOpen || isHovered">
+              <i class="fa-solid fa-house text-sm me-2"></i>
+              Dashboard
+            </span>
+            <span *ngIf="!isSidebarOpen && !isHovered">
+              <i class="fa-solid fa-house text-sm"></i>
+            </span>
           </div>
         </div>
+      </li>
 
-        <!-- Dropdown menu -->
-        <ul *ngIf="isDropdownOpen && isSidebarOpen" class="text-sm">
-          <li class="cursor-pointer hover:bg-green-700 ps-[3.5rem] py-3" (click)="sidebarMenu(6)" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 6}">
-            New Application
+      <!-- Manage Divider -->
+      <div class="px-5 py-3 text-sm bg-[#0E141C] text-white flex items-center gap-2">
+        <i class="fas fa-briefcase"></i>
+        <span *ngIf="isSidebarOpen || isHovered">Manage</span>
+      </div>
+      <li class="" [ngClass]="{ 'bg-gray-900 font-bold': isDropdownOpen || sideMenu === 6 || sideMenu === 7 || sideMenu === 8 }">
+        <div class="px-2">
+          <div (click)="toggleDropdown()"
+               class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full"
+               >
+            <div class="relative z-10 flex justify-between items-center">
+              <span *ngIf="isSidebarOpen || isHovered">
+                <i class="fa-solid fa-file text-sm me-2"></i>
+                Applications
+              </span>
+              <span *ngIf="!isSidebarOpen && !isHovered">
+                <i class="fa-solid fa-file text-sm"></i>
+              </span>
+              <div *ngIf="isSidebarOpen || isHovered">
+                <i [class]="isDropdownOpen ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"
+                   class="ml-2 text-xs transition-transform duration-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Dropdown menu with transition -->
+        <ul *ngIf="isSidebarOpen || isHovered" 
+            [ngClass]="isDropdownOpen ? 'opacity-100 scale-100 max-h-96' : 'opacity-0 scale-95 max-h-0 pointer-events-none'" 
+            class="text-sm overflow-hidden transition-all duration-300 ease-in-out">
+          <li class="px-5">
+            <div (click)="sidebarMenu(6)" 
+                 class="group relative rounded-full py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" 
+                 [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 6}">
+              <div class="relative z-10 ps-[2.5rem]">New Application</div>
+            </div>
           </li>
-          <li class="cursor-pointer hover:bg-green-700 ps-[3.5rem] py-3" (click)="sidebarMenu(7)" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 7}">
-            Approved Application
+          <li class="px-5">
+            <div (click)="sidebarMenu(7)" 
+                 class="group relative rounded-full py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" 
+                 [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 7}">
+              <div class="relative z-10 ps-[2.5rem]">Approved Application</div>
+            </div>
           </li>
-          <li class="cursor-pointer hover:bg-green-700 ps-[3.5rem] py-3" (click)="sidebarMenu(8)" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 8}">
-            Declined Application
+          <li class="px-5">
+            <div (click)="sidebarMenu(8)" 
+                 class="group relative rounded-full py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" 
+                 [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 8}">
+              <div class="relative z-10 ps-[2.5rem]">Declined Application</div>
+            </div>
           </li>
         </ul>
       </li>
-      <li (click)="sidebarMenu(3)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 9}">
-        <div>
-          <span *ngIf="isSidebarOpen || isHovered">
-            <i class="fa-solid fa-gear text-md me-2"></i>
-            Settings
-          </span>
-          <span *ngIf="!isSidebarOpen && !isHovered">
-            <i class="fa-solid fa-gear text-md"></i>
-          </span>
+      <li class="px-2">
+        <div (click)="sidebarMenu(3)" 
+             class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" 
+             [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 9}">
+          <div class="relative z-10">
+            <span *ngIf="isSidebarOpen || isHovered">
+              <i class="fa-solid fa-gear text-md me-2"></i>
+              Settings
+            </span>
+            <span *ngIf="!isSidebarOpen && !isHovered">
+              <i class="fa-solid fa-gear text-md"></i>
+            </span>
+          </div>
         </div>
       </li>
-      <li (click)="sidebarMenu(4)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 4}">
-        <div>
-          <span *ngIf="isSidebarOpen || isHovered">
-            <i class="fas fa-sign-out-alt text-md me-2"></i>
-            Logout
-          </span>
-          <span *ngIf="!isSidebarOpen && !isHovered">
-            <i class="fas fa-sign-out-alt text-md"></i>
-          </span>
+
+      <!-- Account Divider -->
+      <div class="px-5 py-3 text-sm bg-[#0E141C] text-white flex items-center gap-2">
+        <i class="fas fa-user"></i>
+        <span *ngIf="isSidebarOpen || isHovered">Account</span>
+      </div>
+      <li class="px-2">
+        <div (click)="sidebarMenu(4)" 
+             class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" 
+             [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 4}">
+          <div class="relative z-10">
+            <span *ngIf="isSidebarOpen || isHovered">
+              <i class="fas fa-sign-out-alt text-md me-2"></i>
+              Logout
+            </span>
+            <span *ngIf="!isSidebarOpen && !isHovered">
+              <i class="fas fa-sign-out-alt text-md"></i>
+            </span>
+          </div>
         </div>
       </li>
     </ul>
@@ -92,48 +140,56 @@
   <!-- Sidebar for business owners -->
   <nav *ngIf="roleID == 2" class="mt-5">
     <ul>
-      <li (click)="sidebarMenu(1)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-700" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 1}">
-        <div>
-          <span *ngIf="isSidebarOpen || isHovered">
-            <i class="fa-solid fa-house text-sm me-2"></i>
-            Dashboard
-          </span>
-          <span *ngIf="!isSidebarOpen && !isHovered">
-            <i class="fa-solid fa-house text-sm"></i>
-          </span>
+      <li class="px-2">
+        <div (click)="sidebarMenu(1)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/dashboard'}">
+          <div class="relative z-10">
+            <span *ngIf="isSidebarOpen || isHovered">
+              <i class="fa-solid fa-house text-sm me-2"></i>
+              Dashboard
+            </span>
+            <span *ngIf="!isSidebarOpen && !isHovered">
+              <i class="fa-solid fa-house text-sm"></i>
+            </span>
+          </div>
         </div>
       </li>
-      <li (click)="sidebarMenu(2)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 2}">
-        <div>
-          <span *ngIf="isSidebarOpen || isHovered">
-            <i class="fa-solid fa-file text-sm ms-[.1rem] me-2"></i>
-            My Applications
-          </span>
-          <span *ngIf="!isSidebarOpen && !isHovered">
-            <i class="fa-solid fa-file text-sm ms-[.1rem]"></i>
-          </span>
+      <li class="px-2">
+        <div (click)="sidebarMenu(2)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 2}">
+          <div class="relative z-10">
+            <span *ngIf="isSidebarOpen || isHovered">
+              <i class="fa-solid fa-file text-sm ms-[.1rem] me-2"></i>
+              My Applications
+            </span>
+            <span *ngIf="!isSidebarOpen && !isHovered">
+              <i class="fa-solid fa-file text-sm ms-[.1rem]"></i>
+            </span>
+          </div>
         </div>
       </li>
-      <li (click)="sidebarMenu(3)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 3}">
-        <div>
-          <span *ngIf="isSidebarOpen || isHovered">
-            <i class="fa-solid fa-gear text-md me-2"></i>
-            Settings
-          </span>
-          <span *ngIf="!isSidebarOpen && !isHovered">
-            <i class="fa-solid fa-gear text-md"></i>
-          </span>
+      <li class="px-2">
+        <div (click)="sidebarMenu(3)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 3}">
+          <div class="relative z-10">
+            <span *ngIf="isSidebarOpen || isHovered">
+              <i class="fa-solid fa-gear text-md me-2"></i>
+              Settings
+            </span>
+            <span *ngIf="!isSidebarOpen && !isHovered">
+              <i class="fa-solid fa-gear text-md"></i>
+            </span>
+          </div>
         </div>
       </li>
-      <li (click)="sidebarMenu(4)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 4}">
-        <div>
-          <span *ngIf="isSidebarOpen || isHovered">
-            <i class="fas fa-sign-out-alt text-md me-2"></i>
-            Logout
-          </span>
-          <span *ngIf="!isSidebarOpen && !isHovered">
-            <i class="fas fa-sign-out-alt text-md"></i>
-          </span>
+      <li class="px-2">
+        <div (click)="sidebarMenu(4)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 4}">
+          <div class="relative z-10">
+            <span *ngIf="isSidebarOpen || isHovered">
+              <i class="fas fa-sign-out-alt text-md me-2"></i>
+              Logout
+            </span>
+            <span *ngIf="!isSidebarOpen && !isHovered">
+              <i class="fas fa-sign-out-alt text-md"></i>
+            </span>
+          </div>
         </div>
       </li>
     </ul>
@@ -163,8 +219,7 @@
 >
   <div class="flex flex-col gap-4 justify-between items-center relative">
     <button (click)="toggleSidebar()" *ngIf="!isSidebarOpen" class="absolute top-3 right-5 text-gray-600 w-8 h-8 rounded bg-gray-200 hover:text-gray-900">
-      <!-- <i class="fa-solid fa-x text-xs cursor-pointer"></i> -->
-      ✖
+      <i class="fa-solid fa-x text-xs cursor-pointer"></i>
     </button>
 
     <div class="mt-5">
@@ -182,56 +237,98 @@
   <!-- Sidebar for admin -->
   <nav *ngIf="roleID == 1" class="mt-5">
     <ul>
-      <li *ngIf="!isSidebarOpen" (click)="sidebarMenu(5)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-700" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 5}">
-        <div>
-          <span>
-            <i class="fa-solid fa-house text-sm me-2"></i>
-            Dashboard
-          </span>
-        </div>
-      </li>
-      <li (click)="toggleDropdown()" class="text-sm cursor-pointer" [ngClass]="{'bg-gray-900' : isDropdownOpen}">
-        <div class="px-5 py-3 flex justify-between items-center hover:bg-green-700">
-          <span *ngIf="!isSidebarOpen">
-            <i class="fa-solid fa-file text-sm ms-[.1rem] me-2"></i>
-            Applications
-          </span>
-          <!-- Dropdown indicator -->
-          <div *ngIf="!isSidebarOpen">
-            <i [class]="!isDropdownOpen ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'" class="ml-2 text-xs transition-transform duration-300"></i>
+      <!-- Main Divider -->
+      <div *ngIf="!isSidebarOpen" class="px-5 py-3 text-sm bg-[#0E141C] text-white flex items-center gap-2">
+        <i class="fas fa-layer-group"></i>
+        <span>Main</span>
+      </div>
+      <li *ngIf="!isSidebarOpen" class="px-2">
+        <div (click)="sidebarMenu(5)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/admin-dashboard'}">
+          <div class="relative z-10">
+            <span>
+              <i class="fa-solid fa-house text-sm me-2"></i>
+              Dashboard
+            </span>
           </div>
         </div>
+      </li>
 
-        <!-- Dropdown menu -->
-        <ul *ngIf="isDropdownOpen && !isSidebarOpen" class="mt-2 space-y-2 text-sm">
-          <li class="cursor-pointer hover:bg-green-700 ps-[3.5rem] py-3" (click)="sidebarMenu(6)">
-            New Application
+      <!-- Manage Divider -->
+      <div *ngIf="!isSidebarOpen" class="px-5 py-3 text-sm bg-[#0E141C] text-white flex items-center gap-2">
+        <i class="fas fa-briefcase"></i>
+        <span>Manage</span>
+      </div>
+      <li *ngIf="!isSidebarOpen" [ngClass]="{ 'bg-gray-900 font-bold': isDropdownOpen || sideMenu === 6 || sideMenu === 7 || sideMenu === 8 }">
+        <div class="px-2">
+          <div (click)="toggleDropdown()" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full">
+            <div class="relative z-10 flex justify-between items-center">
+              <span *ngIf="!isSidebarOpen">
+                <i class="fa-solid fa-file text-sm me-2"></i>
+                Applications
+              </span>
+              <div *ngIf="!isSidebarOpen">
+                <i [class]="isDropdownOpen ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"
+                   class="ml-2 text-xs transition-transform duration-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Dropdown menu with transition -->
+        <ul *ngIf="!isSidebarOpen" 
+            [ngClass]="isDropdownOpen ? 'opacity-100 scale-100 max-h-96' : 'opacity-0 scale-95 max-h-0 pointer-events-none'" 
+            class="text-sm overflow-hidden transition-all duration-300 ease-in-out">
+          <li class="px-5">
+            <div (click)="sidebarMenu(6)" 
+                 class="group relative rounded-full py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" 
+                 [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 6}">
+              <div class="relative z-10 ps-[2.5rem]">New Application</div>
+            </div>
           </li>
-          <li 
-            class="cursor-pointer hover:bg-green-700 ps-[3.5rem] py-3"
-            (click)="sidebarMenu(7)"
-          >
-            Approved Application
+          <li class="px-5">
+            <div (click)="sidebarMenu(7)" 
+                 class="group relative rounded-full py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" 
+                 [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 7}">
+              <div class="relative z-10 ps-[2.5rem]">Approved Application</div>
+            </div>
           </li>
-          <li class="cursor-pointer hover:bg-green-700 ps-[3.5rem] py-3" (click)="sidebarMenu(8)">
-            Declined Application
+          <li class="px-5">
+            <div (click)="sidebarMenu(8)" 
+                 class="group relative rounded-full py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" 
+                 [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 8}">
+              <div class="relative z-10 ps-[2.5rem]">Declined Application</div>
+            </div>
           </li>
         </ul>
       </li>
-      <li *ngIf="!isSidebarOpen" (click)="sidebarMenu(3)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 9}">
-        <div>
-          <span>
-            <i class="fa-solid fa-gear text-md me-2"></i>
-            Settings
-          </span>
+      <li *ngIf="!isSidebarOpen" class="px-2">
+        <div (click)="sidebarMenu(3)" 
+             class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" 
+             [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 9}">
+          <div class="relative z-10">
+            <span>
+              <i class="fa-solid fa-gear text-md me-2"></i>
+              Settings
+            </span>
+          </div>
         </div>
       </li>
-      <li *ngIf="!isSidebarOpen" (click)="sidebarMenu(4)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 4}">
-        <div>
-          <span>
-            <i class="fas fa-sign-out-alt text-md me-2"></i>
-            Logout
-          </span>
+
+      <!-- Account Divider -->
+      <div *ngIf="!isSidebarOpen" class="px-5 py-3 text-sm bg-[#0E141C] text-white flex items-center gap-2">
+        <i class="fas fa-user"></i>
+        <span>Account</span>
+      </div>
+      <li *ngIf="!isSidebarOpen" class="px-2">
+        <div (click)="sidebarMenu(4)" 
+             class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" 
+             [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 4}">
+          <div class="relative z-10">
+            <span>
+              <i class="fas fa-sign-out-alt text-md me-2"></i>
+              Logout
+            </span>
+          </div>
         </div>
       </li>
     </ul>
@@ -240,36 +337,44 @@
   <!-- Sidebar for business owners -->
   <nav *ngIf="roleID == 2" class="mt-5">
     <ul>
-      <li *ngIf="!isSidebarOpen" (click)="sidebarMenu(1)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-700" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 1}">
-        <div>
-          <span>
-            <i class="fa-solid fa-house text-sm me-2"></i>
-            Dashboard
-          </span>
+      <li *ngIf="!isSidebarOpen" class="px-2">
+        <div (click)="sidebarMenu(1)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/dashboard'}">
+          <div class="relative z-10">
+            <span>
+              <i class="fa-solid fa-house text-sm me-2"></i>
+              Dashboard
+            </span>
+          </div>
         </div>
       </li>
-      <li *ngIf="!isSidebarOpen" (click)="sidebarMenu(2)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 2}">
-        <div>
-          <span>
-            <i class="fa-solid fa-file text-sm ms-[.1rem] me-2"></i>
-            My Applications
-          </span>
+      <li *ngIf="!isSidebarOpen" class="px-2">
+        <div (click)="sidebarMenu(2)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 2}">
+          <div class="relative z-10">
+            <span *ngIf="!isSidebarOpen">
+              <i class="fa-solid fa-file text-sm ms-[.1rem] me-2"></i>
+              My Applications
+            </span>
+          </div>
         </div>
       </li>
-      <li *ngIf="!isSidebarOpen" (click)="sidebarMenu(3)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 3}">
-        <div>
-          <span>
-            <i class="fa-solid fa-gear text-md me-2"></i>
-            Settings
-          </span>
+      <li *ngIf="!isSidebarOpen" class="px-2">
+        <div (click)="sidebarMenu(3)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 3}">
+          <div class="relative z-10">
+            <span>
+              <i class="fa-solid fa-gear text-md me-2"></i>
+              Settings
+            </span>
+          </div>
         </div>
       </li>
-      <li *ngIf="!isSidebarOpen" (click)="sidebarMenu(4)" class="px-5 py-3 text-sm cursor-pointer hover:bg-green-800" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 4}">
-        <div>
-          <span>
-            <i class="fas fa-sign-out-alt text-md me-2"></i>
-            Logout
-          </span>
+      <li *ngIf="!isSidebarOpen" class="px-2">
+        <div (click)="sidebarMenu(4)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 4}">
+          <div class="relative z-10">
+            <span>
+              <i class="fas fa-sign-out-alt text-md me-2"></i>
+              Logout
+            </span>
+          </div>
         </div>
       </li>
     </ul>

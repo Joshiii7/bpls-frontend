@@ -29,11 +29,23 @@
             [operationalCity]="operationalCity"
             [operationalProvince]="operationalProvince"
             [operationalZipCode]="operationalZipCode"
-
+            [operationalStreet]="operationalStreet"
+            [operational_house_no]="operational_house_no"
+            [operational_name_building]="operational_name_building"
+            [operational_lot_no]="operational_lot_no"
+            [operational_block_no]="operational_block_no"
+            [operational_subdivision]="operational_subdivision"
+            
             [barangay]="barangay"
             [city]="city"
             [province]="province"
             [zipCode]="zipCode"
+            [street]="street"
+            [house_no]="house_no"
+            [name_building]="name_building"
+            [lot_no]="lot_no"
+            [block_no]="block_no"
+            [subdivision]="subdivision"
 
             [businessArea]="businessArea"
             [totalFemale]="totalFemale"
@@ -53,14 +65,14 @@
     </section>
 
     <!-- Buttons -->
-    <div class="col-span-12 flex justify-end mt-4">
+    <div *ngIf="router.url.includes('/applications')" class="col-span-12 flex justify-center mt-4 px-32">
       <!-- Previous Button -->
-      <button (click)="decline()" type="button" class="focus:outline-none text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-gray-600 dark:hover:bg-gray-800 dark:focus:ring-gray-800">
+      <button (click)="decline()" type="button" class="focus:outline-none text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-gray-600 dark:hover:bg-gray-800 dark:focus:ring-gray-800 w-full">
           Decline
       </button>
       
       <!-- Next Button -->
-      <button (click)="approve()" type="button" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-green-600 dark:hover:bg-green-800 dark:focus:ring-green-800">
+      <button (click)="approve()" type="button" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-green-600 dark:hover:bg-green-800 dark:focus:ring-green-800 w-full">
           Approve
       </button>
     </div>

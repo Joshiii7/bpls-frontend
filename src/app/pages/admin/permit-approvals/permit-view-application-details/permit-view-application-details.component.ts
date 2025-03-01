@@ -37,11 +37,24 @@ export class PermitViewApplicationDetailsComponent {
   city: any;
   province: any;
   zipCode: any;
+  street: any;
+  house_no: any;
+  name_building: any;
+  lot_no: any;
+  block_no: any;
+  subdivision: any;
 
   operationalBarangay: any;
   operationalCity: any;
   operationalProvince: any;
   operationalZipCode: any;
+  operationalStreet: any;
+  operational_house_no: any;
+  operational_name_building: any;
+  operational_lot_no: any;
+  operational_block_no: any;
+  operational_subdivision: any;
+
   tracking_number: any;
   business_id_number: any;
   date_of_receipt: any;
@@ -57,7 +70,7 @@ export class PermitViewApplicationDetailsComponent {
   constructor(
     private apiService: ApiServicesService, 
     private route: ActivatedRoute, 
-    private router: Router,
+    public router: Router,
     private messageService: MessageService, 
   ) {  }
 
@@ -95,24 +108,36 @@ export class PermitViewApplicationDetailsComponent {
         this.operationalCity = response.permit[0].business_operation.city_id.city_name;
         this.operationalProvince = response.permit[0].business_operation.province_id.province_name;
         this.operationalZipCode = response.permit[0].business_operation.zip_code;
+        this.operationalStreet = response.permit[0].business_operation.street;
+        this.operational_house_no = response.permit[0].business_operation.house_no;
+        this.operational_name_building = response.permit[0].business_operation.building_name;
+        this.operational_lot_no = response.permit[0].business_operation.lot_no;
+        this.operational_block_no = response.permit[0].business_operation.block_no;
+        this.operational_subdivision = response.permit[0].business_operation.subdivision;
         
         this.barangay = response.permit[0].baranggay_id.brgy_name;
         this.city = response.permit[0].city_id.city_name;
         this.province = response.permit[0].province_id.province_name;
         this.zipCode = response.permit[0].zip_code;
+        this.street = response.permit[0].street;
+        this.house_no = response.permit[0].house_no;
+        this.name_building = response.permit[0].name_building;
+        this.lot_no = response.permit[0].lot_no;
+        this.block_no = response.permit[0].block_no;
+        this.subdivision = response.permit[0].subdivision;
         
         this.totalEmployee = response.permit[0].business_operation.no_employee;
         this.businessActivity = response.permit[0].business_operation.business_activity_id;
         this.paymentType = response.permit[0].payment_type_id;
         this.businessType = response.permit[0].business_type_id;
-        this.gender = response.permit[0].gender;
         this.dti_registration_date = response.permit[0].dti_registration_date;
         this.isNew = response.permit[0].isNew;
-
+        
         this.tracking_number = response.permit[0].tracking_number;
         this.business_id_number = response.permit[0].business_id_number;
         this.date_of_receipt = response.permit[0].created_at;
-
+        
+        this.gender = (response.permit[0].gender == 'Male') ? 1 : 2;
         this.isNew = (response.permit[0].isNew == 'New') ? 1 : 2;
       },
       error: (error: any) => {

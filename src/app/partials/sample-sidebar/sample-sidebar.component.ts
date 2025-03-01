@@ -1,4 +1,4 @@
-import { Component, HostListener, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, Input } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService as Auth0Service } from '@auth0/auth0-angular';
 import { ChangeDetectorRef } from '@angular/core';
@@ -7,7 +7,8 @@ import { SidebarService } from 'src/app/sidebar.service';
 @Component({
   selector: 'app-sample-sidebar',
   templateUrl: './sample-sidebar.component.html',
-  styleUrls: ['./sample-sidebar.component.css']
+  styleUrls: ['./sample-sidebar.component.css'],
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class SampleSidebarComponent {
   // @Input('isSideBarOpen') isSidebarOpen: boolean = true;
@@ -21,12 +22,18 @@ export class SampleSidebarComponent {
 
   dropdownHeight: number = 0;
 
+  currentRoute: string = '';
+
   constructor(
     private router: Router,
     private auth: Auth0Service,
     private sidebarService: SidebarService,
     private cdRef: ChangeDetectorRef
-  ) {}
+  ) {
+    this.router.events.subscribe(() => {
+      this.currentRoute = this.router.url;
+    });
+  }
 
   ngOnInit() {
     this.sidebarService.sidebarState$.subscribe((state) => {
@@ -94,32 +101,33 @@ export class SampleSidebarComponent {
   sidebarMenu(num: number) {
     localStorage.setItem('sn', `${num}`);
     this.sideMenu = num;
-    this.navigateToMenu(this.sideMenu);
     this.cdRef.detectChanges();
+    this.navigateToMenu(this.sideMenu);
   }
 
   navigateToMenu(num: number) {
-    if (num === 1) {
-      this.router.navigate(['dashboard']);
-    } else if (num === 2) {
-      this.router.navigate(['my-application']);
-    } else if (num === 4) {
-      this.logout();
-    } else if (num === 5) {
-      this.router.navigate(['admin-dashboard']);
-    } else if (num === 6) {
-      this.router.navigate(['applications']);
-    } else if (num === 7) {
-      this.router.navigate(['approved-applications']);
-    } else if (num === 8) {
-      this.router.navigate(['declined-applications']);
-    } else if (num === 9) {
-      this.logout();
+    const routes: Record<number, string> = {
+      1: 'dashboard',
+      2: 'my-application',
+      4: 'logout',
+      5: 'admin-dashboard',
+      6: 'applications',
+      7: 'approved-applications',
+      8: 'declined-applications',
+      9: 'logout',
+    };
+  
+    if (routes[num]) {
+      if (num === 4 || num === 9) {
+        this.logout();
+      } else {
+        this.router.navigate([routes[num]]);
+      }
     }
   }
+  
 
   setSideMenuFromRoute(url: string) {
-    console.log('current url:', url);
     if (url.includes('/dashboard')) {
       this.sideMenu = 1;
     } else if (url.includes('/my-application')) {
@@ -130,7 +138,6 @@ export class SampleSidebarComponent {
       this.sideMenu = 6;
     }
 
-    console.log('current sideMenu:', this.sideMenu);
     localStorage.setItem('sn', this.sideMenu.toString());
 
     this.cdRef.detectChanges();
