@@ -8,7 +8,8 @@ import { Observable } from 'rxjs';
 export class ApiServicesService {
 
   constructor(private http: HttpClient) { }
-  readonly Root_URL = 'http://localhost:8000/api';
+  // readonly Root_URL = 'http://localhost:8000/api';
+  readonly Root_URL = 'https://bisligcitybpls.com/public/api';
 
   getHeaders(contentType?: string): HttpHeaders {
     const token = this.getToken();
