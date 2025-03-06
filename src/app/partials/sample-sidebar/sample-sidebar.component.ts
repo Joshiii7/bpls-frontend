@@ -94,6 +94,11 @@ export class SampleSidebarComponent {
     this.sidebarService.toggleSidebar();
   }
 
+  onSidebarClick(event: Event) {
+    event.stopPropagation();
+  }
+  
+
   getRoleFunction() {
     this.roleID = localStorage.getItem('r');
   }
@@ -126,7 +131,6 @@ export class SampleSidebarComponent {
     }
   }
   
-
   setSideMenuFromRoute(url: string) {
     if (url.includes('/dashboard')) {
       this.sideMenu = 1;

@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { DashboardComponent } from './pages/user/dashboard/dashboard.component';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
-import { ApplicationComponent } from './pages/user/application/application.component';
+import { ApplicationComponent } from './pages/user/applications/application/application.component';
 import { AuthGuard } from './guards/auth.guard';
 import { AuthComponent } from './auth/auth.component';
 import { PermitOverviewApplicationsComponent } from './pages/admin/permit-approvals/permit-overview-applications/permit-overview-applications.component';
@@ -16,6 +16,8 @@ import { PermitApprovedParentComponent } from './pages/admin/permit-approved/per
 import { PermitApprovedApplicationComponent } from './pages/admin/permit-approved/permit-approved-application/permit-approved-application.component';
 import { PermitDeclinedParentComponent } from './pages/admin/permit-declined/permit-declined-parent/permit-declined-parent.component';
 import { PermitDeclinedApplicationsComponent } from './pages/admin/permit-declined/permit-declined-applications/permit-declined-applications.component';
+import { MyApplicationParentComponent } from './pages/user/applications/my-application-parent/my-application-parent.component';
+import { RenewPermitComponent } from './pages/user/manage-permit/renew-permit/renew-permit.component';
 
 const routes: Routes = [
   {
@@ -44,7 +46,15 @@ const routes: Routes = [
         component: NewPermitComponent,
         data: { 
           allowedRoles: ['business_owner'],
-          breadcrumb: 'Apply for Permit' 
+          breadcrumb: 'Apply for Permit new' 
+        },
+      },
+      {
+        path: 'renew-permit',
+        component: RenewPermitComponent,
+        data: { 
+          allowedRoles: ['business_owner'],
+          breadcrumb: 'Apply for Permit renewal' 
         },
       }
     ],
@@ -60,12 +70,24 @@ const routes: Routes = [
   },
   {
     path: 'my-application',
-    component: ApplicationComponent,
+    component: MyApplicationParentComponent,
     canActivate: [AuthGuard],
     data: { 
       allowedRoles: ['business_owner'],
       breadcrumb: 'My Application' 
     },
+    children: [
+      {
+        path: '',
+        component: ApplicationComponent,
+        data: { breadcrumb: 'My Application' },
+      },
+      {
+        path: 'application-details/:uuid',
+        component: PermitViewApplicationDetailsComponent,
+        data: { breadcrumb: 'Application Details' },
+      }
+    ]
   },
   {
     path: 'applications',

@@ -1,5 +1,5 @@
 <nav class="bg-green-800">
-  <div class="py-3 px-8 md:py-2">
+  <div class="md:py-3 py-2 md:px-8 px-4">
     <div class="flex flex-col md:flex-row py-3 md:px-0 px-3 md:items-center items-start justify-between">
       <div class="flex items-center justify-between gap-3 mb-2 md:mb-0">
         <button
@@ -8,15 +8,9 @@
         >
           <i class="fa-solid fa-bars text-xl"></i>
         </button>
-        <!-- <img src="../../../assets/images/logo/bislig lgu logo.png" alt="Municipality Seal" class="w-12 h-12">
-        <div>
-          <h1 class="text-white text-lg font-semibold">
-            Business Permit
-          </h1>
-          <h2 class="text-white text-sm">Municipality of Bislig, Surigao del Sur</h2>
-        </div> -->
         <p-breadcrumb [model]="items" [home]="home"></p-breadcrumb>
       </div>
+
       <div class="flex flex-col text-white">
         <span class="text-start md:text-end text-xs md:text-sm">Philippine Standard Time:</span>
         <span class="text-start md:text-end text-xs md:text-sm">{{ currentTime }}</span>

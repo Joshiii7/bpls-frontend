@@ -1,7 +1,7 @@
 <main class="py-5 md:px-8 px-5">
     <!-- Information Cards -->
     <section class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3">
-        <button (click)="applyButton()" class="p-5 bg-white/80 shadow-md rounded-md rounded-lg flex justify-between items-center">
+        <button (click)="applyButton(1)" class="p-5 bg-white/80 shadow-md rounded-md rounded-lg flex justify-between items-center">
             <p class="font-bold text-xl text-start">Apply for Business Permit</p>
             <div class="w-4/12 max-w-full px-3 ml-auto text-right flex-0">
                 <svg class="w-10" viewBox="0 0 24 24" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" fill="#000000">
@@ -25,7 +25,7 @@
             </div>
         </button>
 
-        <button disabled class="cursor-not-allowed p-5 bg-white/80 shadow-md rounded-md rounded-lg flex justify-between items-center">
+        <button (click)="applyButton(2)" class="p-5 bg-white/80 shadow-md rounded-md rounded-lg flex justify-between items-center">
             <p class="font-bold text-xl text-start">Renew Business Permit</p>
             <div class="w-4/12 max-w-full px-3 ml-auto text-right flex-0">
                 <svg class="w-10" viewBox="0 0 24 24" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" fill="#000000">

@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import Point from '@mapbox/point-geometry';
 import * as maplibregl from 'maplibre-gl';
 
@@ -8,10 +8,12 @@ import * as maplibregl from 'maplibre-gl';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent {
+  @Output() locationSaved = new EventEmitter<{ lng: number; lat: number }>();
+  savedLocation: { lng: number; lat: number } | null = null;
+
   @ViewChild('map', { static: true }) mapContainer!: ElementRef;
   map: maplibregl.Map | undefined;
   marker!: maplibregl.Marker;
-  savedLocation: { lng: number; lat: number } | null = null;
 
   ngOnInit(): void {
     this.initializeMap();
@@ -28,7 +30,7 @@ export class MapComponent {
 
     // console.log(this.map?.getPaintProperty('roadname_minor', 'text-color'));
     this.map?.on('load', () => {
-      console.log(this.map?.getStyle().layers);
+      // console.log(this.map?.getStyle().layers);
       this.map?.setPaintProperty('background', 'background-color', '#ECECEC');
       this.map?.setPaintProperty('water', 'fill-color', '#8FBEE7');
       this.map?.setPaintProperty("roadname_minor", "text-color", "#000000");
@@ -89,7 +91,8 @@ export class MapComponent {
     const position = this.marker.getLngLat();
     this.savedLocation = { lng: position.lng, lat: position.lat };
 
-    alert(`Location saved: Longitude: ${position.lng}, Latitude: ${position.lat}`);
-    console.log('Saved Location:', this.savedLocation);
+    // alert(`Location saved: Longitude: ${position.lng}, Latitude: ${position.lat}`);
+    // console.log('Saved Location:', this.savedLocation);
+    this.locationSaved.emit(this.savedLocation);
   }
 }

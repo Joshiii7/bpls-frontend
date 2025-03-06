@@ -1,18 +1,18 @@
-<main class="w-[948px] mx-auto bg-white p-5 shadow-lg">
+<main class="lg:w-[59.25rem] md:w-[48.25rem] md:mx-0 mx-auto bg-white p-5 shadow-lg">
     <div class="border border-2 border-gray-900">
 
       <!-- Header Section -->
       <div class="border border-gray-900 pt-10">
         <section class="relative text-center">
-            <h6 class="text-sm">Republic of the Philippines</h6>
-            <h6 class="text-sm absolute top-0 right-0">with postpaid? Yes ______ No ______</h6>
-            <h6 class="text-sm">City/Municipality <span class="font-semibold underline uppercase">Bislig City</span></h6>
-            <h6 class="text-sm font-semibold uppercase">Unified Application Form for Business Permit</h6>
+            <h6 class="lg:text-sm text-xs">Republic of the Philippines</h6>
+            <h6 class="lg:text-sm text-xs absolute top-0 right-0">with postpaid? Yes ______ No ______</h6>
+            <h6 class="lg:text-sm text-xs">City/Municipality <span class="font-semibold underline uppercase">Bislig City</span></h6>
+            <h6 class="lg:lg:text-sm text-xs text-xs font-semibold uppercase">Unified Application Form for Business Permit</h6>
         </section>
 
         <!-- Payment & Date Section -->
         <section class="flex justify-between">
-          <table class="table-auto -translate-x-[.1rem] translate-y-[.1rem] w-[27%] border-collapse border border-gray-900 text-sm">
+          <table class="table-auto -translate-x-[.1rem] translate-y-[.1rem] w-[27%] border-collapse border border-gray-900 lg:text-sm text-xs">
             <tbody>
               <tr>
                 <td colspan="2" class="border border-gray-900 py-1 px-4"></td>
@@ -40,11 +40,11 @@
           </table>
 
           <div class="flex flex-col justify-end relative">
-            <h6 class="text-end text-sm">Date of Receipt ______________________________</h6>
-            <h6 class="absolute left-[50%] -translate-y-[2.6rem] font-semibold text-sm">{{ date_of_receipt | date: 'MMMM d, y' : 'en-US' }}</h6>
-            <h6 class="text-end text-sm">Tracking Number ______________________________</h6>
+            <h6 class="text-end lg:text-sm text-xs">Date of Receipt ______________________________</h6>
+            <h6 class="absolute left-[50%] -translate-y-[2.6rem] font-semibold lg:text-sm text-xs">{{ date_of_receipt | date: 'MMMM d, y' : 'en-US' }}</h6>
+            <h6 class="text-end lg:text-sm text-xs">Tracking Number ______________________________</h6>
             <h6 class="absolute left-[45%] -translate-y-[1.5rem] font-semibold text-xs">{{ tracking_number }}</h6>
-            <h6 class="text-end text-sm">Business ID Number ______________________________</h6>
+            <h6 class="text-end lg:text-sm text-xs">Business ID Number ______________________________</h6>
             <h6 class="absolute left-[45%] -translate-y-[.2rem] font-semibold text-xs">{{ business_id_number }}</h6>
           </div>
         </section>
@@ -55,7 +55,7 @@
           <!-- Types of Business -->
           <section class="p-2 flex flex-col border border-gray-900">
               <h2 class="text-md font-semibold uppercase">A. Business Information and Registration</h2>
-              <div class="flex justify-between text-sm">
+              <div class="flex justify-between lg:text-sm text-xs">
                   <h6 class="">Please choose one:</h6>
                   <div class="grid grid-cols-2 gap-3">
                       <div class="col-span-1">
@@ -109,7 +109,7 @@
           </section>
 
           <!-- DTI, TIN, ETC. -->
-          <section class="flex justify-between text-sm">
+          <section class="flex justify-between lg:text-sm text-xs">
               <div class="border border-gray-900 w-full px-1 h-[3rem]">
                   <h6 class="">DTI/SEC/CDA Registration Number:</h6>
                   <span class="font-semibold">{{ dtiNumber }}</span>
@@ -125,19 +125,19 @@
           </section>
 
           <!-- Business Name -->
-          <section class="flex flex-col justify-center p-1 border border-gray-900 h-[3rem] text-sm">
+          <section class="flex flex-col justify-center p-1 border border-gray-900 h-[3rem] lg:text-sm text-xs">
               <h6>Business Name:</h6>
               <h6 class="font-semibold">{{ businessName }}</h6>
           </section>
 
           <!-- Franchise Name -->
-          <section class="flex flex-col justify-center p-1 border border-gray-900 h-[3rem] text-sm">
+          <section class="flex flex-col justify-center p-1 border border-gray-900 h-[3rem] lg:text-sm text-xs">
               <h6>Trade Name/Franchise (If applicable):</h6>
               <h6 class="font-semibold">{{ franchiseName }}</h6>
           </section>
 
           <!-- Address -->
-          <section class="flex flex-col justify-center items-between p-1 border border-gray-900 h-[5rem] text-sm">
+          <section class="flex flex-col justify-center items-between p-1 border border-gray-900 h-[5rem] lg:text-sm text-xs">
               <div class="flex justify-between w-full relative">
                   <h6 class="w-[20%]">Main Office Address:</h6>
                   <div class="flex w-full">

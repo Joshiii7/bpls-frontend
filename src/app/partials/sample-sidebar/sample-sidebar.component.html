@@ -141,7 +141,7 @@
   <nav *ngIf="roleID == 2" class="mt-5">
     <ul>
       <li class="px-2">
-        <div (click)="sidebarMenu(1)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/dashboard'}">
+        <div (click)="sidebarMenu(1)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold': currentRoute.startsWith('/dashboard')}">
           <div class="relative z-10">
             <span *ngIf="isSidebarOpen || isHovered">
               <i class="fa-solid fa-house text-sm me-2"></i>
@@ -154,7 +154,7 @@
         </div>
       </li>
       <li class="px-2">
-        <div (click)="sidebarMenu(2)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 2}">
+        <div (click)="sidebarMenu(2)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold': currentRoute.startsWith('/my-application')}">
           <div class="relative z-10">
             <span *ngIf="isSidebarOpen || isHovered">
               <i class="fa-solid fa-file text-sm ms-[.1rem] me-2"></i>
@@ -212,6 +212,7 @@
   *ngIf="isMdOrBelow"
   id="sidebar"
   class="bg-gray-800 text-white h-full transition-all duration-300 fixed top-0 left-0 z-50"
+  (click)="onSidebarClick($event)"
   [ngClass]="{
     'w-0': isSidebarOpen,
     'w-64': !isSidebarOpen,
@@ -338,7 +339,7 @@
   <nav *ngIf="roleID == 2" class="mt-5">
     <ul>
       <li *ngIf="!isSidebarOpen" class="px-2">
-        <div (click)="sidebarMenu(1)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/dashboard'}">
+        <div (click)="sidebarMenu(1)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold': currentRoute.startsWith('/dashboard')}">
           <div class="relative z-10">
             <span>
               <i class="fa-solid fa-house text-sm me-2"></i>
@@ -348,7 +349,7 @@
         </div>
       </li>
       <li *ngIf="!isSidebarOpen" class="px-2">
-        <div (click)="sidebarMenu(2)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold' : sideMenu === 2}">
+        <div (click)="sidebarMenu(2)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-green-700 before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold': currentRoute.startsWith('/my-application')}">
           <div class="relative z-10">
             <span *ngIf="!isSidebarOpen">
               <i class="fa-solid fa-file text-sm ms-[.1rem] me-2"></i>
@@ -385,3 +386,6 @@
     <p>All Rights Reserved</p>
   </div>
 </div>
+
+<div *ngIf="!isSidebarOpen && isMdOrBelow" class="fixed inset-0 bg-black bg-opacity-50 z-40" (click)="toggleSidebar()"
+></div>

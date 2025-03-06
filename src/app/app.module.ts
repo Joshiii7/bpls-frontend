@@ -18,7 +18,7 @@ import { DashboardComponent } from './pages/user/dashboard/dashboard.component';
 import { SidebarModule } from 'primeng/sidebar';
 import { SidebarComponent } from './partials/sidebar/sidebar.component';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
-import { ApplicationComponent } from './pages/user/application/application.component';
+import { ApplicationComponent } from './pages/user/applications/application/application.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -44,6 +44,8 @@ import { PermitApprovedApplicationComponent } from './pages/admin/permit-approve
 import { PermitApprovedParentComponent } from './pages/admin/permit-approved/permit-approved-parent/permit-approved-parent.component';
 import { PermitDeclinedApplicationsComponent } from './pages/admin/permit-declined/permit-declined-applications/permit-declined-applications.component';
 import { PermitDeclinedParentComponent } from './pages/admin/permit-declined/permit-declined-parent/permit-declined-parent.component';
+import { MyApplicationParentComponent } from './pages/user/applications/my-application-parent/my-application-parent.component';
+import { RenewPermitComponent } from './pages/user/manage-permit/renew-permit/renew-permit.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDteaccknTxLOY2hOXeluL5aH88B7q-ob8",
@@ -84,6 +86,8 @@ const analytics = getAnalytics(app);
     PermitApprovedParentComponent,
     PermitDeclinedApplicationsComponent,
     PermitDeclinedParentComponent,
+    MyApplicationParentComponent,
+    RenewPermitComponent,
   ],
   imports: [
     BrowserModule,

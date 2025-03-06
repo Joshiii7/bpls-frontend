@@ -18,5 +18,10 @@
 ::ng-deep .p-breadcrumb .p-menuitem-separator .p-element {
     color: white !important;
 }
-  
-  
+
+@media (max-width: 767px) {
+    ::ng-deep .p-breadcrumb .p-element .p-menuitem-link,
+    ::ng-deep .p-breadcrumb .p-element .p-menuitem-link .p-menuitem-text {
+        font-size: .7rem !important;
+    }
+}

@@ -1,17 +1,16 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RouterTestingHarness } from '@angular/router/testing';
 import { MessageService } from 'primeng/api';
 import { ApiServicesService } from 'src/app/api-services.service';
 
 @Component({
-  selector: 'app-new-permit',
-  templateUrl: './new-permit.component.html',
-  styleUrls: ['./new-permit.component.css'],
+  selector: 'app-renew-permit',
+  templateUrl: './renew-permit.component.html',
+  styleUrls: ['./renew-permit.component.css'],
   providers: [MessageService]
 })
-export class NewPermitComponent {
+export class RenewPermitComponent {
   @Output() emitNavigationState = new EventEmitter<boolean>();
   selectedLocation: { lng: number; lat: number } | null = null;
   isLocationSaved = false; 
@@ -248,7 +247,7 @@ export class NewPermitComponent {
     formData.append('email', this.permitForm.value.email);
     formData.append('suffix', this.permitForm.value.suffix);
     formData.append('gender', this.permitForm.value.gender);
-    formData.append('isNew', 'New');
+    formData.append('isNew', 'Renewal');
     
     // register address
     formData.append('registerProvince', this.permitForm.value.registerProvince);

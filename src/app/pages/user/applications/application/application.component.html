@@ -1,0 +1,140 @@
+<main class="py-6 md:px-8 px-2">
+    <section class="bg-white rounded-lg shadow px-5 py-7 mt-4">
+        <!-- Search Filter -->
+        <div class="mb-4 flex flex-col md:flex-row gap-3 lg:w-[50%] w-[100%] relative">
+            <input
+                type="text"
+                [(ngModel)]="searchQuery"
+                placeholder="Search by Business Name..."
+                class="bg-white w-full rounded-md pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded transition duration-200 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md"
+                (input)="filterApplications()"
+            />
+            <i class="fa fa-search absolute top-1/2 right-3 transform -translate-y-1/2 text-slate-400"></i>
+        </div>
+  
+        <!-- Applications Table -->
+        <div class="overflow-scroll">
+            <table class="min-w-full">
+                <thead class="bg-gray-300">
+                    <tr>
+                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
+                            <p class="block font-semibold text-sm text-slate-800">
+                                #
+                            </p>
+                        </th>
+                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
+                            <p class="block font-semibold text-sm text-slate-800">
+                                Business Owner
+                            </p>
+                        </th>
+                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
+                            <p class="block font-semibold text-sm text-slate-800">
+                                Business Name
+                            </p>
+                        </th>
+                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
+                            <p class="block font-semibold text-sm text-slate-800">
+                                Business Type
+                            </p>
+                        </th>
+                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
+                            <p class="block font-semibold text-sm text-slate-800">
+                                Status
+                            </p>
+                        </th>
+                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
+                            <p class="block font-semibold text-sm text-slate-800">
+                                Date Issued
+                            </p>
+                        </th>
+                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
+                            <p class="block font-semibold text-sm text-slate-800">
+                                Action
+                            </p>
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let application of paginatedApplications; let i = index" class="hover:bg-slate-50 border-b border-slate-200">
+                        <td class="px-4 py-2 border-b">
+                            <p class="text-sm text-slate-900 font-semibold">{{ i + 1 }}</p>
+                        </td>
+                        <td class="px-4 py-2 border-b">
+                            <p class="text-sm text-slate-900 font-semibold">{{ application.first_name }} {{ application.last_name }}</p>
+                        </td>
+                        <td class="px-4 py-2 border-b">
+                            <p class="text-sm text-slate-500">{{ application.business_name }}</p>
+                        </td>
+                        <td class="px-4 py-2 border-b">
+                            <p class="text-sm text-slate-500">{{ application.business_type.business_name }}</p>
+                        </td>
+                        <td class="px-4 py-2 border-b">
+                            <span [ngClass]="getBadgeClass(application.status)" class="px-2 py-1 text-sm font-semibold rounded">
+                                {{ application.status }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-2 border-b">
+                            <p class="text-sm text-slate-500">{{ application.created_at | date: 'longDate' }}</p>
+                        </td>
+                        <td class="px-4 py-2 border-b">
+                            <div class="relative group">
+                                <button
+                                    (click)="viewDetails(application.uuid)"
+                                    class="bg-blue-600 hover:bg-blue-900 text-white p-1 rounded-md w-10">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <span
+                                    class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    View
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+  
+        <!-- Pagination Controls -->
+        <div class="mt-4 flex flex-col md:flex-row items-center justify-between">
+            <div class="text-sm text-slate-500">
+                Showing
+                <span class="font-semibold">
+                    {{ getShowingRange() }}
+                </span>
+                of {{ totalEntries }} entries
+            </div>
+            
+            
+    
+            <div class="flex">
+                <button (click)="prevPage()" [disabled]="currentPage === 1" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded-bl-md rounded-tl-md hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed">
+                    Prev
+                </button>
+        
+                <button
+                    *ngFor="let page of visiblePages"
+                    (click)="goToPage(page)"
+                    [class]="page === currentPage 
+                            ? 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-white bg-slate-800 border border-slate-800' 
+                            : 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease'"
+                >
+                    {{ page }}
+                </button>
+        
+                <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded-br-md rounded-tr-md hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed">
+                    Next
+                </button>
+            </div>
+        </div>
+    </section>
+</main>
+  
+
+
+<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+    <div class="text-center">
+        <i class="fa-solid fa-spinner fa-spin text-4xl text-white"></i>
+        <p class="mt-4 text-white text-lg">Loading, please wait...</p>
+    </div>
+</div>

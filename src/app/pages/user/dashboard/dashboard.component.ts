@@ -39,8 +39,12 @@ export class DashboardComponent {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 
-  applyButton() {
-    this.router.navigate(['dashboard/apply-permit']);
+  applyButton(num: number) {
+    if (num === 1) {
+      this.router.navigate(['dashboard/apply-permit']);
+    } else if (num === 2) {
+      this.router.navigate(['dashboard/renew-permit']);
+    }
   }
 
 }
