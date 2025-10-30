@@ -17,7 +17,7 @@ import { PermitApprovedApplicationComponent } from './pages/admin/permit-approve
 import { PermitDeclinedParentComponent } from './pages/admin/permit-declined/permit-declined-parent/permit-declined-parent.component';
 import { PermitDeclinedApplicationsComponent } from './pages/admin/permit-declined/permit-declined-applications/permit-declined-applications.component';
 import { MyApplicationParentComponent } from './pages/user/applications/my-application-parent/my-application-parent.component';
-import { RenewPermitComponent } from './pages/user/manage-permit/renew-permit/renew-permit.component';
+import { ScheduleComponent } from './pages/admin/schedule/schedule.component';
 
 const routes: Routes = [
   {
@@ -25,7 +25,7 @@ const routes: Routes = [
     component: AuthComponent
   },
   {
-    path: 'dashboard',
+    path: 'application',
     component: PermitParentElementComponent,
     canActivate: [AuthGuard],
     data: {
@@ -50,12 +50,9 @@ const routes: Routes = [
         },
       },
       {
-        path: 'renew-permit',
-        component: RenewPermitComponent,
-        data: { 
-          allowedRoles: ['business_owner'],
-          breadcrumb: 'Apply for Permit renewal' 
-        },
+        path: 'application-details/:uuid',
+        component: PermitViewApplicationDetailsComponent,
+        data: { breadcrumb: 'Application Details' },
       }
     ],
   },
@@ -69,23 +66,18 @@ const routes: Routes = [
     },
   },
   {
-    path: 'my-application',
-    component: MyApplicationParentComponent,
+    path: 'permit-schedule',
+    component: ApplicationParentElementComponent,
     canActivate: [AuthGuard],
-    data: { 
-      allowedRoles: ['business_owner'],
-      breadcrumb: 'My Application' 
+    data: {
+      allowedRoles: ['admin'],
+      breadcrumb: 'Permit Schedule' 
     },
     children: [
       {
         path: '',
-        component: ApplicationComponent,
-        data: { breadcrumb: 'My Application' },
-      },
-      {
-        path: 'application-details/:uuid',
-        component: PermitViewApplicationDetailsComponent,
-        data: { breadcrumb: 'Application Details' },
+        component: ScheduleComponent,
+        canActivate: [AuthGuard],
       }
     ]
   },

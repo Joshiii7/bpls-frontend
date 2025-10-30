@@ -57,5 +57,6 @@ export class FormComponent {
   @Input('gender') gender: number = 0;
   @Input('isNew') isNew: number = 0;
 
+  @Input() image: string | null = null;
   constructor() {  }
 }

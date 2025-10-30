@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { MenuItem } from 'primeng/api';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -8,29 +9,51 @@ import { filter } from 'rxjs/operators';
   styleUrls: ['./permit-parent-element.component.css']
 })
 export class PermitParentElementComponent {
-withNavigation: boolean = false;
+  withNavigation: boolean = false;
   isSidebarOpen: boolean = true;
+  items: MenuItem[] = [];
+  home!: MenuItem;
+  showScrollTop = false;
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef) {  }
+  constructor(
+    private router: Router
+  ) {
+    this.home = { 
+      icon: 'fa-solid fa-house text-white', 
+      routerLink: '/application' 
+    };
 
-  ngOnInit(): void {
     this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        this.withNavigation = !event.url.includes('');
-        this.cdr.detectChanges();
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateBreadcrumbs();
       });
+
+    // Initial load
+    this.updateBreadcrumbs();
   }
 
-  onRouteChange(componentInstance: any): void {
-    if (componentInstance && 'emitNavigationState' in componentInstance) {
-      componentInstance.emitNavigationState.subscribe((value: boolean) => {
-        this.withNavigation = value;
-      });
-    }
+  updateBreadcrumbs() {
+    const uuidRegex = /^[0-9a-fA-F-]{36}$/;
+    const segments = this.router.url.split('/').filter(seg => seg && !uuidRegex.test(seg));
+    
+    let url = '';
+    this.items = segments.map(segment => {
+      url += `/${segment}`;
+      return { label: this.capitalize(segment), routerLink: url };
+    });
   }
 
-  close() {
-    this.isSidebarOpen = !this.isSidebarOpen;
+  capitalize(text: string): string {
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  }
+
+  @HostListener('window:scroll')
+  onScroll() {
+    this.showScrollTop = window.scrollY > 200;
+  }
+
+  scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

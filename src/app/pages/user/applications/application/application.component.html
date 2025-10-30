@@ -1,16 +1,5 @@
-<main class="py-6 md:px-8 px-2">
-    <section class="bg-white rounded-lg shadow px-5 py-7 mt-4">
-        <!-- Search Filter -->
-        <div class="mb-4 flex flex-col md:flex-row gap-3 lg:w-[50%] w-[100%] relative">
-            <input
-                type="text"
-                [(ngModel)]="searchQuery"
-                placeholder="Search by Business Name..."
-                class="bg-white w-full rounded-md pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded transition duration-200 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md"
-                (input)="filterApplications()"
-            />
-            <i class="fa fa-search absolute top-1/2 right-3 transform -translate-y-1/2 text-slate-400"></i>
-        </div>
+<main class="">
+    <section class="bg-white rounded-lg border px-5 py-7 mt-4">
   
         <!-- Applications Table -->
         <div class="overflow-scroll">
@@ -19,7 +8,7 @@
                     <tr>
                         <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
                             <p class="block font-semibold text-sm text-slate-800">
-                                #
+                                Tracking #
                             </p>
                         </th>
                         <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
@@ -44,7 +33,7 @@
                         </th>
                         <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
                             <p class="block font-semibold text-sm text-slate-800">
-                                Date Issued
+                                Date Filed
                             </p>
                         </th>
                         <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
@@ -56,9 +45,16 @@
                 </thead>
 
                 <tbody>
+                    <tr *ngIf="isLoading">
+                        <td colspan="7" class="px-4 py-2 border-b">
+                            <p class="text-sm text-slate-900 font-semibold text-center">
+                                Loading applications...
+                            </p>
+                        </td>
+                    </tr>
                     <tr *ngFor="let application of paginatedApplications; let i = index" class="hover:bg-slate-50 border-b border-slate-200">
                         <td class="px-4 py-2 border-b">
-                            <p class="text-sm text-slate-900 font-semibold">{{ i + 1 }}</p>
+                            <p class="text-sm text-slate-900 font-semibold">{{ application.tracking_number }}</p>
                         </td>
                         <td class="px-4 py-2 border-b">
                             <p class="text-sm text-slate-900 font-semibold">{{ application.first_name }} {{ application.last_name }}</p>
@@ -84,10 +80,10 @@
                                     class="bg-blue-600 hover:bg-blue-900 text-white p-1 rounded-md w-10">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <span
+                                <!-- <span
                                     class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     View
-                                </span>
+                                </span> -->
                             </div>
                         </td>
                     </tr>
@@ -129,12 +125,3 @@
         </div>
     </section>
 </main>
-  
-
-
-<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
-    <div class="text-center">
-        <i class="fa-solid fa-spinner fa-spin text-4xl text-white"></i>
-        <p class="mt-4 text-white text-lg">Loading, please wait...</p>
-    </div>
-</div>

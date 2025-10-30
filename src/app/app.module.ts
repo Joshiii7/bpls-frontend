@@ -45,7 +45,9 @@ import { PermitApprovedParentComponent } from './pages/admin/permit-approved/per
 import { PermitDeclinedApplicationsComponent } from './pages/admin/permit-declined/permit-declined-applications/permit-declined-applications.component';
 import { PermitDeclinedParentComponent } from './pages/admin/permit-declined/permit-declined-parent/permit-declined-parent.component';
 import { MyApplicationParentComponent } from './pages/user/applications/my-application-parent/my-application-parent.component';
-import { RenewPermitComponent } from './pages/user/manage-permit/renew-permit/renew-permit.component';
+import { ApplicantsHeaderComponent } from './partials/applicants-header/applicants-header.component';
+import { ScheduleComponent } from './pages/admin/schedule/schedule.component';
+import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDteaccknTxLOY2hOXeluL5aH88B7q-ob8",
@@ -87,7 +89,9 @@ const analytics = getAnalytics(app);
     PermitDeclinedApplicationsComponent,
     PermitDeclinedParentComponent,
     MyApplicationParentComponent,
-    RenewPermitComponent,
+    ApplicantsHeaderComponent,
+    ScheduleComponent,
+    SignaturePadComponent,
   ],
   imports: [
     BrowserModule,

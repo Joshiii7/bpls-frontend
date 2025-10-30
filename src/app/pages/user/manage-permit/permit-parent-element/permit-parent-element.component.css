@@ -1,0 +1,31 @@
+::ng-deep .p-breadcrumb {
+    background-color: transparent !important;
+    border-radius: .3rem;
+    padding: 1rem 1rem;
+    color: white;
+    border: .1rem solid;
+}
+
+::ng-deep .p-breadcrumb .p-breadcrumb-list .p-menuitem-link,
+::ng-deep .p-breadcrumb .p-breadcrumb-list .p-breadcrumb-home-item .p-breadcrumb-item-label {
+    color: black !important;
+    font-size: 0.9rem !important;
+    margin-right: 1rem;
+}
+
+::ng-deep .p-breadcrumb .p-menuitem-separator .p-element {
+    margin: 0 0.5rem;
+    color: black !important;
+}
+
+::ng-deep .p-breadcrumb .p-menuitem-link-active {
+    /* font-weight: bold !important; */
+    color: black !important;
+}
+
+@media (max-width: 767px) {
+    ::ng-deep .p-breadcrumb .p-element .p-menuitem-link,
+    ::ng-deep .p-breadcrumb .p-element .p-menuitem-link .p-menuitem-text {
+        font-size: 0.7rem !important;
+    }
+}

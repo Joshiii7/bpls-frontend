@@ -4,6 +4,7 @@ import { ApiServicesService } from '../api-services.service';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
+import Swal from 'sweetalert2';
 // import { AuthService } from '../auth.service';
 
 @Component({
@@ -172,48 +173,78 @@ export class AuthComponent {
 
   loginSubmit() {
     if (this.loginForm.invalid) {
-      console.log('invalid');
+      Swal.fire({
+        icon: "error",
+        title: "Incomplete Form",
+        text: "Please fill out all required fields before proceeding.",
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Understood'
+      });
       return;
     }
 
     if (this.loginForm.valid) {
+      this.isLoading = true;
       this.apiServices.login(this.loginForm.value).subscribe({
         next: (response: any) => {
-          console.log(response);
           const { token, role, user: userId } = response;
-  
+
           if (token) {
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('t', token);
             localStorage.setItem('r', role);
             localStorage.setItem('u', userId);
             localStorage.setItem('sn', role === 2 ? '1' : role === 1 ? '5' : '');
-  
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfully Signed in' });
-  
-            setTimeout(() => {
-              const redirectRoute = role === 2 ? '/dashboard' : role === 1 ? 'admin-dashboard' : '';
+
+            Swal.fire({
+              icon: "success",
+              title: "Login Successful",
+              text: "You have successfully signed in.",
+            }).then(() => {
+              this.isLoading = false;
+              const redirectRoute = role === 2 ? '/application' : role === 1 ? 'admin-dashboard' : '';
               if (redirectRoute) {
                 this.router.navigate([redirectRoute]).then(() => {
                   window.location.reload();
                 });
               }
-            }, 1000);
+            });
           } else {
-            this.messageService.add({ severity: 'error', summary: 'Login Failed', detail: 'Invalid credentials' });
+            this.isLoading = false;
+            Swal.fire({
+              icon: "error",
+              title: "Login Failed",
+              text: "Invalid email or password. Please try again.",
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Understood'
+            });
           }
         },
         error: (error: any) => {
-          console.log('error logging in:', error);
-          this.messageService.add({ severity: 'error', summary: 'Login Failed', detail: error.error?.message || 'Invalid credentials' });
+          console.log('Error logging in:', error);
+          this.isLoading = false;
+          Swal.fire({
+            icon: "error",
+            title: "Login Failed",
+            text: error.error?.message || 'An error occurred while signing in. Please try again later.',
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'Understood'
+          });
         }
       });
     }
   }
+
   
   registerSubmit() {
     if (this.registerForm.invalid) {
-      console.log('invalid');
+      Swal.fire({
+        icon: "error",
+        title: "Incomplete Form",
+        text: "Please fill out all required fields before proceeding.",
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Got it'
+      });
       return;
     }
 
@@ -221,23 +252,38 @@ export class AuthComponent {
       const password = this.registerForm.value.password;
       const confirmpassword = this.registerForm.value.confirmpassword;
 
-      if (password == confirmpassword) {
-        // console.log('ok nani');
+      if (password === confirmpassword) {
         this.apiServices.register(this.registerForm.value).subscribe({
           next: (response: any) => {
-            // console.log(response);
             if (response) {
-              window.location.reload();
-
-              this.messageService.add({ severity: 'success', summary: "Success", detail: 'Successfully Registered' });
+              Swal.fire({
+                icon: "success",
+                title: "Registration Successful",
+                text: "Your account has been created successfully!",
+              }).then(() => {
+                window.location.reload();
+              });
             }
           },
           error: (error: any) => {
-            console.log('error registering an account');
+            console.log('Error registering an account', error);
+            Swal.fire({
+              icon: "error",
+              title: "Registration Failed",
+              text: "Something went wrong while registering your account. Please try again later.",
+              confirmButtonColor: '#d33',
+              confirmButtonText: 'Okay'
+            });
           }
-        })
+        });
       } else {
-        this.messageService.add({ severity: 'error', summary: "Password didn't match", detail: 'Please make sure both passwords are the same.' });
+        Swal.fire({
+          icon: "error",
+          title: "Password Mismatch",
+          text: "Please make sure both passwords match.",
+          confirmButtonColor: '#d33',
+          confirmButtonText: 'Understood'
+        });
       }
     }
   }

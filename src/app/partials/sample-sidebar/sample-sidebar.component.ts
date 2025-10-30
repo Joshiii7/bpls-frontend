@@ -97,7 +97,6 @@ export class SampleSidebarComponent {
   onSidebarClick(event: Event) {
     event.stopPropagation();
   }
-  
 
   getRoleFunction() {
     this.roleID = localStorage.getItem('r');
@@ -114,6 +113,7 @@ export class SampleSidebarComponent {
     const routes: Record<number, string> = {
       1: 'dashboard',
       2: 'my-application',
+      3: 'permit-schedule',
       4: 'logout',
       5: 'admin-dashboard',
       6: 'applications',

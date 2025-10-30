@@ -109,6 +109,6 @@ export class ApplicationComponent {
   }
 
   viewDetails(uuid: number) {
-    this.router.navigate(['/my-application/application-details/', uuid]);
+    this.router.navigate(['/application/application-details/', uuid]);
   }
 }

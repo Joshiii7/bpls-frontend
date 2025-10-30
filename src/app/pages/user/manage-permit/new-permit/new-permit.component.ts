@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { MessageService } from 'primeng/api';
 import { ApiServicesService } from 'src/app/api-services.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-new-permit',
@@ -12,9 +13,9 @@ import { ApiServicesService } from 'src/app/api-services.service';
   providers: [MessageService]
 })
 export class NewPermitComponent {
-  @Output() emitNavigationState = new EventEmitter<boolean>();
   selectedLocation: { lng: number; lat: number } | null = null;
   isLocationSaved = false; 
+  signatureImage: string | null = null;
 
   businessTypes: any;
   isLoading: boolean = true;
@@ -38,6 +39,11 @@ export class NewPermitComponent {
     { id: 1, payment: 'Annually' },
     { id: 2, payment: 'Bi-annually' },
     { id: 3, payment: 'Quarterly' },
+  ];
+
+  applicationTypes = [
+    { id: 1, label: 'New' },
+    { id: 2, label: 'Renewal' }
   ];
 
   genders = [
@@ -107,7 +113,8 @@ export class NewPermitComponent {
     { id: 41672, brgy_name: "Comawas", brgy_code: "166803025"},
   ];
 
-  selectedPayment: number | null = null;
+  selectedPayment: number = 0;
+  selectedApplicationType: number = 0;
 
   selectedFiles: { [key: string]: File | null } = {
     file1: null,
@@ -165,12 +172,17 @@ export class NewPermitComponent {
     block_no: [''],
     street: ['', [Validators.required]],
     subdivision: [''],
+    sameAsMainOffice: [''],
   });
 
-  constructor(private apiService: ApiServicesService, private formBuilder: FormBuilder, private messageService: MessageService, private router: Router) {  }
+  constructor(
+    private apiService: ApiServicesService, 
+    private formBuilder: FormBuilder, 
+    private messageService: MessageService, 
+    private router: Router
+  ) {  }
 
   ngOnInit():void {
-    this.emitNavigationState.emit(true);
     this.permitOperationForm.get('province')?.disable();
     this.permitOperationForm.get('city')?.disable();
 
@@ -193,19 +205,23 @@ export class NewPermitComponent {
 
   confirmDetails() {
     if (!this.permitForm.valid || !this.permitOperationForm.valid) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Form Incomplete',
-        detail: 'Please complete all required fields before proceeding.'
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please complete all required fields before proceeding.",
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Understood!'
       });
       return;
     }
   
     if (!this.selectedPayment) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Payment Method Required',
-        detail: 'Please select a payment method before proceeding with the business registration.'
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please select a payment method before proceeding with the business registration.",
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Understood!'
       });
       return;
     }
@@ -308,13 +324,27 @@ export class NewPermitComponent {
     this.apiService.businessStore(formData).subscribe({
       next: (response: any) => {
         if (response) {
-          this.router.navigate(['/my-application']).then(() => {
-            window.location.reload();
+          Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Business successfully created! Your application has been submitted for permit processing",
+            // confirmButtonColor: '#d33',
+            // confirmButtonText: 'Understood!'
+          }).then(() => {
+            this.router.navigate(['/application']).then(() => {
+              window.location.reload();
+            });
           });
         }
       },
       error: (error: any) => {
-        console.log('error saving new business:', error);
+        Swal.fire({
+          icon: "error",
+          title: "Opps...",
+          text: "Error saving permit form",
+          confirmButtonColor: '#d33',
+          confirmButtonText: 'Understood!'
+        })
       }
     });
   }
@@ -378,10 +408,14 @@ export class NewPermitComponent {
         });
   
       } else {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Invalid Zone Selection',
-          detail: 'This functionality is only available for businesses compliant with the designated zoning regulations.'
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "This functionality is only available for businesses compliant with the designated zoning regulations.",
+          confirmButtonColor: '#d33',
+          confirmButtonText: 'Understood!'
+        }).then(() => {
+          this.permitOperationForm.get('sameAsMainOffice')?.setValue(false, { emitEvent: false });
         });
       }
     }
@@ -571,17 +605,27 @@ export class NewPermitComponent {
       next: (response: any) => {
         console.log(response);
         if (response) {
-          this.messageService.add({ severity: 'success', summary: "Success", detail: 'Business successfully created! Your application has been submitted for permit processing' });
-          setTimeout(() => {
-            this.router.navigate(['dashboard']).then(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Business successfully created! Your application has been submitted for permit processing",
+            // confirmButtonColor: '#d33',
+            // confirmButtonText: 'Understood!'
+          }).then(() => {
+            this.router.navigate(['/application']).then(() => {
               window.location.reload();
             });
-          }, 2000);
+          });
         }
-        
       },
       error: (error: any) => {
-        console.log('error saving permit form:', error);
+        Swal.fire({
+          icon: "error",
+          title: "Opps...",
+          text: "Error saving permit form",
+          confirmButtonColor: '#d33',
+          confirmButtonText: 'Understood!'
+        })
       }
     });
   }
@@ -636,5 +680,9 @@ export class NewPermitComponent {
         }
     };
     reader.readAsDataURL(file);
+  }
+
+  onSignatureSaved(base64Image: string) {
+    this.signatureImage = base64Image;
   }
 }

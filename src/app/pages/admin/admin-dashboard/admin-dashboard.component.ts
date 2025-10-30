@@ -10,6 +10,11 @@ interface ChartData {
   renewed: { [key: number]: number };
 }
 
+interface BarangayStat {
+  barangay: string;
+  total: number;
+}
+
 @Component({
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
@@ -22,6 +27,11 @@ export class AdminDashboardComponent {
   isLoading: boolean = true;
 
   businesses: any[] = [];
+  businessTypeStats: { type: string; total: number }[] = [];
+
+  barangayLabels: string[] = [];
+  barangayData: number[] = [];
+
   currentPage: number = 1;
   totalPages: number = 0;
   perPage: number = 10;
@@ -51,7 +61,12 @@ export class AdminDashboardComponent {
   agingData: any[] = [];
   chart: any;
   
-  constructor(private apiService: ApiServicesService, private router: Router, private messageService: MessageService, private datePipe: DatePipe) {  }
+  constructor(
+    private apiService: ApiServicesService, 
+    private router: Router, 
+    private messageService: MessageService, 
+    private datePipe: DatePipe
+  ) {  }
 
   ngOnInit():void {
     this.emitNavigationState.emit(true);
@@ -143,9 +158,6 @@ export class AdminDashboardComponent {
         if (response) {
           this.isLoading = false;
         }
-        // this.chartData = response.issued;
-        // const issuedData = { 12: 1 };
-        // const renewedData = { 1: 2, 3: 1, 5: 1, 7: 3 };
         const issuedData: { [key: number]: number } = response.issued || {}; 
         const renewedData: { [key: number]: number } = response.renewed;
 
@@ -190,6 +202,13 @@ export class AdminDashboardComponent {
         });
 
         this.createAgeChart(labels, values);
+
+        this.businessTypeStats = response.businessTypeStats || [];
+        this.createBusinessTypeChart();
+
+        this.barangayLabels = response.barangayStats.map((item: BarangayStat) => item.barangay);
+        this.barangayData = response.barangayStats.map((item: BarangayStat) => item.total);
+        this.baranggayPerformanceChart();
       },
       error: (error: any) => {
         console.log('Error fetching paginated page:', error);
@@ -213,6 +232,60 @@ export class AdminDashboardComponent {
       const value = Math.floor(currentValue);
       this.displayValue = value.toLocaleString();
     }, .2);
+  }
+
+  baranggayPerformanceChart() {
+    const ctx = document.getElementById('barangayPerformanceChart') as HTMLCanvasElement;
+
+    new Chart(ctx, {
+      type: 'polarArea',
+      data: {
+        labels: this.barangayLabels,
+        datasets: [{
+          label: 'Registered Businesses per Barangay',
+          data: this.barangayData,
+          backgroundColor: 'rgba(54, 162, 235, 0.6)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        // scales: {
+        //   x: {
+        //     title: { display: true, text: 'Barangay' },
+        //     ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 }
+        //   },
+        //   y: {
+        //     title: { display: true, text: 'Number of Businesses' },
+        //     beginAtZero: true
+        //   }
+        // }
+      }
+    });
+  }
+
+  createBusinessTypeChart() {
+    const ctx = document.getElementById('businessTypeChart') as HTMLCanvasElement;
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: this.businessTypeStats.map((b) => b.type),
+        datasets: [{
+          label: 'Business Types',
+          data: this.businessTypeStats.map((b) => b.total),
+          backgroundColor: 'rgba(5, 93, 255, .5)',
+          borderColor: 'rgba(5, 93, 255, 1)',
+          borderWidth: 2,
+          borderRadius: 10,
+          borderSkipped: false  
+        }]
+      }
+    });
   }
 
   createAgeChart(labels: string[], values: number[]) {

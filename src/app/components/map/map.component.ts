@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import Point from '@mapbox/point-geometry';
 import * as maplibregl from 'maplibre-gl';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-map',
@@ -8,29 +9,36 @@ import * as maplibregl from 'maplibre-gl';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent {
-  @Output() locationSaved = new EventEmitter<{ lng: number; lat: number }>();
-  savedLocation: { lng: number; lat: number } | null = null;
-
   @ViewChild('map', { static: true }) mapContainer!: ElementRef;
-  map: maplibregl.Map | undefined;
+  
+  map!: maplibregl.Map;
   marker!: maplibregl.Marker;
-
-  ngOnInit(): void {
+  savedLocation: { lng: number; lat: number } | null = null;
+  defaultPosition = {
+    lng: 126.3162286437666,
+    lat: 8.217509410444645,
+    zoom: 10
+  };
+  ngAfterViewInit() {
     this.initializeMap();
   }
 
+  getStoredView() {
+    const stored = localStorage.getItem('mapView');
+    return stored ? JSON.parse(stored) : this.defaultPosition;
+  }
+
   initializeMap() {
+    const view = this.getStoredView();
+
     this.map = new maplibregl.Map({
-      container: document.getElementById('map')!, 
-      // style: 'https://demotiles.maplibre.org/style.json',
+      container: this.mapContainer.nativeElement,
       style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-      center: [126.3162286437666, 8.217509410444645],
-      zoom: 10
+      center: [view.lng, view.lat],
+      zoom: view.zoom
     });
 
-    // console.log(this.map?.getPaintProperty('roadname_minor', 'text-color'));
-    this.map?.on('load', () => {
-      // console.log(this.map?.getStyle().layers);
+    this.map.on('load', () => {
       this.map?.setPaintProperty('background', 'background-color', '#ECECEC');
       this.map?.setPaintProperty('water', 'fill-color', '#8FBEE7');
       this.map?.setPaintProperty("roadname_minor", "text-color", "#000000");
@@ -69,30 +77,37 @@ export class MapComponent {
       // this.map?.setPaintProperty("road_pri_fill_noramp", "fill-color", "#FFFFFF");
       // this.map?.setPaintProperty("road_trunk_fill_noramp", "fill-color", "#FFFFFF");
       // this.map?.setPaintProperty("road_mot_fill_noramp", "fill-color", "#FFFFFF");
-
     });
 
     this.marker = new maplibregl.Marker({
       draggable: false,
     })
-      .setLngLat(this.map.getCenter())
+      .setLngLat([view.lng, view.lat])
       .addTo(this.map);
 
     this.map.on('move', () => {
       const center = this.map?.getCenter();
+      const zoom = this.map?.getZoom();
 
       if (center) {
         this.marker.setLngLat(center);
       }
+
+      localStorage.setItem(
+        'mapView',
+        JSON.stringify({ lng: center.lng, lat: center.lat, zoom })
+      );
     });
   }
 
   saveLocation() {
-    const position = this.marker.getLngLat();
-    this.savedLocation = { lng: position.lng, lat: position.lat };
-
-    // alert(`Location saved: Longitude: ${position.lng}, Latitude: ${position.lat}`);
-    // console.log('Saved Location:', this.savedLocation);
-    this.locationSaved.emit(this.savedLocation);
+    const pos = this.marker.getLngLat();
+    this.savedLocation = { lng: pos.lng, lat: pos.lat };
+    Swal.fire({
+      icon: 'success',
+      title: 'Location Saved!',
+      text: `Longitude: ${pos.lng.toFixed(6)}, Latitude: ${pos.lat.toFixed(6)}`,
+      confirmButtonText: 'Great!'
+    });
   }
 }
