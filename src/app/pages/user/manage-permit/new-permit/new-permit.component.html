@@ -171,14 +171,19 @@
                         <div>
                             <label class="text-sm font-light" [class.text-red-600]="permitForm.get('tinNumber')?.invalid && (permitForm.get('tinNumber')?.touched || permitForm.get('tinNumber')?.dirty)" for="tinNumber">Tax Identification Number (TIN) <span class="text-red-600">*</span></label>
                             <input 
-                                type="text" id="tinNumber" 
+                                type="text" 
+                                id="tinNumber" 
+                                (input)="onTinInput($event)"
                                 formControlName="tinNumber" 
+                                maxlength="15"
                                 class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
                                 [class.border-red-500]="permitForm.get('tinNumber')?.invalid && (permitForm.get('tinNumber')?.touched || permitForm.get('tinNumber')?.dirty)"
                                 placeholder="Enter Tax Identification Number (TIN)" 
-                                required="">
+                                required=""
+                            >
                             <div *ngIf="permitForm.get('tinNumber')?.invalid && (permitForm.get('tinNumber')?.touched || permitForm.get('tinNumber')?.dirty)">
-                                <small class="text-red-500" *ngIf="permitForm.get('tinNumber')?.errors?.['required']">Tax Identification Number (TIN)</small>
+                                <small class="text-red-500" *ngIf="permitForm.get('tinNumber')?.errors?.['required']">Tax Identification Number (TIN) is required.</small>
+                                <small class="text-red-500" *ngIf="permitForm.get('tinNumber')?.errors?.['pattern']">Please enter a valid TIN (format: 123-456-789 or 123-456-789-000).</small>
                             </div>
                         </div>
                         <div>
@@ -585,7 +590,7 @@
         </section>
     
         <section *ngIf="currentTab === 3" class="py-7 relative">
-            <div class="grid grid-cols-12 gap-6">
+            <div class="grid grid-cols-12 gap-3">
     
                 <!-- Map -->
                 <div class="lg:col-span-7 col-span-12 h-[50dvh]">
@@ -620,117 +625,118 @@
     
                 <!-- Uploading of Documents -->
                 <div class="col-span-12">
-                    <h3 class="text-2xl font-bold mt-6 mb-3">Upload Supporting Documents</h3>
+                    <h3 class="text-2xl font-bold mb-3">Upload Supporting Documents</h3>
                     <p class="text-md text-gray-700 mb-3">
                         Please upload the required supporting documents. Ensure that the uploaded images meet the following criteria:
                     </p>
-                    <ul class="list-disc ps-7 space-y-2 text-sm text-gray-700">
+                    <ul class="list-disc ps-7 space-y-2 text-sm text-gray-700 mb-6">
                         <li>The images must not be blurry and should have readable text.</li>
-                        <li>Files should be in a supported format such as PNG, JPG or JPEG.</li>
+                        <li>Files should be in a supported format such as PNG, JPG, or JPEG.</li>
                         <li>Ensure the documents are complete and legible to avoid processing delays.</li>
                     </ul>
-                    <form class="space-y-6 mt-5">
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <!-- Proof of Registration -->
-                            <div class="space-y-2">
-                                <label class="block text-md font-medium text-gray-900">
-                                    Proof of Registration (DTI/SEC/CDA) <span class="text-red-600">*</span>
-                                </label>
-                                <div 
-                                    class="h-[15rem] flex justify-center items-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
-                                    (click)="triggerFileInput('file1')"
-                                    (drop)="onFileDrop($event, 'file1')"
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- Proof of Registration -->
+                        <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
+                            <span class="text-gray-800 font-medium">Proof of Registration (DTI/SEC/CDA) <span class="text-red-600">*</span></span>
+                            <button (click)="openUploadModal('Proof of Registration (DTI/SEC/CDA)', 'file1')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
+                                <i class="fa-solid fa-upload text-white text-lg"></i>
+                            </button>
+                        </div>
+
+                        <!-- Authority to Use of Place of Business -->
+                        <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
+                            <span class="text-gray-800 font-medium">Authority to Use of Place of Business (Proof of Ownership/Contract of Lease) <span class="text-red-600">*</span></span>
+                            <button (click)="openUploadModal('Authority to Use of Place of Business (Proof of Ownership/Contract of Lease)', 'file2')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
+                                <i class="fa-solid fa-upload text-white text-lg"></i>
+                            </button>
+                        </div>
+
+                        <!-- Fire Safety Inspection Certificate -->
+                        <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
+                            <span class="text-gray-800 font-medium">Fire Safety Inspection Certificate <span class="text-red-600">*</span></span>
+                            <button (click)="openUploadModal('Fire Safety Inspection Certificate', 'file3')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
+                                <i class="fa-solid fa-upload text-white text-lg"></i>
+                            </button>
+                        </div>
+
+                        <!-- >Sanitary Permit / Health Clearance -->
+                        <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
+                            <span class="text-gray-800 font-medium">Sanitary Permit <span class="text-red-600">*</span></span>
+                            <button (click)="openUploadModal('Sanitary Permit / Health Clearance', 'file4')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
+                                <i class="fa-solid fa-upload text-white text-lg"></i>
+                            </button>
+                        </div>
+
+                        <!-- Environmental Clearance / Barangay Clearance -->
+                        <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
+                            <span class="text-gray-800 font-medium">Barangay Clearance <span class="text-red-600">*</span></span>
+                            <button (click)="openUploadModal('Environmental Clearance / Barangay Clearance', 'file6')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
+                                <i class="fa-solid fa-upload text-white text-lg"></i>
+                            </button>
+                        </div>
+
+                        <!-- Occupancy Permit -->
+                        <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
+                            <span class="text-gray-800 font-medium">Occupancy Permit Building Official <span class="text-red-600">*</span></span>
+                            <button (click)="openUploadModal('Occupancy Permit', 'file7')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
+                                <i class="fa-solid fa-upload text-white text-lg"></i>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div 
+                        *ngIf="showModal" 
+                        class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+                        (click)="closeModal()"
+                    >
+                        <div 
+                            (click)="$event.stopPropagation()"
+                            class="bg-white w-[90%] max-w-xl rounded-lg shadow-lg"
+                        >
+                            <div class="flex justify-between items-center bg-primary text-white px-4 py-2 rounded-t-lg">
+                                <h3 class="text-lg font-semibold">Document Upload</h3>
+                                <button (click)="closeModal()" class="text-white text-2xl leading-none">&times;</button>
+                            </div>
+
+                            <div class="p-5">
+                                <h4 class="text-lg font-semibold mb-2 uppercase">{{ modalTitle }}</h4>
+
+                                <div
+                                    class="border-2 border-dashed border-gray-300 rounded-lg h-60 flex justify-center items-center text-gray-400 text-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition relative"
+                                    (click)="triggerFileInput()"
+                                    (drop)="onFileDrop($event)"
                                     (dragover)="onDragOver($event)"
                                     (dragleave)="onDragLeave($event)"
                                 >
-                                    <span class="text-sm text-gray-500">
-                                        Drag & drop your file here or <span class="text-blue-500 underline">browse</span>
-                                    </span>
+                                    <ng-container *ngIf="!previewUrl; else previewBlock">
+                                        <span>Drag & drop files here ...</span>
+                                    </ng-container>
+
+                                    <ng-template #previewBlock>
+                                        <img [src]="previewUrl" class="absolute inset-0 w-full h-full object-cover rounded-lg" />
+                                    </ng-template>
                                 </div>
-                                <input 
-                                    id="file1" 
-                                    type="file" 
-                                    accept=".jpg, .jpeg, .png" 
-                                    class="hidden"
-                                    (change)="onFileSelect($event, 'file1')"
-                                />
-                            </div>
-                            <div class="w-full">
-                                <img 
-                                    id="file1-preview-image" 
-                                    src="" 
-                                    alt="Preview" 
-                                    class="w-full h-[15rem] object-cover border border-gray-300 rounded-lg hidden translate-y-8"
-                                />
-                            </div>
-                    
-                            <!-- Authority to Use of Place of Business -->
-                            <div class="space-y-2">
-                                <label class="block text-md font-medium text-gray-900">
-                                    Authority to Use of Place of Business (Proof of Ownership/Contract of Lease) <span class="text-red-600">*</span>
-                                </label>
-                                <div 
-                                    class="h-[15rem] flex justify-center items-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
-                                    (click)="triggerFileInput('file2')"
-                                    (drop)="onFileDrop($event, 'file2')"
-                                    (dragover)="onDragOver($event)"
-                                    (dragleave)="onDragLeave($event)"
-                                >
-                                    <span class="text-sm text-gray-500">
-                                        Drag & drop your file here or <span class="text-blue-500 underline">browse</span>
-                                    </span>
+
+                                <input type="file" #fileInput accept=".jpg,.jpeg,.png" class="hidden" (change)="onFileSelect($event)" />
+
+                                <div class="mt-4 flex justify-between items-center">
+                                    <p class="text-sm text-primary bg-green-50 p-2 rounded-md">
+                                        Please upload a file not exceeding <b>25MB</b>.
+                                    </p>
+                                    <div class="flex gap-3">
+                                        <button 
+                                            (click)="confirmSelection()" 
+                                            class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition cursor-pointer"
+                                        >
+                                            Select This File
+                                        </button>
+                                    </div>
                                 </div>
-                                <input 
-                                    id="file2" 
-                                    type="file" 
-                                    accept=".jpg, .jpeg, .png" 
-                                    class="hidden"
-                                    (change)="onFileSelect($event, 'file2')"
-                                />
-                            </div>
-                            <div class="w-full">
-                                <img 
-                                    id="file2-preview-image" 
-                                    src="" 
-                                    alt="Preview" 
-                                    class="w-full h-[15rem] object-cover border border-gray-300 rounded-lg hidden translate-y-8"
-                                />
-                            </div>
-                    
-                            <!-- Fire Safety Inspection Certificate -->
-                            <div class="space-y-2">
-                                <label class="block text-md font-medium text-gray-900">
-                                    Fire Safety Inspection Certificate <span class="text-red-600">*</span>
-                                </label>
-                                <div 
-                                    class="h-[15rem] flex justify-center items-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
-                                    (click)="triggerFileInput('file3')"
-                                    (drop)="onFileDrop($event, 'file3')"
-                                    (dragover)="onDragOver($event)"
-                                    (dragleave)="onDragLeave($event)"
-                                >
-                                    <span class="text-sm text-gray-500">
-                                        Drag & drop your file here or <span class="text-blue-500 underline">browse</span>
-                                    </span>
-                                </div>
-                                <input 
-                                    id="file3" 
-                                    type="file" 
-                                    accept=".jpg, .jpeg, .png" 
-                                    class="hidden"
-                                    (change)="onFileSelect($event, 'file3')"
-                                />
-                            </div>
-                            <div class="w-full">
-                                <img 
-                                    id="file3-preview-image" 
-                                    src="" 
-                                    alt="Preview" 
-                                    class="w-full h-[15rem] object-cover border border-gray-300 rounded-lg hidden translate-y-8"
-                                />
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
 
                 <div class="col-span-12">
@@ -798,6 +804,33 @@
                 </button>
             </div>
         </section>
+
+        <section class="relative">
+            <div class="flex justify-between items-center">
+                <!-- Previous Button -->
+                <button
+                    type="button"
+                    class="flex items-center gap-2 bg-primary hover:bg-primary/90 rounded-md p-3 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    (click)="prevTab()"
+                    [disabled]="currentTab === 1"
+                >
+                    <i class="fas fa-arrow-left"></i>
+                    Previous
+                </button>
+
+                <!-- Next Button -->
+                <button
+                    type="button"
+                    class="flex items-center gap-2 bg-primary hover:bg-primary/90 rounded-md p-3 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    (click)="nextTab()"
+                    [disabled]="currentTab === totalTabs"
+                >
+                    Next
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
     </section>
 </main>
 
@@ -811,22 +844,22 @@
     
     <!-- Terms and Conditions Content -->
     <p class="text-gray-700 text-sm mb-4">
-      Are you sure you want to submit your application now?
+        Are you sure you want to submit your application now?
     </p>
     <p class="text-gray-700 text-sm mb-4">
-      I DECLARE UNDER PENALTY OF PERJURY that all information in this application 
-      is true and correct based on my personal knowledge and authentic records 
-      submitted to the Municipality of Bislig. Any false or misleading information 
-      supplied, or production of fake/falsified documents shall be grounds for 
-      appropriate legal action against me and automatically revokes the permit.
+        I DECLARE UNDER PENALTY OF PERJURY that all information in this application 
+        is true and correct based on my personal knowledge and authentic records 
+        submitted to the Municipality of Bislig. Any false or misleading information 
+        supplied, or production of fake/falsified documents shall be grounds for 
+        appropriate legal action against me and automatically revokes the permit.
     </p>
     <p class="text-gray-700 text-sm mb-4">
-      I hereby agree that all personal data (as defined under the Data Privacy 
-      Law of 2012 and its Implementing Rules and Regulations) and account 
-      transaction information or records with the Municipality of Bislig 
-      Government may be processed, profiled, or shared to requesting parties 
-      or for the purpose of any court, legal process, examination, inquiry, and 
-      audit or investigation of any authority.
+        I hereby agree that all personal data (as defined under the Data Privacy 
+        Law of 2012 and its Implementing Rules and Regulations) and account 
+        transaction information or records with the Municipality of Bislig 
+        Government may be processed, profiled, or shared to requesting parties 
+        or for the purpose of any court, legal process, examination, inquiry, and 
+        audit or investigation of any authority.
     </p>
 
     <!-- Checkbox to Enable Submit -->
@@ -837,15 +870,15 @@
 
     <!-- Modal Footer -->
     <div class="flex justify-end gap-2">
-      <button (click)="closeModal()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
-        Cancel
-      </button>
-      <button (click)="confirmSubmission()" 
-              [disabled]="!isChecked"
-              class="px-4 py-2 rounded-md text-white transition-colors"
-              [ngClass]="isChecked ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'">
-        Confirm & Submit
-      </button>
+        <button (click)="closeModal()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
+            Cancel
+        </button>
+        <button (click)="confirmSubmission()" 
+                [disabled]="!isChecked"
+                class="px-4 py-2 rounded-md text-white transition-colors"
+                [ngClass]="isChecked ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'">
+            Confirm & Submit
+        </button>
     </div>
 
   </div>

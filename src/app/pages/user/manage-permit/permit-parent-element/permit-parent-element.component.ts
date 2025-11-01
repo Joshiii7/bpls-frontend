@@ -19,7 +19,7 @@ export class PermitParentElementComponent {
     private router: Router
   ) {
     this.home = { 
-      icon: 'fa-solid fa-house text-white', 
+      icon: 'fa-solid fa-house text-md', 
       routerLink: '/application' 
     };
 

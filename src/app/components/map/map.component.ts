@@ -107,7 +107,8 @@ export class MapComponent {
       icon: 'success',
       title: 'Location Saved!',
       text: `Longitude: ${pos.lng.toFixed(6)}, Latitude: ${pos.lat.toFixed(6)}`,
-      confirmButtonText: 'Great!'
+      confirmButtonText: 'Great!',
+      confirmButtonColor: '#009800',
     });
   }
 }

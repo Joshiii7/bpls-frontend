@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { ViewportScroller } from '@angular/common';
+import { Component, ElementRef, EventEmitter, HostListener, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
@@ -13,6 +14,8 @@ import Swal from 'sweetalert2';
   providers: [MessageService]
 })
 export class NewPermitComponent {
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
   selectedLocation: { lng: number; lat: number } | null = null;
   isLocationSaved = false; 
   signatureImage: string | null = null;
@@ -26,6 +29,7 @@ export class NewPermitComponent {
   barangays: any;
   
   currentTab: number = 1;
+  totalTabs = 4;
   existingPhoneNumber: boolean = false;
   existingEmail: boolean = false;
 
@@ -34,6 +38,28 @@ export class NewPermitComponent {
   currentBarangayRegister: any;
 
   operationBarangayRegister: any;
+
+  showModal = false;
+  modalTitle = '';
+  activeField = '';
+  previewUrl: string | null = null;
+  activeFile: File | null = null;
+
+  // Store all uploaded documents here
+  documents: {
+    [key: string]: {
+      title: string;
+      file?: File;
+      previewUrl?: string | null;
+    };
+  } = {
+    file1: { title: 'Proof of Registration (DTI/SEC/CDA)', previewUrl: null },
+    file2: { title: 'Authority to Use of Place of Business', previewUrl: null },
+    file3: { title: 'Fire Safety Inspection Certificate', previewUrl: null },
+    file4: { title: 'Sanitary Permit / Health Clearance', previewUrl: null },
+    file6: { title: 'Environmental Clearance / Barangay Clearance', previewUrl: null },
+    file7: { title: 'Occupancy Permit', previewUrl: null },
+  };
   
   payments = [
     { id: 1, payment: 'Annually' },
@@ -127,7 +153,7 @@ export class NewPermitComponent {
     tradeName: ['', [Validators.required]],
     dtiNumber: ['', [Validators.required]],
     registrationDate: ['', [Validators.required]],
-    tinNumber: ['', [Validators.required]],
+    tinNumber: ['', [Validators.required, Validators.pattern(/^(\d{3}-?\d{3}-?\d{3}(-?\d{3})?)$/)]],
     businessType: ['', [Validators.required]],
     first_name: ['', [Validators.required]],
     middle_name: ['', [Validators.required]],
@@ -179,7 +205,8 @@ export class NewPermitComponent {
     private apiService: ApiServicesService, 
     private formBuilder: FormBuilder, 
     private messageService: MessageService, 
-    private router: Router
+    private router: Router,
+    private viewportScroller: ViewportScroller
   ) {  }
 
   ngOnInit():void {
@@ -192,6 +219,38 @@ export class NewPermitComponent {
     this.getBusinessTypeFunction();
     this.getProvinceAddress();
     this.getBusinessCity();
+  }
+
+  nextTab() {
+    if (this.currentTab < this.totalTabs) {
+      this.currentTab++;
+      setTimeout(() => this.viewportScroller.scrollToPosition([0, 0]), 0);
+    }
+  }
+
+  prevTab() {
+    if (this.currentTab > 1) {
+      this.currentTab--;
+      setTimeout(() => this.viewportScroller.scrollToPosition([0, 0]), 0);
+    }
+  }
+
+  onTinInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value.replace(/\D/g, '');
+
+    if (value.length <= 9) {
+      value = value.replace(/(\d{3})(\d{0,3})(\d{0,3})/, (_, a, b, c) =>
+        [a, b, c].filter(Boolean).join('-')
+      );
+    } else {
+      value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{0,3})/, (_, a, b, c, d) =>
+        [a, b, c, d].filter(Boolean).join('-')
+      );
+    }
+
+    input.value = value;
+    this.permitForm.get('tinNumber')?.setValue(value, { emitEvent: false });
   }
 
   onLocationSaved(location: { lng: number; lat: number }): void {
@@ -228,10 +287,6 @@ export class NewPermitComponent {
   
     this.confirmation = true;
     this.isChecked = false;
-  }
-
-  closeModal() {
-    this.confirmation = false;
   }
 
   closeModalOutside(event: MouseEvent) {
@@ -630,36 +685,94 @@ export class NewPermitComponent {
     });
   }
 
-  // drag and drop image functionality
-  triggerFileInput(inputId: string): void {
-    const fileInput = document.getElementById(inputId) as HTMLInputElement;
-    if (fileInput) {
-        fileInput.click();
+  openUploadModal(title: string, field: string) {
+    this.modalTitle = title;
+    this.activeField = field;
+    this.showModal = true;
+
+    // Restore preview if already uploaded before
+    this.previewUrl = this.documents[field]?.previewUrl || null;
+    this.activeFile = this.documents[field]?.file || null;
+  }
+
+  closeModal() {
+    this.showModal = false;
+    this.previewUrl = null;
+    this.activeFile = null;
+  }
+
+  triggerFileInput() {
+    this.fileInput.nativeElement.click();
+  }
+
+  onFileSelect(event: any) {
+    const file = event.target.files?.[0];
+    if (file) {
+      this.activeFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
-  onFileSelect(event: Event, field: string): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-        this.validateAndPreviewFile(input.files[0], field);
+  onFileDrop(event: DragEvent) {
+    event.preventDefault();
+    const file = event.dataTransfer?.files[0];
+    if (file) {
+      this.activeFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
-  onFileDrop(event: DragEvent, field: string): void {
+  onDragOver(event: DragEvent) {
     event.preventDefault();
-    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
-        this.validateAndPreviewFile(event.dataTransfer.files[0], field);
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+  }
+
+  confirmSelection() {
+    if (!this.previewUrl) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'No image selected',
+        text: 'Please select an image before continuing.',
+        confirmButtonColor: '#009800',
+      });
+      return;
     }
+
+    if (this.activeField && this.activeFile && this.previewUrl) {
+      this.documents[this.activeField] = {
+        title: this.modalTitle,
+        file: this.activeFile,
+        previewUrl: this.previewUrl,
+      };
+    }
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Image selected!',
+      text: 'Your image has been successfully chosen.',
+      confirmButtonColor: '#009800',
+    }).then(() => {
+      this.closeModal();
+    });
   }
 
-  onDragOver(event: DragEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
-  onDragLeave(event: DragEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
+  getUploadedDocuments() {
+    return Object.entries(this.documents).map(([key, doc]) => ({
+      field: key,
+      title: doc.title,
+      file: doc.file,
+    }));
   }
 
   validateAndPreviewFile(file: File, field: string): void {

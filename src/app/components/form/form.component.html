@@ -19,21 +19,21 @@
                     <td colspan="2" class="border border-gray-900 py-1 px-4 text-center">Payment</td>
                 </tr>
                 <tr>
-                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="isNew == 1">✔</span></td>
+                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="isNew == 1"><i class="fa-solid fa-check"></i></span></td>
                     <td class="border border-gray-900 py-1 px-1">New</td>
-                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="paymentType == 1">✔</span></td>
+                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="paymentType == 1"><i class="fa-solid fa-check"></i></span></td>
                     <td class="border border-gray-900 py-1 px-1">Annually</td>
                 </tr>
                 <tr>
-                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="isNew == 2">✔</span></td>
+                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="isNew == 2"><i class="fa-solid fa-check"></i></span></td>
                     <td class="border border-gray-900 py-1 px-1">Renewal</td>
-                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="paymentType == 2">✔</span></td>
+                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="paymentType == 2"><i class="fa-solid fa-check"></i></span></td>
                     <td class="border border-gray-900 py-1 px-1">Bi-annually</td>
                 </tr>
                 <tr>
-                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="isNew == 3">✔</span></td>
+                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="isNew == 3"><i class="fa-solid fa-check"></i></span></td>
                     <td class="border border-gray-900 py-1 px-1">Additional</td>
-                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="paymentType == 3">✔</span></td>
+                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="paymentType == 3"><i class="fa-solid fa-check"></i></span></td>
                     <td class="border border-gray-900 py-1 px-1">Quarterly</td>
                 </tr>
                 </tbody>
@@ -60,32 +60,32 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div class="col-span-1">
                             <div class="flex gap-1 mb-1">
-                                <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 1">✔</span></span>
+                                <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 1"><i class="fa-solid fa-check"></i></span></span>
                                 <h6>Sole Proprietorship</h6>
                             </div>
                             <div class="flex justify-between">
                                 <div class="flex gap-1">
-                                    <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 1 && gender == 1">✔</span></span>
+                                    <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 1 && gender == 1"><i class="fa-solid fa-check"></i></span></span>
                                     <h6>Male</h6>
                                 </div>
                                 <div class="flex gap-1">
-                                    <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 1 && gender == 2">✔</span></span>
+                                    <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 1 && gender == 2"><i class="fa-solid fa-check"></i></span></span>
                                     <h6>Female</h6>
                                 </div>
                             </div>
                         </div>
                         <div class="col-span-1 text-end ">
                             <div class="flex gap-1 mb-1">
-                                <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 2">✔</span></span>
+                                <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 2"><i class="fa-solid fa-check"></i></span></span>
                                 <h6>One Person Corporation</h6>
                             </div>
                             <div class="flex justify-between">
                                 <div class="flex gap-1">
-                                    <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 2 && gender == 1">✔</span></span>
+                                    <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 2 && gender == 1"><i class="fa-solid fa-check"></i></span></span>
                                     <h6>Male</h6>
                                 </div>
                                 <div class="flex gap-1">
-                                    <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 2 && gender == 2">✔</span></span>
+                                    <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 2 && gender == 2"><i class="fa-solid fa-check"></i></span></span>
                                     <h6>Female</h6>
                                 </div>
                             </div>
@@ -93,15 +93,15 @@
                     </div>
                     <div class="grid grid-cols-3 gap-2">
                         <div class="col-span-1 text-end flex gap-1">
-                            <span class="w-[1.1rem] h-[1.3rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 3">✔</span></span>
+                            <span class="w-[1.1rem] h-[1.3rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 3"><i class="fa-solid fa-check"></i></span></span>
                             <h6>Partnership</h6>
                         </div>
                         <div class="col-span-1 text-end flex gap-1">
-                            <span class="w-[1.1rem] h-[1.3rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 4">✔</span></span>
+                            <span class="w-[1.1rem] h-[1.3rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 4"><i class="fa-solid fa-check"></i></span></span>
                             <h6>Corporation</h6>
                         </div>
                         <div class="col-span-1 text-end flex gap-1">
-                            <span class="w-[1.1rem] h-[1.3rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType === 5">✔</span></span>
+                            <span class="w-[1.1rem] h-[1.3rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType === 5"><i class="fa-solid fa-check"></i></span></span>
                             <h6>Cooperative</h6>
                         </div>
                     </div>
@@ -369,31 +369,31 @@
                 <div class="flex justify-between gap-2 w-full">
                     <div class="flex gap-2">
                         <div class="border border-gray-900 w-[1.1rem]">
-                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 1">✔</span>
+                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 1"><i class="fa-solid fa-check"></i></span>
                         </div>
                         <h6>Main Office</h6>
                     </div>
                     <div class="flex gap-2">
                         <div class="border border-gray-900 w-[1.1rem]">
-                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 2">✔</span>
+                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 2"><i class="fa-solid fa-check"></i></span>
                         </div>
                         <h6>Branch Office</h6>
                     </div>
                     <div class="flex gap-2">
                         <div class="border border-gray-900 w-[1.1rem]">
-                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 3">✔</span>
+                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 3"><i class="fa-solid fa-check"></i></span>
                         </div>
                         <h6>Admin Office Only</h6>
                     </div>
                     <div class="flex gap-2">
                         <div class="border border-gray-900 w-[1.1rem]">
-                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 4">✔</span>
+                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 4"><i class="fa-solid fa-check"></i></span>
                         </div>
                         <h6>Warehouse</h6>
                     </div>
                     <div class="flex gap-2">
                         <div class="border border-gray-900 w-[1.1rem]">
-                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 5">✔</span>
+                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 5"><i class="fa-solid fa-check"></i></span>
                         </div>
                         <h6>Others</h6>
                     </div>
