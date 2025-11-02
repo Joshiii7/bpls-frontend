@@ -48,6 +48,8 @@ import { MyApplicationParentComponent } from './pages/user/applications/my-appli
 import { ApplicantsHeaderComponent } from './partials/applicants-header/applicants-header.component';
 import { ScheduleComponent } from './pages/admin/schedule/schedule.component';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
+import { NotificationDropdownComponent } from './components/notification-dropdown/notification-dropdown.component';
+import { NotificationsComponent } from './pages/notifications/notifications.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDteaccknTxLOY2hOXeluL5aH88B7q-ob8",
@@ -92,6 +94,8 @@ const analytics = getAnalytics(app);
     ApplicantsHeaderComponent,
     ScheduleComponent,
     SignaturePadComponent,
+    NotificationDropdownComponent,
+    NotificationsComponent,
   ],
   imports: [
     BrowserModule,

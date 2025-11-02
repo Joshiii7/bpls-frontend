@@ -1,41 +1,198 @@
-<div class="py-7 w-[90%] max-w-[80rem] mx-auto">
+<div class="py-5 md:px-8 px-4">
     <h2 class="text-2xl font-bold mb-4">Business Permit Scheduler</h2>
 
-    <!-- Form -->
-    <div class="bg-white p-6 rounded shadow-md mb-6">
-        <h3 class="font-semibold mb-4">Add New Schedule</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input type="date" [(ngModel)]="newSchedule.start_date" class="border p-2 rounded" placeholder="Start Date" />
-            <input type="date" [(ngModel)]="newSchedule.end_date" class="border p-2 rounded" placeholder="End Date" />
-            <input type="text" [(ngModel)]="newSchedule.schedule_type" class="border p-2 rounded" placeholder="Schedule Type" />
-        </div>
-        <button 
-            (click)="addSchedule()"
-            class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-        >
-            Add Schedule
-        </button>
-    </div>
-
-    <!-- Schedule List -->
-    <div class="bg-white p-6 rounded shadow-md">
-        <h3 class="font-semibold mb-4">Scheduled Applications</h3>
-        <div *ngIf="schedules.length === 0" class="text-gray-500">No schedules added yet.</div>
-        <ul *ngIf="schedules.length > 0" class="space-y-2">
-            <li *ngFor="let schedule of schedules; let i = index"
-                class="flex justify-between items-center border p-3 rounded">
-                <div>
-                    <span class="font-semibold">{{ schedule.start_date }}</span> - 
-                    <span class="font-semibold">{{ schedule.end_date }}</span> | 
-                    {{ schedule.schedule_type }}
+    <div class="grid grid-cols-12 gap-6">
+        
+        <!-- Calendar -->
+        <div class="bg-white p-6 rounded shadow-md lg:col-span-4 col-span-12">
+            
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex gap-2 items-center">
+                    <button (click)="prevMonth()" class="p-2 rounded hover:bg-gray-100">
+                        <svg class="w-5 h-5" viewBox="0 0 20 20"><path fill="currentColor" d="M12.7 15.3 7.4 10l5.3-5.3 1.3 1.3L10 10l4 4-1.3 1.3z"/></svg>
+                    </button>
+                    <div class="font-semibold">{{ monthTitle() }}</div>
+                    <button (click)="nextMonth()" class="p-2 rounded hover:bg-gray-100">
+                        <svg class="w-5 h-5" viewBox="0 0 20 20"><path fill="currentColor" d="M7.3 4.7 12.6 10 7.3 15.3 6 14l4-4-4-4 1.3-1.3z"/></svg>
+                    </button>
                 </div>
-                <button 
-                    (click)="removeSchedule(i)"
-                    class="text-red-500 hover:text-red-700 font-bold"
-                >
-                    Delete
-                </button>
-            </li>
-        </ul>
+
+                <div class="text-sm text-gray-600">
+                    <div *ngIf="startDate">Start: <b>{{ startDate | date:'mediumDate' }}</b></div>
+                    <div *ngIf="endDate">End: <b>{{ endDate | date:'mediumDate' }}</b></div>
+                </div>
+            </div>
+
+            <!-- Weekdays -->
+            <div class="grid grid-cols-7 text-center text-xs text-gray-500 mb-2">
+                <div *ngFor="let d of ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']" class="py-1">{{ d }}</div>
+            </div>
+
+            <!-- Calendar weeks -->
+            <div class="space-y-1">
+                <div *ngFor="let week of weeks" class="grid grid-cols-7 gap-1">
+                    <div
+                        *ngFor="let day of week"
+                        (click)="onPick(day)"
+                        class="h-12 flex items-center justify-center cursor-pointer rounded relative select-none transition-all duration-150"
+                        [ngClass]="{
+                            'text-gray-400': !day.inMonth,
+                            'bg-green-100 text-green-800 font-semibold': isInRange(day) && day.inMonth,
+                            'ring-2 ring-green-400': startDate && (toISO(day.date) === toISO(startDate)),
+                            'bg-blue-100 text-blue-800 font-semibold': isToday(day) && !isInRange(day),
+                            'opacity-70': !day.inMonth
+                        }"
+                        title="{{ day.iso }}"
+                    >
+                        <span class="z-10">{{ day.label }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule form -->
+            <div class="mt-4 border-t pt-4">
+                <form [formGroup]="scheduleForm" class="mb-4">
+                    <label class="text-sm font-light" for="schedule">Schedule Type</label>
+                    <select 
+                        formControlName="scheduleType" 
+                        id="schedule"
+                        class="bg-white border border-gray-300 text-sm rounded-lg focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-800 cursor-pointer"
+                    >
+                        <option value="" disabled>Please Select</option>
+                        <option value="new">New</option>
+                        <option value="renewal">Renewal</option>
+                    </select>
+                </form>
+                <div class="flex gap-2">
+                    <button (click)="addSchedule()" class="bg-primary text-white px-4 py-2 rounded">Add Schedule</button>
+                    <button (click)="clearScheduleForm()" class="px-4 py-2 rounded border">Clear</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule List -->
+        <div class="bg-white p-6 rounded shadow-md lg:col-span-8 col-span-12 self-start">
+            <h3 class="font-semibold mb-3">Scheduled Applications</h3>
+
+            <!-- Table -->
+            <div class="overflow-scroll my-5">
+                <table class="w-full text-left table-auto min-w-max">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3 border-b border-slate-200 bg-green-200">
+                                <p class="block font-semibold text-sm text-slate-800">
+                                    Schedule Type
+                                </p>
+                            </th>
+                            <th class="px-4 py-3 border-b border-slate-200 bg-green-200">
+                                <p class="block font-semibold text-sm text-slate-800">
+                                    Start Date
+                                </p>
+                            </th>
+                            <th class="px-4 py-3 border-b border-slate-200 bg-green-200">
+                                <p class="block font-semibold text-sm text-slate-800">
+                                    End Date
+                                </p>
+                            </th>
+                            <th class="px-4 py-3 border-b border-slate-200 bg-green-200">
+                                <p class="block font-semibold text-sm text-slate-800">
+                                    Status
+                                </p>
+                            </th>
+                            <th class="px-4 py-3 border-b border-slate-200 bg-green-200">
+                                <p class="block font-semibold text-sm text-slate-800">
+                                    Action
+                                </p>
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr *ngIf="schedules.length === 0" class="text-center">
+                            <td colspan="6" class="p-4 py-4 text-sm text-slate-500">
+                                No schedules added yet.
+                            </td>
+                        </tr>
+                        <tr *ngFor="let s of schedules; let i = index" class="hover:bg-slate-50 border-b border-slate-200">
+                            <td class="px-4 py-2 border-b">
+                                <p class="text-sm text-slate-500">{{ s.schedule_type }}</p>
+                            </td>
+                           <td class="px-4 py-2 border-b">
+                                <p class="text-sm text-slate-500">{{ s.start_date | date:'MMMM d, y' }}</p>
+                            </td>
+                            <td class="px-4 py-2 border-b">
+                                <p class="text-sm text-slate-500">{{ s.end_date | date:'MMMM d, y' }}</p>
+                            </td>
+                            <td class="px-4 py-2 border-b">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" 
+                                        class="sr-only peer"
+                                        [checked]="s.is_active"
+                                        (change)="toggleActive(s, $event)"
+                                    >
+                                    <div
+                                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full transition-all duration-200"
+                                        [ngClass]="{'bg-green-500': s.is_active}"
+                                    ></div>
+                                    <div
+                                        class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200"
+                                        [ngStyle]="{'transform': s.is_active ? 'translateX(100%)' : 'translateX(0)'}"
+                                    ></div>
+                                </label>
+                            </td>
+                            <td class="px-4 py-2 border-b">
+                                <button (click)="removeSchedule(s)" class="bg-red-600 hover:bg-red-800 text-white p-1 rounded-md w-10">
+                                    <i class="fa-solid fa-trash text-white"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex lg:flex-row flex-col gap-4 justify-between lg:items-center">
+                <!-- Current Tab -->
+                <div class="text-sm text-slate-500">
+                    Showing 
+                    <span class="font-semibold">
+                        {{ total > 0 ? start + ' to ' + end : '0' }} 
+                    </span> 
+                    of {{ total > 0 ? total : '0' }} entries
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex">
+                    <!-- Prev Button -->
+                    <button 
+                        (click)="changePage(currentPage - 1)" 
+                        [disabled]="currentPage === 1"
+                        class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded-bl-md rounded-tl-md hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Prev
+                    </button>
+
+                    <!-- Page Numbers -->
+                    <ng-container *ngFor="let page of getVisiblePages()">
+                        <button 
+                            (click)="changePage(page)" 
+                            [class]="page === currentPage 
+                            ? 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-white bg-slate-800 border border-slate-800' 
+                            : 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease'"
+                        >
+                            {{ page }}
+                        </button>
+                    </ng-container>
+
+                    <!-- Next Button -->
+                    <button 
+                        (click)="changePage(currentPage + 1)" 
+                        [disabled]="currentPage === totalPages"
+                        class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded-br-md rounded-tr-md hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

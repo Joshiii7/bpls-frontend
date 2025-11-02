@@ -47,6 +47,38 @@ export class ApiServicesService {
     return this.http.post(`${this.Root_URL}/logout`, {}, { headers: this.getHeaders() });
   }
 
+  getPermitSchedule() {
+    return this.http.get(`${this.Root_URL}/permit-schedules`, { headers: this.getHeaders() });
+  }
+
+  postPermitSchedule(data: any) {
+    return this.http.post(`${this.Root_URL}/permit-schedules`, data, { headers: this.getHeaders() });
+  }
+
+  patchPermitSchedule(data: any, id: any) {
+    return this.http.patch(`${this.Root_URL}/permit-schedules/${id}`, data, { headers: this.getHeaders() });
+  }
+
+  deletePermitSchedule(id: any) {
+    return this.http.delete(`${this.Root_URL}/permit-schedules/${id}`, { headers: this.getHeaders() });
+  }
+
+  getSystemNotification() {
+    return this.http.get(`${this.Root_URL}/system-notifications`, { headers: this.getHeaders() });
+  }
+
+  postSystemNotification(data: any) {
+    return this.http.post(`${this.Root_URL}/system-notifications`, data, { headers: this.getHeaders() });
+  }
+
+  patchSystemNotification(data: any, id: any) {
+    return this.http.patch(`${this.Root_URL}/system-notifications/${id}`, data, { headers: this.getHeaders() });
+  }
+
+  deleteSystemNotification(id: any) {
+    return this.http.delete(`${this.Root_URL}/system-notifications/${id}`, { headers: this.getHeaders() });
+  }
+
   getUserRole() {
     return this.http.get(`${this.Root_URL}/userRole`, { headers: this.getHeaders() });
   }
