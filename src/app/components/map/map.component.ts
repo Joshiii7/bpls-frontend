@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 })
 export class MapComponent {
   @ViewChild('map', { static: true }) mapContainer!: ElementRef;
+  @Output() locationSelected = new EventEmitter<{ lng: number; lat: number }>();
   
   map!: maplibregl.Map;
   marker!: maplibregl.Marker;
@@ -103,6 +104,7 @@ export class MapComponent {
   saveLocation() {
     const pos = this.marker.getLngLat();
     this.savedLocation = { lng: pos.lng, lat: pos.lat };
+    this.locationSelected.emit(this.savedLocation);
     Swal.fire({
       icon: 'success',
       title: 'Location Saved!',

@@ -52,6 +52,15 @@
                             </p>
                         </td>
                     </tr>
+
+                    <tr *ngIf="!isLoading && paginatedApplications.length === 0">
+                        <td colspan="7" class="px-4 py-2 border-b">
+                            <p class="text-sm text-slate-900 font-semibold text-center">
+                                No applications found.
+                            </p>
+                        </td>
+                    </tr>
+                    
                     <tr *ngFor="let application of paginatedApplications; let i = index" class="hover:bg-slate-50 border-b border-slate-200">
                         <td class="px-4 py-2 border-b">
                             <p class="text-sm text-slate-900 font-semibold">{{ application.business.tracking_number }}</p>

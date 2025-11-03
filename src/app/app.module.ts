@@ -50,6 +50,7 @@ import { ScheduleComponent } from './pages/admin/schedule/schedule.component';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
 import { NotificationDropdownComponent } from './components/notification-dropdown/notification-dropdown.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
+import { ViewApplicationComponent } from './pages/user/applications/view-application/view-application.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDteaccknTxLOY2hOXeluL5aH88B7q-ob8",
@@ -96,6 +97,7 @@ const analytics = getAnalytics(app);
     SignaturePadComponent,
     NotificationDropdownComponent,
     NotificationsComponent,
+    ViewApplicationComponent,
   ],
   imports: [
     BrowserModule,

@@ -39,10 +39,6 @@ export class ApiServicesService {
     return this.http.post(`${this.Root_URL}/register`, data);
   }
 
-  updateStatus(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.Root_URL}/updateStatus/${id}`, data, { headers: this.getHeaders() });
-  }
-
   logout() {
     return this.http.post(`${this.Root_URL}/logout`, {}, { headers: this.getHeaders() });
   }
@@ -95,12 +91,12 @@ export class ApiServicesService {
     return this.http.post(`${this.Root_URL}/checkEmail/`, {email}, { headers: this.getHeaders() });
   }
 
-  declineApplication(id: any) {
-    return this.http.post(`${this.Root_URL}/declineApplication/${id}`, {}, { headers: this.getHeaders() });
+  declineApplication(id: any, data: any) {
+    return this.http.patch(`${this.Root_URL}/declineApplication/${id}`, data, { headers: this.getHeaders() });
   }
 
   approveApplication(id: any) {
-    return this.http.post(`${this.Root_URL}/approveApplication/${id}`, {}, { headers: this.getHeaders() });
+    return this.http.patch(`${this.Root_URL}/approveApplication/${id}`, {}, { headers: this.getHeaders() });
   }
 
   getApplications() {

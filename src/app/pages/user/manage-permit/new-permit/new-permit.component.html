@@ -594,7 +594,7 @@
     
                 <!-- Map -->
                 <div class="lg:col-span-7 col-span-12 h-[50dvh]">
-                    <app-map></app-map>
+                    <app-map (locationSelected)="onLocationSelected($event)"></app-map>
                 </div>
 
                 <!-- Map Instruction -->
@@ -834,52 +834,63 @@
     </section>
 </main>
 
-<div *ngIf="confirmation" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50" 
-     (click)="closeModalOutside($event)">
+<div 
+    *ngIf="confirmation" 
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50" 
+    (click)="closeModalOutside($event)"
+>
   
-  <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full relative" (click)="$event.stopPropagation()">
-    
-    <!-- Modal Header -->
-    <h2 class="text-lg font-semibold text-gray-800 mb-4">Terms and Conditions</h2>
-    
-    <!-- Terms and Conditions Content -->
-    <p class="text-gray-700 text-sm mb-4">
-        Are you sure you want to submit your application now?
-    </p>
-    <p class="text-gray-700 text-sm mb-4">
-        I DECLARE UNDER PENALTY OF PERJURY that all information in this application 
-        is true and correct based on my personal knowledge and authentic records 
-        submitted to the Municipality of Bislig. Any false or misleading information 
-        supplied, or production of fake/falsified documents shall be grounds for 
-        appropriate legal action against me and automatically revokes the permit.
-    </p>
-    <p class="text-gray-700 text-sm mb-4">
-        I hereby agree that all personal data (as defined under the Data Privacy 
-        Law of 2012 and its Implementing Rules and Regulations) and account 
-        transaction information or records with the Municipality of Bislig 
-        Government may be processed, profiled, or shared to requesting parties 
-        or for the purpose of any court, legal process, examination, inquiry, and 
-        audit or investigation of any authority.
-    </p>
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full relative" (click)="$event.stopPropagation()">
+        
+        <!-- Modal Header -->
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Terms and Conditions</h2>
+        
+        <!-- Terms and Conditions Content -->
+        <p class="text-gray-700 text-sm mb-4">
+            Are you sure you want to submit your application now?
+        </p>
+        <p class="text-gray-700 text-sm mb-4">
+            I DECLARE UNDER PENALTY OF PERJURY that all information in this application 
+            is true and correct based on my personal knowledge and authentic records 
+            submitted to the Municipality of Bislig. Any false or misleading information 
+            supplied, or production of fake/falsified documents shall be grounds for 
+            appropriate legal action against me and automatically revokes the permit.
+        </p>
+        <p class="text-gray-700 text-sm mb-4">
+            I hereby agree that all personal data (as defined under the Data Privacy 
+            Law of 2012 and its Implementing Rules and Regulations) and account 
+            transaction information or records with the Municipality of Bislig 
+            Government may be processed, profiled, or shared to requesting parties 
+            or for the purpose of any court, legal process, examination, inquiry, and 
+            audit or investigation of any authority.
+        </p>
 
-    <!-- Checkbox to Enable Submit -->
-    <div class="flex items-center gap-2 mb-4">
-      <input type="checkbox" id="agree" [(ngModel)]="isChecked" class="w-4 h-4">
-      <label for="agree" class="text-sm text-gray-700">I agree to the terms and conditions</label>
+        <!-- Checkbox to Enable Submit -->
+        <div class="flex items-center gap-2 mb-4">
+            <input type="checkbox" id="agree" [(ngModel)]="isChecked" class="w-4 h-4">
+            <label for="agree" class="text-sm text-gray-700">I agree to the terms and conditions</label>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end gap-2">
+            <button (click)="closeModal()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
+                Cancel
+            </button>
+            <button (click)="confirmSubmission()" 
+                    [disabled]="!isChecked"
+                    class="px-4 py-2 rounded-md text-white transition-colors"
+                    [ngClass]="isChecked ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'">
+                Confirm & Submit
+            </button>
+        </div>
+
     </div>
+</div>
 
-    <!-- Modal Footer -->
-    <div class="flex justify-end gap-2">
-        <button (click)="closeModal()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
-            Cancel
-        </button>
-        <button (click)="confirmSubmission()" 
-                [disabled]="!isChecked"
-                class="px-4 py-2 rounded-md text-white transition-colors"
-                [ngClass]="isChecked ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'">
-            Confirm & Submit
-        </button>
+<!-- Loading -->
+<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-100">
+    <div class="text-center">
+        <i class="fa-solid fa-spinner fa-spin text-4xl text-white"></i>
+        <p class="mt-4 text-white text-lg">Loading, please wait...</p>
     </div>
-
-  </div>
 </div>

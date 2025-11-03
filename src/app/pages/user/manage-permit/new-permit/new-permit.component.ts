@@ -21,7 +21,7 @@ export class NewPermitComponent {
   signatureImage: string | null = null;
 
   businessTypes: any;
-  isLoading: boolean = true;
+  isLoading: boolean = false;
   confirmation: boolean = false;
   isChecked: boolean = false;
   provinces: any;
@@ -73,8 +73,8 @@ export class NewPermitComponent {
   ];
 
   genders = [
-    { id: 1, gender: 'Male' },
-    { id: 2, gender: 'Female' },
+    { id: 'Male', gender: 'Male' },
+    { id: 'Female', gender: 'Female' },
   ];
 
   businessActivity = [
@@ -142,12 +142,6 @@ export class NewPermitComponent {
   selectedPayment: number = 0;
   selectedApplicationType: number = 0;
 
-  selectedFiles: { [key: string]: File | null } = {
-    file1: null,
-    file2: null,
-    file3: null
-  };
-
   permitForm: FormGroup = this.formBuilder.group({
     businessName: ['', [Validators.required]],
     tradeName: ['', [Validators.required]],
@@ -208,6 +202,11 @@ export class NewPermitComponent {
     private router: Router,
     private viewportScroller: ViewportScroller
   ) {  }
+
+  onLocationSelected(location: { lng: number; lat: number }) {
+    this.selectedLocation = location;
+    console.log('Location received from child:', location);
+  }
 
   ngOnInit():void {
     this.permitOperationForm.get('province')?.disable();
@@ -299,109 +298,160 @@ export class NewPermitComponent {
   confirmSubmission() {
     this.confirmation = false;
     this.isLoading = true;
+
     if (!this.isChecked) {
-      alert('Please check the confirmation box to proceed.');
+      this.isLoading = false;
+      Swal.fire({
+        icon: 'warning',
+        title: 'Confirmation Required',
+        text: 'Please check the confirmation box to proceed.',
+        confirmButtonColor: '#009800',
+        confirmButtonText: 'OK'
+      });
       return;
     }
 
 
     const formData = new FormData();
-    formData.append('businessName', this.permitForm.value.businessName);
-    formData.append('registrationDate', this.permitForm.value.registrationDate);
-    formData.append('tradeName', this.permitForm.value.tradeName);
-    formData.append('dtiNumber', this.permitForm.value.dtiNumber);
-    formData.append('tinNumber', this.permitForm.value.tinNumber);
-    formData.append('businessType', this.permitForm.value.businessType);
-    formData.append('first_name', this.permitForm.value.first_name);
-    formData.append('middle_name', this.permitForm.value.middle_name);
-    formData.append('last_name', this.permitForm.value.last_name);
-    formData.append('number', this.permitForm.value.number);
-    formData.append('email', this.permitForm.value.email);
-    formData.append('suffix', this.permitForm.value.suffix);
-    formData.append('gender', this.permitForm.value.gender);
-    formData.append('isNew', 'New');
-    
-    // register address
-    formData.append('registerProvince', this.permitForm.value.registerProvince);
-    formData.append('registerCities', this.permitForm.value.registerCities);
-    formData.append('registerBaranggays', this.permitForm.value.registerBaranggays);
-    formData.append('registerZipCode', this.permitForm.value.registerZipCode);
-    formData.append('registerStreet', this.permitForm.value.registerStreet);
-    formData.append('registerHouse', this.permitForm.value.registerHouse);
-    formData.append('registerNameBuilding', this.permitForm.value.registerNameBuilding);
-    formData.append('registerLotNo', this.permitForm.value.registerLotNo);
-    formData.append('registerBlockNo', this.permitForm.value.registerBlockNo);
-    formData.append('registerSubdivision', this.permitForm.value.registerSubdivision);
 
-    formData.append('activity', this.permitOperationForm.value.activity);
-    formData.append('employees', this.permitOperationForm.value.employees);
-    formData.append('no_male', this.permitOperationForm.value.no_male);
-    formData.append('no_female', this.permitOperationForm.value.no_female);
-    
-    formData.append('van', this.permitOperationForm.value.van);
-    formData.append('motor', this.permitOperationForm.value.motor);
-    // operational address
-    formData.append('province', '87');
-    formData.append('city', '1624');
-    formData.append('baranggays', this.permitOperationForm.value.baranggays);
-    formData.append('zip_code', this.permitOperationForm.value.zip_code);
-    formData.append('businessArea', this.permitOperationForm.value.businessArea);
-    formData.append('businessFloorArea', this.permitOperationForm.value.businessFloorArea);
-    formData.append('street', this.permitOperationForm.value.street);
-    formData.append('house', this.permitOperationForm.value.house);
-    formData.append('name_building', this.permitOperationForm.value.name_building);
-    formData.append('lot_no', this.permitOperationForm.value.lot_no);
-    formData.append('block_no', this.permitOperationForm.value.block_no);
-    formData.append('street', this.permitOperationForm.value.street);
-    formData.append('subdivision', this.permitOperationForm.value.subdivision);
-    
+    // Helper to append all keys of an object
+    const appendFormData = (obj: any, prefix = '') => {
+      for (const key in obj) {
+        if (obj[key] !== null && obj[key] !== undefined) {
+          formData.append(`${prefix}${key}`, obj[key]);
+        }
+      }
+    };
+
+    // Basic business info
+    appendFormData({
+      businessName: this.permitForm.value.businessName,
+      tradeName: this.permitForm.value.tradeName,
+      registrationDate: this.permitForm.value.registrationDate,
+      dtiNumber: this.permitForm.value.dtiNumber,
+      tinNumber: this.permitForm.value.tinNumber,
+      businessType: this.permitForm.value.businessType,
+      first_name: this.permitForm.value.first_name,
+      middle_name: this.permitForm.value.middle_name,
+      last_name: this.permitForm.value.last_name,
+      suffix: this.permitForm.value.suffix,
+      gender: this.permitForm.value.gender,
+      number: this.permitForm.value.number,
+      email: this.permitForm.value.email,
+    });
+
+    // Registration address
+    appendFormData({
+      registerProvince: this.permitForm.value.registerProvince,
+      registerCities: this.permitForm.value.registerCities,
+      registerBaranggays: this.permitForm.value.registerBaranggays,
+      registerZipCode: this.permitForm.value.registerZipCode,
+      registerStreet: this.permitForm.value.registerStreet,
+      registerHouse: this.permitForm.value.registerHouse,
+      registerNameBuilding: this.permitForm.value.registerNameBuilding,
+      registerLotNo: this.permitForm.value.registerLotNo,
+      registerBlockNo: this.permitForm.value.registerBlockNo,
+      registerSubdivision: this.permitForm.value.registerSubdivision
+    });
+
+    // Business operation info
+    appendFormData({
+      activity: this.permitOperationForm.value.activity,
+      employees: this.permitOperationForm.value.employees,
+      no_male: this.permitOperationForm.value.no_male,
+      no_female: this.permitOperationForm.value.no_female,
+      van: this.permitOperationForm.value.van,
+      motor: this.permitOperationForm.value.motor,
+      province: '87',
+      city: '1624',
+      baranggays: this.permitOperationForm.value.baranggays,
+      zip_code: this.permitOperationForm.value.zip_code,
+      businessArea: this.permitOperationForm.value.businessArea,
+      businessFloorArea: this.permitOperationForm.value.businessFloorArea,
+      house: this.permitOperationForm.value.house,
+      name_building: this.permitOperationForm.value.name_building,
+      lot_no: this.permitOperationForm.value.lot_no,
+      block_no: this.permitOperationForm.value.block_no,
+      street: this.permitOperationForm.value.street,
+      subdivision: this.permitOperationForm.value.subdivision
+    });
+
+    // Latitude & longitude
     if (this.selectedLocation) {
       formData.append('latitude', this.selectedLocation.lat.toString());
       formData.append('longitude', this.selectedLocation.lng.toString());
     } else {
-        console.error("Error: Location is not selected!");
+      console.error("Error: Location is not selected!");
     }
 
+    // Payment type
     if (this.selectedPayment) {
       formData.append('payment_type_id', this.selectedPayment.toString());
     }
 
-    if (this.selectedFiles['file1']) {
-      formData.append('proof_of_registration', this.selectedFiles['file1']);
-    }
-    if (this.selectedFiles['file2']) {
-      formData.append('authority_to_use', this.selectedFiles['file2']);
-    }
-    if (this.selectedFiles['file3']) {
-      formData.append('fire_safety_certificate', this.selectedFiles['file3']);
+    // Application type
+    if (this.selectedApplicationType) {
+      formData.append(
+        'isNew',
+        this.selectedApplicationType === 1 ? 'New' : 'Renewal'
+      );
     }
 
+    // Attach documents
+    if (this.documents) {
+      for (const key in this.documents) {
+        const doc = this.documents[key];
+        if (doc.file) {
+          formData.append(key, doc.file);
+          formData.append(`${key}_title`, doc.title);
+        }
+      }
+    }
+
+    // Signature
+    if (this.signatureImage) {
+      const blob = this.dataURLtoBlob(this.signatureImage);
+      const randomName = `signature_${Date.now()}_${Math.floor(Math.random() * 10000)}.png`;
+      formData.append('signatureImage', blob, randomName);
+    }
+
+    // Submit to API
     this.apiService.businessStore(formData).subscribe({
       next: (response: any) => {
-        if (response) {
-          Swal.fire({
-            icon: "success",
-            title: "Success",
-            text: "Business successfully created! Your application has been submitted for permit processing",
-            // confirmButtonColor: '#d33',
-            // confirmButtonText: 'Understood!'
-          }).then(() => {
-            this.router.navigate(['/application']).then(() => {
-              window.location.reload();
-            });
+        this.isLoading = false;
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Business successfully created! Your application has been submitted for permit processing'
+        }).then(() => {
+          this.router.navigate(['/application']).then(() => {
+            window.location.reload();
           });
-        }
+        });
       },
       error: (error: any) => {
+        this.isLoading = false;
         Swal.fire({
-          icon: "error",
-          title: "Opps...",
-          text: "Error saving permit form",
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Error saving permit form',
           confirmButtonColor: '#d33',
           confirmButtonText: 'Understood!'
-        })
+        });
       }
     });
+  }
+
+  private dataURLtoBlob(dataURL: string): Blob {
+    const arr = dataURL.split(',');
+    const mime = arr[0].match(/:(.*?);/)![1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
   }
 
   confirmDuplicate(e: Event) {
@@ -773,26 +823,6 @@ export class NewPermitComponent {
       title: doc.title,
       file: doc.file,
     }));
-  }
-
-  validateAndPreviewFile(file: File, field: string): void {
-    const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-    if (!validTypes.includes(file.type)) {
-        alert('Invalid file type. Only JPEG, PNG, or JPG are allowed.');
-        return;
-    }
-
-    this.selectedFiles[field] = file;
-    const reader = new FileReader();
-    const previewImage = document.getElementById(`${field}-preview-image`) as HTMLImageElement;
-
-    reader.onload = (e: ProgressEvent<FileReader>) => {
-        if (previewImage) {
-            previewImage.src = e.target?.result as string;
-            previewImage.classList.remove('hidden');
-        }
-    };
-    reader.readAsDataURL(file);
   }
 
   onSignatureSaved(base64Image: string) {

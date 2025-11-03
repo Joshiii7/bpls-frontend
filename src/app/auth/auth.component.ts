@@ -134,16 +134,19 @@ export class AuthComponent {
           localStorage.setItem('u', userId);
           localStorage.setItem('sn', role === 2 ? '1' : role === 1 ? '5' : '');
 
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Successfully Signed in' });
-
-          setTimeout(() => {
-            const redirectRoute = role === 2 ? '/dashboard' : role === 1 ? 'admin-dashboard' : '';
+          Swal.fire({
+            icon: "success",
+            title: "Login Successful",
+            text: "You have successfully signed in.",
+          }).then(() => {
+            this.isLoading = false;
+            const redirectRoute = role === 2 ? '/application' : role === 1 ? 'admin-dashboard' : '';
             if (redirectRoute) {
               this.router.navigate([redirectRoute]).then(() => {
                 window.location.reload();
               });
             }
-          }, 1000);
+          });
         }
       },
       error: (err: any) => {

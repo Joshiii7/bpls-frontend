@@ -18,6 +18,7 @@ import { PermitDeclinedParentComponent } from './pages/admin/permit-declined/per
 import { PermitDeclinedApplicationsComponent } from './pages/admin/permit-declined/permit-declined-applications/permit-declined-applications.component';
 import { MyApplicationParentComponent } from './pages/user/applications/my-application-parent/my-application-parent.component';
 import { ScheduleComponent } from './pages/admin/schedule/schedule.component';
+import { ViewApplicationComponent } from './pages/user/applications/view-application/view-application.component';
 
 const routes: Routes = [
   {
@@ -51,7 +52,7 @@ const routes: Routes = [
       },
       {
         path: 'application-details/:uuid',
-        component: PermitViewApplicationDetailsComponent,
+        component: ViewApplicationComponent,
         data: { breadcrumb: 'Application Details' },
       }
     ],

@@ -514,25 +514,6 @@ export class AdminDashboardComponent {
     });
   }
 
-  declineButton(num: any) {
-    this.apiService.declineApplication(num).subscribe({
-      next: (response: any) => {
-        console.log(response);
-
-        if (response) {
-          this.messageService.add({ severity: 'success', summary: "Success", detail: 'Application Declined Successfully' });
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        }
-
-      },
-      error: (error: any) => {
-        console.log('error declining application:', error);
-      }
-    });
-  }
-
   viewButton(uuid: any) {
     // vad = view application details
     localStorage.setItem('vad', `${uuid}`);

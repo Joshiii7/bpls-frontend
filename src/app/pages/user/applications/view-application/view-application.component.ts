@@ -1,19 +1,14 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { ApiServicesService } from 'src/app/api-services.service';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { timeout } from 'rxjs';
-import Swal from 'sweetalert2';
-
+import { ApiServicesService } from 'src/app/api-services.service';
 
 @Component({
-  selector: 'app-permit-view-application-details',
-  templateUrl: './permit-view-application-details.component.html',
-  styleUrls: ['./permit-view-application-details.component.css'],
-  providers: [MessageService]
+  selector: 'app-view-application',
+  templateUrl: './view-application.component.html',
+  styleUrls: ['./view-application.component.css']
 })
-export class PermitViewApplicationDetailsComponent {
-  isApplicationsRoute = false;
+export class ViewApplicationComponent {
   isLoading: boolean = true;
   application_id = localStorage.getItem('vad');
   uuid!: string
@@ -67,10 +62,8 @@ export class PermitViewApplicationDetailsComponent {
   businessActivity: number = 0;
   isNew: number = 0;
 
-  businessID: any;
-
   visible: boolean = false;
-  declineReason: string = '';
+  businessID: any;
   
   lat: any;
   lng: any;
@@ -81,9 +74,7 @@ export class PermitViewApplicationDetailsComponent {
     private apiService: ApiServicesService, 
     private route: ActivatedRoute, 
     public router: Router,
-  ) {
-    this.isApplicationsRoute = this.router.url.includes('/applications');
-  }
+  ) {  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -176,93 +167,4 @@ export class PermitViewApplicationDetailsComponent {
       }
     });
   }
-
-  approve() {
-    Swal.fire({
-      title: 'Approve Application?',
-      text: 'Are you sure you want to approve this business permit?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#009800',
-      cancelButtonColor: '#6b7280',
-      confirmButtonText: 'Yes, Approve',
-      cancelButtonText: 'Cancel'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.apiService.approveApplication(this.businessID).subscribe({
-          next: (response: any) => {
-            console.log(response);
-            if (response) {
-              Swal.fire({
-                icon: 'success',
-                title: 'Application Approved!',
-                text: 'The business permit has been successfully approved.',
-                confirmButtonColor: '#009800',
-                timer: 2000,
-                showConfirmButton: false
-              }).then(() => {
-                this.router.navigate(['/applications']).then(() => {
-                  window.location.reload();
-                });
-              });
-            }
-          },
-          error: (error: any) => {
-            console.error('Error approving the status:', error);
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: 'Something went wrong while approving.',
-              confirmButtonColor: '#009800'
-            });
-          }
-        });
-      }
-    });
-  }
-
-  decline() {
-    this.visible = true;
-  }
-
-  confirmDecline() {
-    if (!this.declineReason.trim()) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Missing Reason',
-        text: 'Please provide a reason for declining.',
-        confirmButtonColor: '#009800'
-      });
-      return;
-    }
-
-    this.apiService.declineApplication(this.businessID, { 
-      status: 'Declined', 
-      reason: this.declineReason 
-    }).subscribe({
-      next: (response: any) => {
-        this.visible = false;
-        Swal.fire({
-          icon: 'success',
-          title: 'Application Declined',
-          text: 'The permit has been successfully declined.',
-          confirmButtonColor: '#009800'
-        }).then(() => {
-          this.router.navigate(['/applications']).then(() => {
-            window.location.reload();
-          });
-        });
-      },
-      error: (error: any) => {
-        console.error('Error declining application:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Something went wrong while declining the application.',
-          confirmButtonColor: '#009800'
-        });
-      }
-    });
-  }
-
 }
