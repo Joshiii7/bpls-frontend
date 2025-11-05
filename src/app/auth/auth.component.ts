@@ -199,19 +199,24 @@ export class AuthComponent {
             localStorage.setItem('u', userId);
             localStorage.setItem('sn', role === 2 ? '1' : role === 1 ? '5' : '');
 
-            Swal.fire({
-              icon: "success",
-              title: "Login Successful",
-              text: "You have successfully signed in.",
-            }).then(() => {
-              this.isLoading = false;
-              const redirectRoute = role === 2 ? '/application' : role === 1 ? 'admin-dashboard' : '';
-              if (redirectRoute) {
-                this.router.navigate([redirectRoute]).then(() => {
-                  window.location.reload();
-                });
-              }
-            });
+            // Swal.fire({
+            //   icon: "success",
+            //   title: "Login Successful",
+            //   text: "You have successfully signed in.",
+            // }).then(() => {
+            //   this.isLoading = false;
+            //   const redirectRoute = role === 2 ? '/application' : role === 1 ? 'admin-dashboard' : '';
+            //   if (redirectRoute) {
+            //     this.router.navigate([redirectRoute]).then(() => {
+            //       window.location.reload();
+            //     });
+            //   }
+            // });
+
+            const redirectRoute = role === 2 ? '/application' : role === 1 ? 'admin-dashboard' : '';
+            if (redirectRoute) {
+              this.router.navigate([redirectRoute]);
+            }
           } else {
             this.isLoading = false;
             Swal.fire({
@@ -237,7 +242,6 @@ export class AuthComponent {
       });
     }
   }
-
   
   registerSubmit() {
     if (this.registerForm.invalid) {

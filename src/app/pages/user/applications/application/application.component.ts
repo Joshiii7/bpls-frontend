@@ -36,7 +36,7 @@ export class ApplicationComponent {
         if (response) {
           this.isLoading = false;
         }
-        this.applications = response.permit;
+        this.applications = response.permits;
         this.filteredApplications = [...this.applications];
         this.updatePagination();
       },

@@ -144,7 +144,6 @@ export class NewPermitComponent {
 
   permitForm: FormGroup = this.formBuilder.group({
     businessName: ['', [Validators.required]],
-    tradeName: ['', [Validators.required]],
     dtiNumber: ['', [Validators.required]],
     registrationDate: ['', [Validators.required]],
     tinNumber: ['', [Validators.required, Validators.pattern(/^(\d{3}-?\d{3}-?\d{3}(-?\d{3})?)$/)]],
@@ -161,13 +160,14 @@ export class NewPermitComponent {
     registerCities: ['', [Validators.required]],
     registerBaranggays: ['', [Validators.required]],
     registerZipCode: ['', [Validators.required]],
-
+    
     registerStreet: ['', [Validators.required]],
     registerHouse: [''],
     registerNameBuilding: [''],
     registerLotNo: [''],
     registerBlockNo: [''],
     registerSubdivision: [''],
+    tradeName: [''],
   });
 
   permitOperationForm: FormGroup = this.formBuilder.group({
@@ -221,10 +221,58 @@ export class NewPermitComponent {
   }
 
   nextTab() {
+    // Check if form is valid before moving to the next tab
+    if (this.permitForm.invalid) {
+      // Mark all controls as touched so validation messages show up
+      this.permitForm.markAllAsTouched();
+
+      // Find the invalid fields (optional, but helps users)
+      const invalidFields = Object.keys(this.permitForm.controls)
+        .filter(key => this.permitForm.get(key)?.invalid)
+        .map(key => this.formatFieldName(key));
+
+      // Show a SweetAlert
+      Swal.fire({
+        icon: 'warning',
+        title: 'Incomplete Form',
+        html: `
+          <p style="margin-bottom: 10px;">Please fill in all required fields before continuing.</p>
+          ${
+            invalidFields.length
+              ? `<ul style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                    gap: 6px 16px;
+                    list-style-type: disc;
+                    text-align: left;
+                    padding-left: 20px;
+                    margin-top: 10px;
+                  ">
+                    ${invalidFields.map(field => `<li>${field}</li>`).join('')}
+                </ul>`
+              : ''
+          }
+        `,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Understood',
+        width: 700,
+      });
+
+      return;
+    }
+
+    // Proceed if valid
     if (this.currentTab < this.totalTabs) {
       this.currentTab++;
       setTimeout(() => this.viewportScroller.scrollToPosition([0, 0]), 0);
     }
+  }
+
+  private formatFieldName(key: string): string {
+    return key
+      .replace(/([A-Z])/g, ' $1') // Add space before uppercase letters
+      .replace(/_/g, ' ')         // Replace underscores
+      .replace(/\b\w/g, c => c.toUpperCase()); // Capitalize first letters
   }
 
   prevTab() {
@@ -527,16 +575,7 @@ export class NewPermitComponent {
   }
 
   tabIndex(number: any) {
-    this.currentTab = number;
-    // if (this.permitForm.invalid && number === 2) {
-    //   this.messageService.add({ 
-    //     severity: 'error', 
-    //     summary: 'Form Submission Error', 
-    //     detail: 'Please ensure that all required fields are filled out correctly before proceeding. Missing or invalid information needs to be completed or corrected.' 
-    //   });
-    // } else {
-    //   this.currentTab = number;
-    // }
+    // this.currentTab = number;
   }
 
   // registerAddress

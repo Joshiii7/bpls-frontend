@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { finalize } from 'rxjs';
 import { ApiServicesService } from 'src/app/api-services.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-view-application',
@@ -85,7 +87,11 @@ export class ViewApplicationComponent {
   }
 
   getApplicationDetail() {
-    this.apiService.applicationDetail(this.uuid).subscribe({
+    this.apiService.applicationDetail(this.uuid)
+    .pipe(
+      finalize(() => this.isLoading = false)
+    )
+    .subscribe({
       next: (response: any) => {
         if (response.permit) {
           this.businessID = response.permit.businessID;
@@ -157,13 +163,16 @@ export class ViewApplicationComponent {
             });
           }
         }
-
       },
       error: (error: any) => {
         console.log('error fetching application detail:', error);
-      },
-      complete: () => {
-        this.isLoading = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to fetch application detail.',
+          confirmButtonText: 'Understood',
+          confirmButtonColor: '#d33',
+        });
       }
     });
   }

@@ -1,7 +1,7 @@
-<main class="py-7 grid grid-cols-12 gap-3">
+<main class="grid grid-cols-12 gap-3">
 
     <!-- Payment Methods -->
-    <div class="col-span-12 lg:col-span-3 lg:sticky top-[12.2rem] self-start grid grid-cols-12 gap-3">
+    <div class="col-span-12 lg:col-span-3 lg:sticky top-[12rem] self-start grid grid-cols-12 gap-3">
 
         <div class="col-span-6 lg:col-span-12 flex flex-col justify-between bg-white rounded-lg border p-7 w-full h-auto">
             <h2 class="font-bold text-lg mb-4">Type of Application <span class="font-normal text-red-600">*</span></h2>
@@ -44,17 +44,28 @@
         </div>
 
         <div class="col-span-6 lg:col-span-12 space-y-2">
-            <div class="bg-red-50 border-l-4 border-red-400 p-4 text-sm text-gray-800">
+            <!-- Required Fields Note -->
+            <div class="bg-red-50 border-l-4 border-red-600 p-4 text-sm text-gray-800">
                 <strong>Note:</strong> 
                 All fields marked with <span class="text-red-600">*</span> are required.
             </div>
-            <div class="bg-red-50 border-l-4 border-red-400 p-4 text-sm text-gray-800">
-                <strong>Reminders for Renewal:</strong> 
-                If your business already exists in the system, simply select it from your dashboard and click the Renew Permit button. This ensures your existing information is reused and updated without needing to register again.
+
+            <!-- Renewal Reminder -->
+            <div class="bg-red-50 border-l-4 border-red-600 p-4 text-sm text-gray-800">
+                <strong>For Renewal Applications:</strong> 
+                If your business is already registered in the system, go to your dashboard, select your business, and click 
+                <strong>Renew Permit</strong>. This will automatically reuse your existing business details.
+            </div>
+
+            <!-- Profile Reminder -->
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-sm text-gray-800">
+                <strong>Reminder:</strong> 
+                Your registered name and contact details will appear in the <strong>Owner Information</strong> section.
+                To make changes, please update your profile before submitting your application.
             </div>
         </div>
-    </div>
 
+    </div>
     
     <!-- main section -->
     <section class="col-span-12 lg:col-span-9">
@@ -187,8 +198,16 @@
                             </div>
                         </div>
                         <div>
-                            <label class="text-sm font-light" for="businessType">Type of Organization <span class="text-red-600">*</span></label>
-                            <select id="businessType" formControlName="businessType" class="bg-white border border-gray-300 text-sm rounded-lg focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-800 cursor-pointer">
+                            <label class="text-sm font-light" [class.text-red-600]="permitForm.get('businessType')?.invalid && (permitForm.get('businessType')?.touched || permitForm.get('businessType')?.dirty)" for="businessType">Type of Organization <span class="text-red-600">*</span></label>
+                            <select 
+                                id="businessType" 
+                                formControlName="businessType" 
+                                class="bg-white border border-gray-300 text-sm rounded-lg focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-800 cursor-pointer"
+                                [ngClass]="{
+                                    'border-red-500 text-red-600': permitForm.get('businessType')?.invalid &&
+                                    (permitForm.get('businessType')?.touched || permitForm.get('businessType')?.dirty)
+                                }"
+                            >
                                 <option value="" disabled selected>Please Select</option>
                                 <option *ngFor="let businessType of businessTypes" [value]="businessType.id">{{ businessType.business_name }}</option>
                             </select>
@@ -260,36 +279,34 @@
                             <input type="text" id="suffix" formControlName="suffix" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="Jr.">
                         </div>
                         <div>
-                            <label [class.text-red-600]="permitForm.get('number')?.invalid && (permitForm.get('number')?.touched || permitForm.get('number')?.dirty) || existingPhoneNumber" class="text-sm font-light" for="number">Contact Number <span class="text-red-600">*</span></label>
+                            <label [class.text-red-600]="permitForm.get('number')?.invalid && (permitForm.get('number')?.touched || permitForm.get('number')?.dirty)" class="text-sm font-light" for="number">Contact Number <span class="text-red-600">*</span></label>
                             <input 
                                 (change)="confirmDuplicate($event)" 
                                 type="text" 
                                 id="number" 
                                 formControlName="number" 
                                 class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                [class.border-red-500]="permitForm.get('number')?.invalid && (permitForm.get('number')?.touched || permitForm.get('number')?.dirty) || existingPhoneNumber"
+                                [class.border-red-500]="permitForm.get('number')?.invalid && (permitForm.get('number')?.touched || permitForm.get('number')?.dirty)"
                                 placeholder="09382943739" 
                                 required="">
                             <div *ngIf="permitForm.get('number')?.invalid && (permitForm.get('number')?.touched || permitForm.get('number')?.dirty)">
                                 <small class="text-red-500" *ngIf="permitForm.get('number')?.errors?.['required']">Contact Number is required.</small>
                             </div>
-                            <small class="text-red-500" *ngIf="existingPhoneNumber">This number is already in use. Please provide a different number.</small>
                         </div>
                         <div>
-                            <label [class.text-red-600]="permitForm.get('email')?.invalid && (permitForm.get('email')?.touched || permitForm.get('email')?.dirty) || existingEmail" class="text-sm font-light" for="email">Email Address <span class="text-red-600">*</span></label>
+                            <label [class.text-red-600]="permitForm.get('email')?.invalid && (permitForm.get('email')?.touched || permitForm.get('email')?.dirty)" class="text-sm font-light" for="email">Email Address <span class="text-red-600">*</span></label>
                             <input 
                                 (change)="confirmDuplicateEmail($event)" 
                                 type="email" id="email" 
                                 formControlName="email" 
                                 class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                [class.border-red-500]="permitForm.get('email')?.invalid && (permitForm.get('email')?.touched || permitForm.get('email')?.dirty) || existingEmail"
+                                [class.border-red-500]="permitForm.get('email')?.invalid && (permitForm.get('email')?.touched || permitForm.get('email')?.dirty)"
                                 placeholder="sample@gmail.com" 
                                 required="">
                             <div *ngIf="permitForm.get('email')?.invalid && (permitForm.get('email')?.touched || permitForm.get('email')?.dirty)">
                                 <small class="text-red-500" *ngIf="permitForm.get('email')?.errors?.['required']">Email is required.</small>
                                 <small class="text-red-500" *ngIf="permitForm.get('email')?.errors?.['email']">Invalid email format.</small>
                             </div>
-                            <small class="text-red-500" *ngIf="existingEmail">This email is already in use. Please provide a different email.</small>
                         </div>
                     </div>
                 </div>
@@ -805,6 +822,7 @@
             </div>
         </section>
 
+        <!-- Buttons -->
         <section class="relative">
             <div class="flex justify-between items-center">
                 <!-- Previous Button -->
@@ -830,7 +848,6 @@
                 </button>
             </div>
         </section>
-
     </section>
 </main>
 
@@ -888,9 +905,10 @@
 </div>
 
 <!-- Loading -->
-<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-100">
-    <div class="text-center">
-        <i class="fa-solid fa-spinner fa-spin text-4xl text-white"></i>
-        <p class="mt-4 text-white text-lg">Loading, please wait...</p>
-    </div>
+<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center bg-[#e1e6ed] z-[100]">
+    <img
+        src="assets/images/logo/bislig lgu logo.png"
+        alt="App Logo"
+        width="100"
+    />
 </div>

@@ -4,7 +4,7 @@
     <section class="col-span-12 lg:col-span-3 lg:sticky top-[12.2rem] self-start grid grid-cols-12 gap-3">
 
         <div class="col-span-12 space-y-2">
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-sm text-gray-800">
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 text-sm text-gray-800">
                 <strong>Note:</strong> 
                 This page shows the details of your submitted application. All information is final and read-only. 
                 <ul class="mt-1 list-disc list-inside">
@@ -109,10 +109,12 @@
     </section>
     
 </main>
+
 <!-- Loading -->
-<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
-    <div class="text-center">
-        <i class="fa-solid fa-spinner fa-spin text-4xl text-white"></i>
-        <p class="mt-4 text-white text-lg">Loading, please wait...</p>
-    </div>
+<div *ngIf="isLoading" class="fixed inset-0 flex items-center justify-center bg-[#e1e6ed] z-[100]">
+    <img
+        src="assets/images/logo/bislig lgu logo.png"
+        alt="App Logo"
+        width="100"
+    />
 </div>

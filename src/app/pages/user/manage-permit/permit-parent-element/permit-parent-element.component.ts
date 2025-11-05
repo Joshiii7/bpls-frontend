@@ -35,7 +35,12 @@ export class PermitParentElementComponent {
 
   updateBreadcrumbs() {
     const uuidRegex = /^[0-9a-fA-F-]{36}$/;
-    const segments = this.router.url.split('/').filter(seg => seg && !uuidRegex.test(seg));
+    const trackRegex = /^TRK-\d{4}-\d{6}$/;
+
+    const segments = this.router.url
+      .split('/')
+      .filter(seg => seg && !uuidRegex.test(seg) && !trackRegex.test(seg));
+
     
     let url = '';
     this.items = segments.map(segment => {
