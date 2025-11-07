@@ -43,10 +43,6 @@ export class AdminDashboardComponent {
   totalApproved: number = 0;
   totalDeclined: number = 0;
 
-  displayValue: string = '0';
-  displayPending: string = '0';
-  displayApproved: string = '0';
-  displayDeclined: string = '0';
 
   totalBusiness: number = 0;
   pendingPercentage: number = 0;
@@ -72,10 +68,7 @@ export class AdminDashboardComponent {
     this.emitNavigationState.emit(true);
 
     this.loadBusinessTotalPermits();
-    // setInterval(() => {
-    // }, 1000);
     this.loadBusinesses();
-    this.getUser();
   }
 
   navigate(num: number) {
@@ -100,9 +93,6 @@ export class AdminDashboardComponent {
         this.totalPending = response.totalPending;
         this.totalApproved = response.totalApproved;
         this.totalDeclined = response.totalDeclined;
-        this.animateNumberPending();
-        this.animateNumberApproved();
-        this.animateNumberDeclined();
         this.totalBusiness = response.totalBusiness;
 
         this.calculatePendingPercentage();
@@ -137,19 +127,6 @@ export class AdminDashboardComponent {
     } else {
       this.declinedPercentage = 0;
     }
-  }
-
-  getUser() {
-    this.apiService.getUserRole().subscribe({
-      next: (response: any) => {
-        this.totalUser = response.userCount;
-        // this.totalUser = 1234;
-        this.animateNumberUser();
-      },
-      error: (error: any) => {
-        console.log('Error fetching users:', error);
-      }
-    });
   }
 
   loadBusinesses(): void {
@@ -214,24 +191,6 @@ export class AdminDashboardComponent {
         console.log('Error fetching paginated page:', error);
       }
     });
-  }
-
-  animateNumberUser() {
-    const duration = 20;
-    const step = (this.totalUser - this.startValue) / duration;
-    let currentValue = this.startValue;
-
-    const interval = setInterval(() => {
-      currentValue += step;
-
-      if (currentValue >= this.totalUser) {
-        clearInterval(interval);
-        currentValue = this.totalUser;
-      }
-
-      const value = Math.floor(currentValue);
-      this.displayValue = value.toLocaleString();
-    }, .2);
   }
 
   baranggayPerformanceChart() {
@@ -432,60 +391,6 @@ export class AdminDashboardComponent {
         console.log('Error fetching searched business:', error);
       }
     });
-  }
-
-  animateNumberApproved() {
-    const duration = 20;
-    const step = (this.totalApproved - this.startValue) / duration;
-    let currentValue = this.startValue;
-
-    const interval = setInterval(() => {
-      currentValue += step;
-
-      if (currentValue >= this.totalApproved) {
-        clearInterval(interval);
-        currentValue = this.totalApproved;
-      }
-
-      const value = Math.floor(currentValue);
-      this.displayApproved = value.toLocaleString();
-    }, .2);
-  }
-
-  animateNumberDeclined() {
-    const duration = 20;
-    const step = (this.totalDeclined - this.startValue) / duration;
-    let currentValue = this.startValue;
-
-    const interval = setInterval(() => {
-      currentValue += step;
-
-      if (currentValue >= this.totalDeclined) {
-        clearInterval(interval);
-        currentValue = this.totalDeclined;
-      }
-
-      const value = Math.floor(currentValue);
-      this.displayDeclined = value.toLocaleString();
-    }, .2);
-  }
-
-  animateNumberPending() {
-    const duration = 20;
-    const step = (this.totalPending - this.startValue) / duration;
-    let currentValue = this.startValue;
-
-    const interval = setInterval(() => {
-      currentValue += step;
-
-      if (currentValue >= this.totalPending) {
-        clearInterval(interval);
-        currentValue = this.totalPending;
-      }
-
-      const value = Math.floor(currentValue);
-      this.displayPending = value.toLocaleString();
-    }, .2);
   }
 
   changePage(page: number): void {

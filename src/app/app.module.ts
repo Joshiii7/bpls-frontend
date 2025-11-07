@@ -51,6 +51,17 @@ import { SignaturePadComponent } from './components/signature-pad/signature-pad.
 import { NotificationDropdownComponent } from './components/notification-dropdown/notification-dropdown.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
 import { ViewApplicationComponent } from './pages/user/applications/view-application/view-application.component';
+import { PermitReviewComponent } from './modules/admin/pages/permit-review/permit-review.component';
+import { PermitApprovedComponent } from './modules/admin/pages/permit-approved/permit-approved.component';
+import { PermitDeclinedComponent } from './modules/admin/pages/permit-declined/permit-declined.component';
+import { PermitRevisionComponent } from './modules/admin/pages/permit-revision/permit-revision.component';
+import { AdminParentComponent } from './modules/admin/components/admin-parent/admin-parent.component';
+import { AdminHeaderComponent } from './modules/admin/components/admin-header/admin-header.component';
+import { AdminSidebarComponent } from './modules/admin/components/admin-sidebar/admin-sidebar.component';
+import { ApplicantDashboardComponent } from './modules/applicant/pages/applicant-dashboard/applicant-dashboard.component';
+import { ApplyPermitComponent } from './modules/applicant/pages/apply-permit/apply-permit.component';
+import { ApplicantApplicationDetailsComponent } from './modules/applicant/pages/applicant-application-details/applicant-application-details.component';
+import { LoaderComponent } from './shared/components/loader/loader.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDteaccknTxLOY2hOXeluL5aH88B7q-ob8",
@@ -98,6 +109,17 @@ const analytics = getAnalytics(app);
     NotificationDropdownComponent,
     NotificationsComponent,
     ViewApplicationComponent,
+    PermitReviewComponent,
+    PermitApprovedComponent,
+    PermitDeclinedComponent,
+    PermitRevisionComponent,
+    AdminParentComponent,
+    AdminHeaderComponent,
+    AdminSidebarComponent,
+    ApplicantDashboardComponent,
+    ApplyPermitComponent,
+    ApplicantApplicationDetailsComponent,
+    LoaderComponent,
   ],
   imports: [
     BrowserModule,

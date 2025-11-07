@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectorRef, Component, HostListener, Input } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { AuthService as Auth0Service } from '@auth0/auth0-angular';
 import { SidebarService } from 'src/app/sidebar.service';
 
@@ -9,27 +9,56 @@ import { SidebarService } from 'src/app/sidebar.service';
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent {
-  @Input('isSideBarOpen') isSidebarOpen: boolean = true;
-  // sideMenu = localStorage.getItem('sn');
-  // sideMenuNumber: number = 1;
+  // @Input('isSideBarOpen') isSidebarOpen: boolean = true;
+  isSidebarOpen: boolean = true;
+  isMdOrBelow = false;
   sideMenu: any;
   default: any;
-  isHovered: boolean = false;
-  // isSidebarOpen: boolean = true;
-
-  // default is user role
   roleID: any;
-  constructor(
-    private router: Router, 
-    private auth: Auth0Service,
-    private sidebarService: SidebarService
-  ) {  }
+  isDropdownOpen: boolean = false;
+  isHovered: boolean = false;
 
-  ngOnInit(): void {
+  dropdownHeight: number = 0;
+
+  currentRoute: string = '';
+
+  constructor(
+    private router: Router,
+    private auth: Auth0Service,
+    private sidebarService: SidebarService,
+    private cdRef: ChangeDetectorRef
+  ) {
+    this.router.events.subscribe(() => {
+      this.currentRoute = this.router.url;
+    });
+  }
+
+  ngOnInit() {
     this.sidebarService.sidebarState$.subscribe((state) => {
       this.isSidebarOpen = state;
     });
 
+    const storedDropdownState = localStorage.getItem('ddOpen');
+    this.isDropdownOpen = storedDropdownState === 'true';
+
+    this.isMdOrBelow = window.innerWidth < 1024;
+
+    this.defaultSidebar();
+
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.setSideMenuFromRoute(event.url);
+      }
+    });
+
+    // Set sideMenu based on the stored value
+    const storedMenu = localStorage.getItem('sn');
+    if (storedMenu) {
+      this.sideMenu = Number(storedMenu);
+    }
+  }
+
+  defaultSidebar() {
     const role = localStorage.getItem('r');
     const sn = localStorage.getItem('sn');
     if (role == '1') {
@@ -43,13 +72,28 @@ export class SidebarComponent {
     this.getRoleFunction();
   }
 
-  onHover(hoverState: boolean): void {
-    this.isHovered = hoverState;
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    // console.log(event.target.innerWidth);
+    this.isMdOrBelow = event.target.innerWidth < 1024;
   }
 
-  close() {
+  onHover(state: boolean) {
+    this.isHovered = state;
+  }
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+    localStorage.setItem('ddOpen', this.isDropdownOpen.toString());
+  }
+
+  toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
-    // console.log(this.isSidebarOpen);
+    this.sidebarService.toggleSidebar();
+  }
+
+  onSidebarClick(event: Event) {
+    event.stopPropagation();
   }
 
   getRoleFunction() {
@@ -59,23 +103,43 @@ export class SidebarComponent {
   sidebarMenu(num: number) {
     localStorage.setItem('sn', `${num}`);
     this.sideMenu = num;
+    this.cdRef.detectChanges();
     this.navigateToMenu(this.sideMenu);
   }
 
   navigateToMenu(num: number) {
-    if (num === 1) {
-      this.router.navigate(['dashboard']);
-    } else if (num === 2) {
-      this.router.navigate(['my-application']);
-    } else if (num === 4) {
-      this.logout();
-    } else if (num === 5) {
-      this.router.navigate(['admin-dashboard']);
-    } else if (num === 6) {
-      this.router.navigate(['applications'])
-    } else if (num === 9) {
-      this.logout();
+    const routes: Record<number, string> = {
+      1: 'admin-dashboard',
+      2: 'applications',
+      3: 'approved-applications',
+      4: 'declined-applications',
+      5: 'permit-schedule',
+      6: 'logout',
+    };
+  
+    if (routes[num]) {
+      if (num === 6) {
+        this.logout();
+      } else {
+        this.router.navigate([routes[num]]);
+      }
     }
+  }
+  
+  setSideMenuFromRoute(url: string) {
+    if (url.includes('/dashboard')) {
+      this.sideMenu = 1;
+    } else if (url.includes('/my-application')) {
+      this.sideMenu = 2;
+    } else if (url.includes('/admin-dashboard')) {
+      this.sideMenu = 5;
+    } else if (url.includes('/applications')) {
+      this.sideMenu = 6;
+    }
+
+    localStorage.setItem('sn', this.sideMenu.toString());
+
+    this.cdRef.detectChanges();
   }
 
   logout() {

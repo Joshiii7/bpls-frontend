@@ -1,16 +1,14 @@
-import { ChangeDetectionStrategy, Component, HostListener, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService as Auth0Service } from '@auth0/auth0-angular';
-import { ChangeDetectorRef } from '@angular/core';
 import { SidebarService } from 'src/app/sidebar.service';
 
 @Component({
-  selector: 'app-sample-sidebar',
-  templateUrl: './sample-sidebar.component.html',
-  styleUrls: ['./sample-sidebar.component.css'],
-  changeDetection: ChangeDetectionStrategy.Default
+  selector: 'app-admin-sidebar',
+  templateUrl: './admin-sidebar.component.html',
+  styleUrls: ['./admin-sidebar.component.css']
 })
-export class SampleSidebarComponent {
+export class AdminSidebarComponent {
   // @Input('isSideBarOpen') isSidebarOpen: boolean = true;
   isSidebarOpen: boolean = true;
   isMdOrBelow = false;

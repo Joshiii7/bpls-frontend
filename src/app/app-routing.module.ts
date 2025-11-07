@@ -1,24 +1,19 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { DashboardComponent } from './pages/user/dashboard/dashboard.component';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
-import { ApplicationComponent } from './pages/user/applications/application/application.component';
 import { AuthGuard } from './guards/auth.guard';
 import { AuthComponent } from './auth/auth.component';
 import { PermitOverviewApplicationsComponent } from './pages/admin/permit-approvals/permit-overview-applications/permit-overview-applications.component';
 import { PermitViewApplicationDetailsComponent } from './pages/admin/permit-approvals/permit-view-application-details/permit-view-application-details.component';
-import { ApplicationParentElementComponent } from './pages/admin/permit-approvals/application-parent-element/application-parent-element.component';
 import { AccessDeniedPageComponent } from './pages/access-denied-page/access-denied-page.component';
 import { PermitParentElementComponent } from './pages/user/manage-permit/permit-parent-element/permit-parent-element.component';
 import { NewPermitComponent } from './pages/user/manage-permit/new-permit/new-permit.component';
-import { PermitApprovedParentComponent } from './pages/admin/permit-approved/permit-approved-parent/permit-approved-parent.component';
 import { PermitApprovedApplicationComponent } from './pages/admin/permit-approved/permit-approved-application/permit-approved-application.component';
-import { PermitDeclinedParentComponent } from './pages/admin/permit-declined/permit-declined-parent/permit-declined-parent.component';
 import { PermitDeclinedApplicationsComponent } from './pages/admin/permit-declined/permit-declined-applications/permit-declined-applications.component';
-import { MyApplicationParentComponent } from './pages/user/applications/my-application-parent/my-application-parent.component';
 import { ScheduleComponent } from './pages/admin/schedule/schedule.component';
 import { ViewApplicationComponent } from './pages/user/applications/view-application/view-application.component';
+import { AdminParentComponent } from './modules/admin/components/admin-parent/admin-parent.component';
 
 const routes: Routes = [
   {
@@ -57,34 +52,26 @@ const routes: Routes = [
       }
     ],
   },
+
+  // Admin Routings
   {
     path: 'admin-dashboard',
-    component: AdminDashboardComponent,
+    component: AdminParentComponent,
     canActivate: [AuthGuard],
     data: {
       allowedRoles: ['admin'],
       breadcrumb: 'Admin Dashboard' 
     },
-  },
-  {
-    path: 'permit-schedule',
-    component: ApplicationParentElementComponent,
-    canActivate: [AuthGuard],
-    data: {
-      allowedRoles: ['admin'],
-      breadcrumb: 'Permit Schedule' 
-    },
     children: [
       {
         path: '',
-        component: ScheduleComponent,
-        canActivate: [AuthGuard],
+        component: AdminDashboardComponent,
       }
     ]
   },
   {
-    path: 'applications',
-    component: ApplicationParentElementComponent,
+    path: 'under-review-applications',
+    component: AdminParentComponent,
     canActivate: [AuthGuard],
     data: { allowedRoles: ['admin'] },
     children: [
@@ -102,40 +89,53 @@ const routes: Routes = [
   },
   {
     path: 'approved-applications',
-    component: PermitApprovedParentComponent,
+    component: AdminParentComponent,
     canActivate: [AuthGuard],
     data: { allowedRoles: ['admin'] },
     children: [
       {
         path: '',
         component: PermitApprovedApplicationComponent,
-        data: { breadcrumb: 'Approved Applications' },
       },
       {
         path: 'application-details/:uuid',
         component: PermitViewApplicationDetailsComponent,
-        data: { breadcrumb: 'Application Details' },
       },
     ],
   },
   {
     path: 'declined-applications',
-    component: PermitDeclinedParentComponent,
+    component: AdminParentComponent,
     canActivate: [AuthGuard],
     data: { allowedRoles: ['admin'] },
     children: [
       {
         path: '',
         component: PermitDeclinedApplicationsComponent,
-        data: { breadcrumb: 'Declined Applications' },
       },
       {
         path: 'application-details/:uuid',
         component: PermitViewApplicationDetailsComponent,
-        data: { breadcrumb: 'Application Details' },
       },
     ],
   },
+  {
+    path: 'permit-schedule',
+    component: AdminParentComponent,
+    canActivate: [AuthGuard],
+    data: {
+      allowedRoles: ['admin'],
+      breadcrumb: 'Permit Schedule' 
+    },
+    children: [
+      {
+        path: '',
+        component: ScheduleComponent,
+      }
+    ]
+  },
+
+  // Access Denied Route
   {
     path: 'access-denied',
     component: AccessDeniedPageComponent
