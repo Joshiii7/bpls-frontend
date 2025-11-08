@@ -6,7 +6,7 @@ import { Component, HostListener } from '@angular/core';
   styleUrls: ['./public-parent.component.css']
 })
 export class PublicParentComponent {
-  showScrollTop = false;
+  showScrollTop: boolean = false;
   
   @HostListener('window:scroll')
   onScroll() {

@@ -29,6 +29,12 @@ const routes: Routes = [
       import('./modules/auth/auth.module').then(m => m.AuthModule) 
   },
 
+  { 
+    path: 'applications', 
+    loadChildren: () => 
+      import('./modules/applicant/applicant.module').then(m => m.ApplicantModule) 
+  },
+
   // Business Owner's Routes
   {
     path: 'application',

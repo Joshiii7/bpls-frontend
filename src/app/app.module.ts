@@ -60,12 +60,7 @@ import { AdminSidebarComponent } from './modules/admin/components/admin-sidebar/
 import { ApplicantDashboardComponent } from './modules/applicant/pages/applicant-dashboard/applicant-dashboard.component';
 import { ApplyPermitComponent } from './modules/applicant/pages/apply-permit/apply-permit.component';
 import { ApplicantApplicationDetailsComponent } from './modules/applicant/pages/applicant-application-details/applicant-application-details.component';
-import { LoaderComponent } from './shared/components/loader/loader.component';
 import { HomeComponent } from './modules/landing/pages/home/home.component';
-import { LoginComponent } from './modules/auth/pages/login/login.component';
-import { RegisterComponent } from './modules/auth/pages/register/register.component';
-import { FooterComponent } from './shared/components/footer/footer.component';
-import { PublicFooterComponent } from './modules/landing/components/public-footer/public-footer.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDteaccknTxLOY2hOXeluL5aH88B7q-ob8",
@@ -84,8 +79,6 @@ const analytics = getAnalytics(app);
 @NgModule({
   declarations: [
     AppComponent,
-    PublicFooterComponent,
-    FooterComponent,
     HeaderComponent,
     LandingPageComponent,
     DashboardComponent,
@@ -124,10 +117,7 @@ const analytics = getAnalytics(app);
     ApplicantDashboardComponent,
     ApplyPermitComponent,
     ApplicantApplicationDetailsComponent,
-    LoaderComponent,
     HomeComponent,
-    LoginComponent,
-    RegisterComponent,
   ],
   imports: [
     BrowserModule,
