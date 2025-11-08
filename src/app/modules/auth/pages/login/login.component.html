@@ -1,0 +1,78 @@
+<main class="py-10 flex items-center justify-center bg-gray-50">
+    <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+        <div class="flex justify-center items-center">
+            <img class="w-[5rem] h-[5rem]" src="../../../assets/images/logo/bislig lgu logo.png" alt="logo">
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800 text-center my-6">Welcome Back</h2>
+
+        <form [formGroup]="loginForm" (ngSubmit)="submit()" class="space-y-3">
+
+            <!-- Email Field -->
+            <div class="form-group">
+                <label class="block mb-1" [class.text-red-600]="email?.invalid && email?.touched">Email</label>
+                <input 
+                    type="email"
+                    formControlName="email"
+                    placeholder="Enter your email"
+                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    [class.border-red-500]="email?.invalid && email?.touched"
+                >
+                <p *ngIf="email?.invalid && email?.touched" class="text-red-600 text-sm mt-1">
+                    <span *ngIf="email?.errors?.['required']">Email is required.</span>
+                    <span *ngIf="email?.errors?.['email']">Invalid email format.</span>
+                </p>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group relative">
+                <label class="block mb-1" [class.text-red-600]="password?.invalid && password?.touched">Password</label>
+                <div class="relative">
+                    <input
+                        [type]="showPassword ? 'text' : 'password'"
+                        formControlName="password"
+                        placeholder="Enter your password"
+                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        [class.border-red-500]="password?.invalid && password?.touched"
+                    >
+                    <button type="button" (click)="togglePassword()" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
+                        {{ showPassword ? 'Hide' : 'Show' }}
+                    </button>
+                </div>
+                <p *ngIf="password?.invalid && password?.touched" class="text-red-600 text-sm mt-1">
+                    Password is required.
+                </p>
+            </div>
+
+            <!-- Submit Button -->
+            <button 
+                type="submit" 
+                class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2 rounded-lg transition"
+            >
+                Login
+            </button>
+
+        </form>
+
+        <!-- Footer Static Links -->
+        <div class="mt-6 text-center">
+            <p class="text-gray-600">
+                Don't have an account yet? 
+                <a routerLink="/auth/register" class="text-green-600 hover:underline font-medium">Sign up</a>
+            </p>
+
+            <!-- OR Divider -->
+            <div class="flex items-center my-4">
+                <hr class="flex-grow border-t border-gray-300">
+                <span class="mx-3 text-gray-500 text-sm">or</span>
+                <hr class="flex-grow border-t border-gray-300">
+            </div>
+
+            <!-- Google Login Button -->
+            <button class="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-lg py-2 hover:bg-gray-100 transition">
+                <img src="https://cdn-icons-png.flaticon.com/512/300/300221.png" alt="Google logo" class="w-5 h-5">
+                <span class="font-medium text-gray-700">Login with Google</span>
+            </button>
+        </div>
+
+    </div>
+</main>

@@ -22,7 +22,6 @@ import { ApplicationComponent } from './pages/user/applications/application/appl
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
 import { SkeletonModule } from 'primeng/skeleton';
-import { FooterComponent } from './partials/footer/footer.component';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CountUpModule } from 'ngx-countup';
@@ -62,6 +61,11 @@ import { ApplicantDashboardComponent } from './modules/applicant/pages/applicant
 import { ApplyPermitComponent } from './modules/applicant/pages/apply-permit/apply-permit.component';
 import { ApplicantApplicationDetailsComponent } from './modules/applicant/pages/applicant-application-details/applicant-application-details.component';
 import { LoaderComponent } from './shared/components/loader/loader.component';
+import { HomeComponent } from './modules/landing/pages/home/home.component';
+import { LoginComponent } from './modules/auth/pages/login/login.component';
+import { RegisterComponent } from './modules/auth/pages/register/register.component';
+import { FooterComponent } from './shared/components/footer/footer.component';
+import { PublicFooterComponent } from './modules/landing/components/public-footer/public-footer.component';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDteaccknTxLOY2hOXeluL5aH88B7q-ob8",
@@ -80,8 +84,9 @@ const analytics = getAnalytics(app);
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent,
+    PublicFooterComponent,
     FooterComponent,
+    HeaderComponent,
     LandingPageComponent,
     DashboardComponent,
     SidebarComponent,
@@ -120,6 +125,9 @@ const analytics = getAnalytics(app);
     ApplyPermitComponent,
     ApplicantApplicationDetailsComponent,
     LoaderComponent,
+    HomeComponent,
+    LoginComponent,
+    RegisterComponent,
   ],
   imports: [
     BrowserModule,

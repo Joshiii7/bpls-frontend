@@ -1,0 +1,39 @@
+<!-- Landing Page for BPLS -->
+<main class="h-screen relative flex items-center justify-center text-center">
+
+    <!-- Moving Background -->
+    <div class="absolute inset-0 bg-hero-section bg-no-repeat bg-cover animate-bg-scroll z-0"></div>
+
+    <!-- Glass Effect Overlay -->
+    <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-0"></div>
+
+    <!-- Header -->
+    <header class="bg-transparent text-white fixed top-0 z-[100] w-screen">
+        <div class="w-[90%] max-w-[80rem] mx-auto py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-wide">{{ title }}</h1>
+            <nav class="space-x-6">
+                <a routerLink="/" class="hover:text-gray-200">Home</a>
+                <a routerLink="/requirements" class="hover:text-gray-200">Requirements</a>
+                <a routerLink="/services" class="hover:text-gray-200">Services</a>
+                <a routerLink="/auth/login" class="bg-white text-primary px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition">
+                    Login
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative z-10 text-white w-[90%] max-w-[80rem] mx-auto space-y-6">
+        <h2 class="text-4xl md:text-5xl font-bold leading-snug">
+            Fast and Reliable <span class="text-[#00ff88]">Permit Processing</span>
+        </h2>
+        <p class="text-gray-200 text-lg md:text-xl">
+            Simplify your business permit applications and renewals with our online system designed for convenience and transparency.
+        </p>
+        <div>
+            <a routerLink="/auth/register" class="bg-primary text-white px-8 py-3 rounded-lg shadow hover:bg-green-700 transition font-medium">
+                Apply Now
+            </a>
+        </div>
+    </section>
+</main>

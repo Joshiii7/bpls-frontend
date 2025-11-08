@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './pages/user/dashboard/dashboard.component';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
 import { AuthGuard } from './guards/auth.guard';
-import { AuthComponent } from './auth/auth.component';
 import { PermitOverviewApplicationsComponent } from './pages/admin/permit-approvals/permit-overview-applications/permit-overview-applications.component';
 import { PermitViewApplicationDetailsComponent } from './pages/admin/permit-approvals/permit-view-application-details/permit-view-application-details.component';
 import { AccessDeniedPageComponent } from './pages/access-denied-page/access-denied-page.component';
@@ -14,12 +13,23 @@ import { PermitDeclinedApplicationsComponent } from './pages/admin/permit-declin
 import { ScheduleComponent } from './pages/admin/schedule/schedule.component';
 import { ViewApplicationComponent } from './pages/user/applications/view-application/view-application.component';
 import { AdminParentComponent } from './modules/admin/components/admin-parent/admin-parent.component';
+import { HomeComponent } from './modules/landing/pages/home/home.component';
 
 const routes: Routes = [
+  // Public Routes
   {
     path: '',
-    component: AuthComponent
+    loadChildren: () =>
+      import('./modules/landing/landing.module').then(m => m.LandingModule),
   },
+
+  { 
+    path: 'auth', 
+    loadChildren: () => 
+      import('./modules/auth/auth.module').then(m => m.AuthModule) 
+  },
+
+  // Business Owner's Routes
   {
     path: 'application',
     component: PermitParentElementComponent,
@@ -32,7 +42,7 @@ const routes: Routes = [
       {
         path: '',
         component: DashboardComponent,
-        data: { 
+        data: {
           allowedRoles: ['business_owner'],
           breadcrumb: 'Dashboards',
         }
