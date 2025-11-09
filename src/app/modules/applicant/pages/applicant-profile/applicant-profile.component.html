@@ -1,7 +1,7 @@
 <main class="p-7 bg-white rounded-xl border">
     <h2 class="text-2xl font-semibold mb-6 text-gray-800">Profile</h2>
 
-    <div class="grid grid-cols-12 gap-6">
+    <section class="grid grid-cols-12 gap-6">
 
         <!-- Left Column: Signature -->
         <div class="col-span-12 lg:col-span-5 flex flex-col items-center">
@@ -22,7 +22,7 @@
 
             <!-- Upload area -->
             <div *ngIf="signatureMode === 'upload'"
-                class="mb-4 w-full border rounded-lg relative h-40 md:h-60 flex justify-center items-center cursor-pointer"
+                class="mb-4 w-full bg-white border text-sm rounded-md relative h-40 md:h-60 flex justify-center items-center cursor-pointer"
                 (drop)="onDrop($event)"
                 (dragover)="onDragOver($event)">
                 <input type="file" accept="image/*" (change)="onFileSelect($event)"
@@ -36,7 +36,7 @@
             <div *ngIf="signatureMode === 'draw'" class="mb-4 w-full h-40 md:h-60">
                 <label for="signature-canvas" class="block font-medium mb-1">Draw Signature</label>
                 <canvas #canvas id="signature-canvas"
-                        class="w-full h-full border rounded-lg bg-white"
+                        class="w-full h-full bg-white border text-sm rounded-md bg-white"
                         (mousedown)="startDrawing($event)"
                         (mousemove)="draw($event)"
                         (mouseup)="stopDrawing()"
@@ -68,13 +68,15 @@
                 <!-- Name fields -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="first_name"
-                               [ngClass]="{'text-red-500': profileForm.get('first_name')?.invalid && profileForm.get('first_name')?.touched}"
-                               class="block font-medium mb-1">
+                        <label 
+                            for="first_name"
+                            [ngClass]="{'text-red-500': profileForm.get('first_name')?.invalid && profileForm.get('first_name')?.touched}"
+                            class="block font-medium mb-1"
+                        >
                             First Name
                         </label>
                         <input id="first_name" formControlName="first_name" placeholder="First Name"
-                               class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                               class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
                                [ngClass]="{'border-red-500': profileForm.get('first_name')?.invalid && profileForm.get('first_name')?.touched}" />
                         <p *ngIf="profileForm.get('first_name')?.invalid && profileForm.get('first_name')?.touched"
                            class="text-red-500 text-sm mt-1">
@@ -85,47 +87,59 @@
                     <div>
                         <label for="middle_name" class="block font-medium mb-1">Middle Name</label>
                         <input id="middle_name" formControlName="middle_name" placeholder="Middle Name"
-                               class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+                               class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400" />
                     </div>
 
                     <div>
-                        <label for="last_name"
-                               [ngClass]="{'text-red-500': profileForm.get('last_name')?.invalid && profileForm.get('last_name')?.touched}"
-                               class="block font-medium mb-1">
+                        <label 
+                            for="last_name"
+                            [ngClass]="{'text-red-500': profileForm.get('last_name')?.invalid && profileForm.get('last_name')?.touched}"
+                            class="block font-medium mb-1"
+                        >
                             Last Name
                         </label>
                         <input id="last_name" formControlName="last_name" placeholder="Last Name"
-                               class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                               class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
                                [ngClass]="{'border-red-500': profileForm.get('last_name')?.invalid && profileForm.get('last_name')?.touched}" />
                     </div>
 
                     <div>
                         <label for="suffix" class="block font-medium mb-1">Suffix</label>
                         <input id="suffix" formControlName="suffix" placeholder="Suffix"
-                               class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+                               class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400" />
                     </div>
                 </div>
 
                 <!-- Contact fields -->
                 <div>
-                    <label for="number"
-                           [ngClass]="{'text-red-500': profileForm.get('number')?.invalid && profileForm.get('number')?.touched}"
-                           class="block font-medium mb-1">
+                    <label 
+                        for="number"
+                        [ngClass]="{'text-red-500': profileForm.get('number')?.invalid && profileForm.get('number')?.touched}"
+                        class="block font-medium mb-1"
+                    >
                         Phone Number
                     </label>
-                    <input id="number" formControlName="number" placeholder="Phone Number"
-                           class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                           [ngClass]="{'border-red-500': profileForm.get('number')?.invalid && profileForm.get('number')?.touched}" />
+                    <input 
+                        id="number" 
+                        formControlName="number" 
+                        (input)="onNumberInput($event)"
+                        maxlength="16"
+                        placeholder="+63 9## ### ####"
+                        class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
+                        [ngClass]="{'border-red-500': profileForm.get('number')?.invalid && profileForm.get('number')?.touched}" 
+                    />
                 </div>
 
                 <div>
-                    <label for="email"
-                           [ngClass]="{'text-red-500': profileForm.get('email')?.invalid && profileForm.get('email')?.touched}"
-                           class="block font-medium mb-1">
+                    <label 
+                        for="email"
+                        [ngClass]="{'text-red-500': profileForm.get('email')?.invalid && profileForm.get('email')?.touched}"
+                        class="block font-medium mb-1"
+                    >
                         Email
                     </label>
                     <input id="email" formControlName="email" placeholder="Email"
-                           class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                           class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
                            [ngClass]="{'border-red-500': profileForm.get('email')?.invalid && profileForm.get('email')?.touched}" />
                 </div>
 
@@ -137,6 +151,5 @@
 
             </form>
         </div>
-
-    </div>
+    </section>
 </main>

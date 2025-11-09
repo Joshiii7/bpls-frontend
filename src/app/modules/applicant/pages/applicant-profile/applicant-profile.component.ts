@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { ApplicantService } from '../../services/applicant.service';
 
 @Component({
   selector: 'app-applicant-profile',
@@ -19,24 +20,73 @@ export class ApplicantProfileComponent {
   signatureError = false;
   dragHover = false;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private api: ApplicantService,
+  ) {}
 
   ngOnInit() {
     this.profileForm = this.fb.group({
-      first_name: ['', [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]],
+      id: [''],
+      first_name: ['', [Validators.pattern(/^[A-Za-z\s]+$/)]],
       middle_name: [''],
-      last_name: ['', [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]],
+      last_name: ['', [Validators.pattern(/^[A-Za-z\s]+$/)]],
       suffix: [''],
-      number: ['', [Validators.required, Validators.pattern(/^\+?\d{9,15}$/)]],
-      email: ['', [Validators.required, Validators.email]],
+      number: ['', [Validators.pattern(/^\+63\s?\d{3}\s?\d{3}\s?\d{4}$/)]],
+      email: ['', [Validators.email]],
       signature: ['']
     });
+
+    this.initUserProfile();
   }
 
   ngAfterViewInit() {
     if (this.signatureMode === 'draw') {
       this.initCanvas();
     }
+  }
+
+  initUserProfile() {
+    this.api.getUserProfile().subscribe({
+      next: (response: any) => {
+
+        this.profileForm.patchValue({
+          id: response.id || '',
+          first_name: response.first_name || '',
+          middle_name: response.middle_name || '',
+          last_name: response.last_name || '',
+          suffix: response.suffix || '',
+          number: response.number || '',
+          email: response.email || '',
+          signature: response.signature || '',
+        });
+      },
+      error: (err: any) => {
+        console.error("error fetching user profile data: ", err)
+      }
+    });
+  }
+
+  onNumberInput(event: any) {
+    let value = event.target.value.replace(/\D+/g, '');
+
+    if (!value.startsWith('63')) {
+      value = '63' + value.replace(/^0+/, '');
+    }
+
+    value = value.substring(0, 12);
+
+    let formatted = '+';
+
+    for (let i = 0; i < value.length; i++) {
+      formatted += value[i];
+
+      if (i === 1) formatted += ' ';
+      else if (i === 4) formatted += ' '; 
+      else if (i === 7) formatted += ' '; 
+    }
+
+    this.profileForm.patchValue({ number: formatted }, { emitEvent: false });
   }
 
   // Reinitialize canvas when switching back to draw
@@ -133,10 +183,37 @@ export class ApplicantProfileComponent {
   }
 
   onSubmitProfile() {
+    if (this.profileForm.invalid) {
+      this.profileForm.markAllAsTouched();
+    }
+
     if (this.profileForm.valid) {
       console.log('Profile submitted', this.profileForm.value);
-    } else {
-      this.profileForm.markAllAsTouched();
+
+      const userID = this.profileForm.value.id;
+      
+      this.api.patchUserProfile(this.profileForm.value, userID).subscribe({
+        next: (response: any) => {
+          Swal.fire({
+            title: 'Profile Updated',
+            text: 'Your profile has been successfully updated.',
+            icon: 'success',
+            confirmButtonColor: '#008900',
+            confirmButtonText: 'OK'
+          });
+        },
+        error: (err: any) => {
+          console.error("Error patching value to your profile: ", err);
+          Swal.fire({
+            title: 'Error',
+            text: 'There was an error updating your profile.',
+            icon: 'error',
+            confirmButtonColor: '#FF0000',
+            confirmButtonText: 'Understood'
+          });
+        }
+    });
+
     }
   }
 
