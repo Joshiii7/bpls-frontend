@@ -10,6 +10,7 @@ import { ApplicantService } from '../../services/applicant.service';
 export class ApplicantDashboardComponent {
   @Output() emitNavigationState = new EventEmitter<boolean>();
   isLoading: boolean = true;
+  showProfileWarning: boolean = false;
 
   applications: any[] = [];
   filteredApplications: any[] = [];
@@ -25,9 +26,25 @@ export class ApplicantDashboardComponent {
   constructor(
     private router: Router,
     private api: ApplicantService
-  ) {
+  ) {}
+  
+  ngOnInit() {
     this.emitNavigationState.emit(true);
     this.initApplications();
+    this.initUserInformation();
+  }
+
+  initUserInformation() {
+    this.api.getUserProfile().subscribe({
+      next: (response: any) => {
+        
+        const fieldsToCheck = ['first_name', 'middle_name', 'last_name', 'suffix', 'number', 'email', 'signature'];
+        this.showProfileWarning = fieldsToCheck.some(field => !response[field]);
+      },
+      error: (err: any) => {
+        console.error("error fetching user information: ", err)
+      }
+    });
   }
 
   newApplication() {

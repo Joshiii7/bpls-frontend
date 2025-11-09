@@ -1,7 +1,10 @@
 <main class="pb-7">
-    <section class="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800">
+    <section
+        *ngIf="showProfileWarning" 
+        class="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800"
+    >
         <p>
-            Please update your profile first. The information from your profile will be used as the owner’s details when filling out the permit application form.
+            You can pre-fill your permit application with your profile information. Updating your profile is optional, and you can still enter details manually each time you apply.
         </p>
     </section>
 
