@@ -130,6 +130,6 @@ export class ApplicantDashboardComponent {
   }
 
   viewDetails(uuid: number) {
-    this.router.navigate(['/application/application-details/', uuid]);
+    this.router.navigate(['/applications/', uuid]);
   }
 }

@@ -1,10 +1,5 @@
-import { ViewportScroller } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import Swal from 'sweetalert2';
-import { ApplicantService } from '../../services/applicant.service';
-import { ApiServicesService } from 'src/app/api-services.service';
 
 @Component({
   selector: 'app-apply-permit',
@@ -12,797 +7,249 @@ import { ApiServicesService } from 'src/app/api-services.service';
   styleUrls: ['./apply-permit.component.css']
 })
 export class ApplyPermitComponent {
-  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  activeTab = 'businessInfo';
+  tabs = [
+    { key: 'businessInfo', label: 'A. Business Information' },
+    { key: 'businessOperation', label: 'B. Business Operation' },
+    { key: 'documentsLocation', label: 'C. Documents & Location' },
+    { key: 'review', label: 'D. Review' },
+  ];
 
-  selectedLocation: { lng: number; lat: number } | null = null;
-  isLocationSaved = false; 
-  signatureImage: string | null = null;
+  applicationTypeForm!: FormGroup;
+  paymentOptionForm!: FormGroup;
+  businessInfoForm!: FormGroup;
 
-  businessTypes: any;
-  isLoading: boolean = false;
-  confirmation: boolean = false;
-  isChecked: boolean = false;
-  provinces: any;
-  cities: any;
-  barangays: any;
+  genderOptions = ['Male', 'Female'];
+  organizationOptions = [
+    'Sole Proprietorship',
+    'One Person Corporation',
+    'Partnership',
+    'Corporation',
+    'Cooperative',
+  ];
+
+  filteredGenders = [...this.genderOptions];
+  filteredOrganizations = [...this.organizationOptions];
+
+  genderDropdownOpen = false;
+  orgDropdownOpen = false;
   
-  currentTab: number = 1;
-  totalTabs = 4;
-  existingPhoneNumber: boolean = false;
-  existingEmail: boolean = false;
+  provinceDropdownOpen = false;
+  cityDropdownOpen = false;
+  barangayDropdownOpen = false;
 
-  currentProvinceRegister: any;
-  currentCityRegister: any;
-  currentBarangayRegister: any;
+  filteredProvinces: string[] = [];
+  filteredCities: string[] = [];
+  filteredBarangays: string[] = [];
 
-  operationBarangayRegister: any;
+  allProvinces: string[] = ['Cebu', 'Bohol', 'Davao'];
 
-  showModal = false;
-  modalTitle = '';
-  activeField = '';
-  previewUrl: string | null = null;
-  activeFile: File | null = null;
-
-  // Store all uploaded documents here
-  documents: {
-    [key: string]: {
-      title: string;
-      file?: File;
-      previewUrl?: string | null;
-    };
-  } = {
-    file1: { title: 'Proof of Registration (DTI/SEC/CDA)', previewUrl: null },
-    file2: { title: 'Authority to Use of Place of Business', previewUrl: null },
-    file3: { title: 'Fire Safety Inspection Certificate', previewUrl: null },
-    file4: { title: 'Sanitary Permit / Health Clearance', previewUrl: null },
-    file6: { title: 'Environmental Clearance / Barangay Clearance', previewUrl: null },
-    file7: { title: 'Occupancy Permit', previewUrl: null },
+  allCities: { [province: string]: string[] } = {
+    Cebu: ['Cebu City', 'Lapu-Lapu', 'Mandaue'],
+    Bohol: ['Tagbilaran', 'Loboc', 'Panglao'],
+    Davao: ['Davao City', 'Panabo', 'Digos'],
   };
-  
-  payments = [
-    { id: 1, payment: 'Annually' },
-    { id: 2, payment: 'Bi-annually' },
-    { id: 3, payment: 'Quarterly' },
-  ];
 
-  applicationTypes = [
-    { id: 1, label: 'New' },
-    { id: 2, label: 'Renewal' }
-  ];
+  allBarangays: { [city: string]: string[] } = {
+    'Cebu City': ['Barangay 1', 'Barangay 2'],
+    'Lapu-Lapu': ['Pajo', 'Marigondon'],
+    'Mandaue': ['Looc', 'Basak'],
+    Tagbilaran: ['Cogon', 'Tawala'],
+  };
 
-  genders = [
-    { id: 'Male', gender: 'Male' },
-    { id: 'Female', gender: 'Female' },
-  ];
+  constructor(private fb: FormBuilder) {}
 
-  businessActivity = [
-    { id: 1, activity: 'Main Office' },
-    { id: 2, activity: 'Branch Office' },
-    { id: 4, activity: 'Admin Office Only' },
-    { id: 5, activity: 'Warehouse' },
-    { id: 6, activity: 'Others' },
-  ];
-
-  registerBaranggays = [
-    { id: 41649, brgy_name: "Bucto", brgy_code: "166803002"},
-    { id: 41650, brgy_name: "Burboanan", brgy_code: "166803003"},
-    { id: 41651, brgy_name: "San Roque (Cadanglasan)", brgy_code: "166803004"},
-    { id: 41652, brgy_name: "Caguyao", brgy_code: "166803005"},
-    { id: 41653, brgy_name: "Coleto", brgy_code: "166803006"},
-    { id: 41654, brgy_name: "Labisma", brgy_code: "166803007"},
-    { id: 41655, brgy_name: "Lawigan", brgy_code: "166803008"},
-    { id: 41656, brgy_name: "Mangagoy", brgy_code: "166803009"},
-    { id: 41657, brgy_name: "Mone", brgy_code: "166803010"},
-    { id: 41658, brgy_name: "Pamaypayan", brgy_code: "166803011"},
-    { id: 41659, brgy_name: "Poblacion", brgy_code: "166803012"},
-    { id: 41660, brgy_name: "San Antonio", brgy_code: "166803013"},
-    { id: 41661, brgy_name: "San Fernando", brgy_code: "166803014"},
-    { id: 41662, brgy_name: "San Isidro (Bagnan)", brgy_code: "166803015"},
-    { id: 41663, brgy_name: "San Jose", brgy_code: "166803016"},
-    { id: 41664, brgy_name: "San Vicente", brgy_code: "166803017"},
-    { id: 41665, brgy_name: "Santa Cruz", brgy_code: "166803018"},
-    { id: 41666, brgy_name: "Sibaroy", brgy_code: "166803019"},
-    { id: 41667, brgy_name: "Tabon", brgy_code: "166803020"},
-    { id: 41668, brgy_name: "Tumanan", brgy_code: "166803021"},
-    { id: 41669, brgy_name: "Pamanlinan", brgy_code: "166803022"},
-    { id: 41670, brgy_name: "Kahayag", brgy_code: "166803023"},
-    { id: 41671, brgy_name: "Maharlika", brgy_code: "166803024"},
-    { id: 41672, brgy_name: "Comawas", brgy_code: "166803025"},
-  ];
-
-  baranggaysArray = [
-    { id: 41649, brgy_name: "Bucto", brgy_code: "166803002"},
-    { id: 41650, brgy_name: "Burboanan", brgy_code: "166803003"},
-    { id: 41651, brgy_name: "San Roque (Cadanglasan)", brgy_code: "166803004"},
-    { id: 41652, brgy_name: "Caguyao", brgy_code: "166803005"},
-    { id: 41653, brgy_name: "Coleto", brgy_code: "166803006"},
-    { id: 41654, brgy_name: "Labisma", brgy_code: "166803007"},
-    { id: 41655, brgy_name: "Lawigan", brgy_code: "166803008"},
-    { id: 41656, brgy_name: "Mangagoy", brgy_code: "166803009"},
-    { id: 41657, brgy_name: "Mone", brgy_code: "166803010"},
-    { id: 41658, brgy_name: "Pamaypayan", brgy_code: "166803011"},
-    { id: 41659, brgy_name: "Poblacion", brgy_code: "166803012"},
-    { id: 41660, brgy_name: "San Antonio", brgy_code: "166803013"},
-    { id: 41661, brgy_name: "San Fernando", brgy_code: "166803014"},
-    { id: 41662, brgy_name: "San Isidro (Bagnan)", brgy_code: "166803015"},
-    { id: 41663, brgy_name: "San Jose", brgy_code: "166803016"},
-    { id: 41664, brgy_name: "San Vicente", brgy_code: "166803017"},
-    { id: 41665, brgy_name: "Santa Cruz", brgy_code: "166803018"},
-    { id: 41666, brgy_name: "Sibaroy", brgy_code: "166803019"},
-    { id: 41667, brgy_name: "Tabon", brgy_code: "166803020"},
-    { id: 41668, brgy_name: "Tumanan", brgy_code: "166803021"},
-    { id: 41669, brgy_name: "Pamanlinan", brgy_code: "166803022"},
-    { id: 41670, brgy_name: "Kahayag", brgy_code: "166803023"},
-    { id: 41671, brgy_name: "Maharlika", brgy_code: "166803024"},
-    { id: 41672, brgy_name: "Comawas", brgy_code: "166803025"},
-  ];
-
-  selectedPayment: number = 0;
-  selectedApplicationType: number = 0;
-
-  permitForm: FormGroup = this.formBuilder.group({
-    businessName: ['', [Validators.required]],
-    dtiNumber: ['', [Validators.required]],
-    registrationDate: ['', [Validators.required]],
-    tinNumber: ['', [Validators.required, Validators.pattern(/^(\d{3}-?\d{3}-?\d{3}(-?\d{3})?)$/)]],
-    businessType: ['', [Validators.required]],
-    first_name: ['', [Validators.required]],
-    middle_name: ['', [Validators.required]],
-    last_name: ['', [Validators.required]],
-    number: ['', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
-    suffix: [''],
-    gender: [''],
-
-    registerProvince: ['', [Validators.required]],
-    registerCities: ['', [Validators.required]],
-    registerBaranggays: ['', [Validators.required]],
-    registerZipCode: ['', [Validators.required]],
-    
-    registerStreet: ['', [Validators.required]],
-    registerHouse: [''],
-    registerNameBuilding: [''],
-    registerLotNo: [''],
-    registerBlockNo: [''],
-    registerSubdivision: [''],
-    tradeName: [''],
-  });
-
-  permitOperationForm: FormGroup = this.formBuilder.group({
-    activity: ['', [Validators.required]],
-    businessArea: ['', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.min(1)]],
-    businessFloorArea: ['', [Validators.required, Validators.pattern('^[0-9]*$'), Validators.min(1)]],
-    employees: ['', [Validators.required]],
-    no_male: ['', [Validators.required]],
-    no_female: ['', [Validators.required]],
-
-    province: ['', [Validators.required]],
-    city: ['', [Validators.required]],
-    baranggays: ['', [Validators.required]],
-    zip_code: ['', [Validators.required]],
-
-    van: [''],
-    motor: [''],
-    
-    house: [''],
-    name_building: [''],
-    lot_no: [''],
-    block_no: [''],
-    street: ['', [Validators.required]],
-    subdivision: [''],
-    sameAsMainOffice: [''],
-  });
-
-  constructor(
-    private apiService: ApiServicesService, 
-    private formBuilder: FormBuilder, 
-    private router: Router,
-    private viewportScroller: ViewportScroller
-  ) {  }
-
-  onLocationSelected(location: { lng: number; lat: number }) {
-    this.selectedLocation = location;
-    console.log('Location received from child:', location);
-  }
-
-  ngOnInit():void {
-    this.permitOperationForm.get('province')?.disable();
-    this.permitOperationForm.get('city')?.disable();
-
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 2000);
-    this.getBusinessTypeFunction();
-    this.getProvinceAddress();
-    this.getBusinessCity();
-  }
-
-  nextTab() {
-    // Check if form is valid before moving to the next tab
-    if (this.permitForm.invalid) {
-      // Mark all controls as touched so validation messages show up
-      this.permitForm.markAllAsTouched();
-
-      // Find the invalid fields (optional, but helps users)
-      const invalidFields = Object.keys(this.permitForm.controls)
-        .filter(key => this.permitForm.get(key)?.invalid)
-        .map(key => this.formatFieldName(key));
-
-      // Show a SweetAlert
-      Swal.fire({
-        icon: 'warning',
-        title: 'Incomplete Form',
-        html: `
-          <p style="margin-bottom: 10px;">Please fill in all required fields before continuing.</p>
-          ${
-            invalidFields.length
-              ? `<ul style="
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-                    gap: 6px 16px;
-                    list-style-type: disc;
-                    text-align: left;
-                    padding-left: 20px;
-                    margin-top: 10px;
-                  ">
-                    ${invalidFields.map(field => `<li>${field}</li>`).join('')}
-                </ul>`
-              : ''
-          }
-        `,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Understood',
-        width: 700,
-      });
-
-      return;
-    }
-
-    // Proceed if valid
-    if (this.currentTab < this.totalTabs) {
-      this.currentTab++;
-      setTimeout(() => this.viewportScroller.scrollToPosition([0, 0]), 0);
-    }
-  }
-
-  private formatFieldName(key: string): string {
-    return key
-      .replace(/([A-Z])/g, ' $1') // Add space before uppercase letters
-      .replace(/_/g, ' ')         // Replace underscores
-      .replace(/\b\w/g, c => c.toUpperCase()); // Capitalize first letters
-  }
-
-  prevTab() {
-    if (this.currentTab > 1) {
-      this.currentTab--;
-      setTimeout(() => this.viewportScroller.scrollToPosition([0, 0]), 0);
-    }
-  }
-
-  onTinInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    let value = input.value.replace(/\D/g, '');
-
-    if (value.length <= 9) {
-      value = value.replace(/(\d{3})(\d{0,3})(\d{0,3})/, (_, a, b, c) =>
-        [a, b, c].filter(Boolean).join('-')
-      );
-    } else {
-      value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{0,3})/, (_, a, b, c, d) =>
-        [a, b, c, d].filter(Boolean).join('-')
-      );
-    }
-
-    input.value = value;
-    this.permitForm.get('tinNumber')?.setValue(value, { emitEvent: false });
-  }
-
-  onLocationSaved(location: { lng: number; lat: number }): void {
-    this.selectedLocation = location;
-    this.isLocationSaved = true;
-    // console.log('Location received in NewPermitComponent:', this.selectedLocation);
-    setTimeout(() => {
-      this.isLocationSaved = false;
-    }, 2000);
-  }
-
-  confirmDetails() {
-    if (!this.permitForm.valid || !this.permitOperationForm.valid) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Please complete all required fields before proceeding.",
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Understood!'
-      });
-      return;
-    }
-  
-    if (!this.selectedPayment) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Please select a payment method before proceeding with the business registration.",
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'Understood!'
-      });
-      return;
-    }
-  
-    this.confirmation = true;
-    this.isChecked = false;
-  }
-
-  closeModalOutside(event: MouseEvent) {
-    // Close modal if user clicks outside the modal box
-    if ((event.target as HTMLElement).classList.contains('bg-black')) {
-      this.closeModal();
-    }
-  }
-
-  confirmSubmission() {
-    this.confirmation = false;
-    this.isLoading = true;
-
-    if (!this.isChecked) {
-      this.isLoading = false;
-      Swal.fire({
-        icon: 'warning',
-        title: 'Confirmation Required',
-        text: 'Please check the confirmation box to proceed.',
-        confirmButtonColor: '#009800',
-        confirmButtonText: 'OK'
-      });
-      return;
-    }
-
-
-    const formData = new FormData();
-
-    // Helper to append all keys of an object
-    const appendFormData = (obj: any, prefix = '') => {
-      for (const key in obj) {
-        if (obj[key] !== null && obj[key] !== undefined) {
-          formData.append(`${prefix}${key}`, obj[key]);
-        }
-      }
-    };
-
-    // Basic business info
-    appendFormData({
-      businessName: this.permitForm.value.businessName,
-      tradeName: this.permitForm.value.tradeName,
-      registrationDate: this.permitForm.value.registrationDate,
-      dtiNumber: this.permitForm.value.dtiNumber,
-      tinNumber: this.permitForm.value.tinNumber,
-      businessType: this.permitForm.value.businessType,
-      first_name: this.permitForm.value.first_name,
-      middle_name: this.permitForm.value.middle_name,
-      last_name: this.permitForm.value.last_name,
-      suffix: this.permitForm.value.suffix,
-      gender: this.permitForm.value.gender,
-      number: this.permitForm.value.number,
-      email: this.permitForm.value.email,
+  ngOnInit(): void {
+    this.applicationTypeForm = this.fb.group({
+      applicationType: ['', Validators.required],
     });
 
-    // Registration address
-    appendFormData({
-      registerProvince: this.permitForm.value.registerProvince,
-      registerCities: this.permitForm.value.registerCities,
-      registerBaranggays: this.permitForm.value.registerBaranggays,
-      registerZipCode: this.permitForm.value.registerZipCode,
-      registerStreet: this.permitForm.value.registerStreet,
-      registerHouse: this.permitForm.value.registerHouse,
-      registerNameBuilding: this.permitForm.value.registerNameBuilding,
-      registerLotNo: this.permitForm.value.registerLotNo,
-      registerBlockNo: this.permitForm.value.registerBlockNo,
-      registerSubdivision: this.permitForm.value.registerSubdivision
+    this.paymentOptionForm = this.fb.group({
+      paymentOption: ['', Validators.required],
     });
 
-    // Business operation info
-    appendFormData({
-      activity: this.permitOperationForm.value.activity,
-      employees: this.permitOperationForm.value.employees,
-      no_male: this.permitOperationForm.value.no_male,
-      no_female: this.permitOperationForm.value.no_female,
-      van: this.permitOperationForm.value.van,
-      motor: this.permitOperationForm.value.motor,
-      province: '87',
-      city: '1624',
-      baranggays: this.permitOperationForm.value.baranggays,
-      zip_code: this.permitOperationForm.value.zip_code,
-      businessArea: this.permitOperationForm.value.businessArea,
-      businessFloorArea: this.permitOperationForm.value.businessFloorArea,
-      house: this.permitOperationForm.value.house,
-      name_building: this.permitOperationForm.value.name_building,
-      lot_no: this.permitOperationForm.value.lot_no,
-      block_no: this.permitOperationForm.value.block_no,
-      street: this.permitOperationForm.value.street,
-      subdivision: this.permitOperationForm.value.subdivision
+    this.businessInfoForm = this.fb.group({
+      // Business Information
+      businessName: ['', Validators.required],
+      tradeName: [''],
+      registrationNumber: ['', Validators.required],
+      registrationDate: ['', Validators.required],
+      tin: ['', [Validators.required, Validators.pattern(/^(\d{3}-\d{3}-\d{3}|\d{3}-\d{3}-\d{3}-\d{3})$/)]],
+      organizationType: ['', Validators.required],
+      gender: [''],
+
+      // Owner's Information
+      givenName: ['', Validators.required],
+      middleName: ['', Validators.required],
+      surname: ['', Validators.required],
+      suffix: [''],
+      contactNumber: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+
+      // Main Office Primary Address
+      province: ['', Validators.required],
+      city: ['', Validators.required],
+      barangay: ['', Validators.required],
+      zipCode: ['', Validators.required],
     });
 
-    // Latitude & longitude
-    if (this.selectedLocation) {
-      formData.append('latitude', this.selectedLocation.lat.toString());
-      formData.append('longitude', this.selectedLocation.lng.toString());
-    } else {
-      console.error("Error: Location is not selected!");
-    }
-
-    // Payment type
-    if (this.selectedPayment) {
-      formData.append('payment_type_id', this.selectedPayment.toString());
-    }
-
-    // Application type
-    if (this.selectedApplicationType) {
-      formData.append(
-        'isNew',
-        this.selectedApplicationType === 1 ? 'New' : 'Renewal'
-      );
-    }
-
-    // Attach documents
-    if (this.documents) {
-      for (const key in this.documents) {
-        const doc = this.documents[key];
-        if (doc.file) {
-          formData.append(key, doc.file);
-          formData.append(`${key}_title`, doc.title);
-        }
-      }
-    }
-
-    // Signature
-    if (this.signatureImage) {
-      const blob = this.dataURLtoBlob(this.signatureImage);
-      const randomName = `signature_${Date.now()}_${Math.floor(Math.random() * 10000)}.png`;
-      formData.append('signatureImage', blob, randomName);
-    }
-
-    // Submit to API
-    this.apiService.businessStore(formData).subscribe({
-      next: (response: any) => {
-        this.isLoading = false;
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'Business successfully created! Your application has been submitted for permit processing'
-        }).then(() => {
-          this.router.navigate(['/application']).then(() => {
-            window.location.reload();
-          });
-        });
-      },
-      error: (error: any) => {
-        this.isLoading = false;
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Error saving permit form',
-          confirmButtonColor: '#d33',
-          confirmButtonText: 'Understood!'
-        });
-      }
-    });
-  }
-
-  private dataURLtoBlob(dataURL: string): Blob {
-    const arr = dataURL.split(',');
-    const mime = arr[0].match(/:(.*?);/)![1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new Blob([u8arr], { type: mime });
-  }
-
-  confirmDuplicate(e: Event) {
-    const event = e.target as HTMLInputElement;
-    // console.log(event.value);
-    this.apiService.checkNumber(event.value).subscribe({
-      next: (response: any) => {
-        if (response.existingPhoneNumber != null) {
-          this.existingPhoneNumber = true;
-        } else {
-          this.existingPhoneNumber = false;
-        }
-      },
-      error: (error: any) => {
-        console.log('Error checking duplicate number:', error);
-      }
-    });
-  }
-
-  confirmDuplicateEmail(e: Event) {
-    const event = e.target as HTMLInputElement;
-    // console.log(event.value);
-    this.apiService.checkEmail(event.value).subscribe({
-      next: (response: any) => {
-        if (response.existingEmail != null) {
-          this.existingEmail = true;
-        } else {
-          this.existingEmail = false;
-        }
-      },
-      error: (error: any) => {
-        console.log('Error checking duplicate number:', error);
-      }
-    });
-  }
-
-  copyAddress(event: any) {
-    if (event.target.checked) {
-      const provinceValue = this.permitForm.get('registerProvince')?.value;
-      const cityValue = this.permitForm.get('registerCities')?.value;
-      const barangayId = this.permitForm.get('registerBaranggays')?.value;
-
-      const barangay = this.baranggaysArray.find((b) => b.id == barangayId);
-
-      // console.log(barangay?.brgy_name);
-      this.operationBarangayRegister = barangay?.brgy_name
-
-      // console.log(provinceValue, cityValue)
-      if (provinceValue == 87 && cityValue == 1624) {
-        this.permitOperationForm.patchValue({
-          baranggays: barangayId,
-          zip_code: this.permitForm.get('registerZipCode')?.value,
-          street: this.permitForm.get('registerStreet')?.value,
-          house: this.permitForm.get('registerHouse')?.value,
-          name_building: this.permitForm.get('registerNameBuilding')?.value,
-          lot_no: this.permitForm.get('registerLotNo')?.value,
-          block_no: this.permitForm.get('registerBlockNo')?.value,
-          subdivision: this.permitForm.get('registerSubdivision')?.value,
-        });
-  
+    this.businessInfoForm.get('organizationType')?.valueChanges.subscribe((val) => {
+      if (val === 'Sole Proprietorship' || val === 'One Person Corporation') {
+        this.businessInfoForm.get('gender')?.setValidators([Validators.required]);
       } else {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "This functionality is only available for businesses compliant with the designated zoning regulations.",
-          confirmButtonColor: '#d33',
-          confirmButtonText: 'Understood!'
-        }).then(() => {
-          this.permitOperationForm.get('sameAsMainOffice')?.setValue(false, { emitEvent: false });
-        });
+        this.businessInfoForm.get('gender')?.clearValidators();
       }
-    }
-  }
-
-  tabIndex(number: any) {
-    // this.currentTab = number;
-  }
-
-  // registerAddress
-  selectProvince() {
-    const province = this.permitForm.value.registerProvince;
-
-    const foundProvince = this.provinces.find((ele: any) => {
-      return ele.id == province;
+      this.businessInfoForm.get('gender')?.updateValueAndValidity();
     });
+  }
 
-    this.currentProvinceRegister = foundProvince.province_name;
-    // console.log(this.currentProvinceRegister);
-    
-    if (foundProvince) {
-      this.apiService.getCities(foundProvince.province_code).subscribe({
-        next: (response: any) => {
-          // console.log(response);
-          this.cities = response.cities;
-        },
-        error: (error: any) => {
-          console.log('error fetching cities:', error);
-        }
-      });
+  get showGender() {
+    const type = this.businessInfoForm.get('organizationType')?.value;
+    return type === 'Sole Proprietorship' || type === 'One Person Corporation';
+  }
+
+  inputClass(field: string): string {
+    const control = this.businessInfoForm.get(field);
+    const base =
+      'bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none';
+    if (control?.invalid && control?.touched) {
+      return base + ' border-red-500 focus:border-red-500';
     }
+    return base + ' focus:border-green-500';
   }
 
-  // registerAddress
-  selectCity() {
-    const city = this.permitForm.value.registerCities;
-    // console.log(city);
-
-    const foundCity = this.cities.find((ele: any) => {
-      // console.log(ele);
-      return ele.id == city;
-    });
-
-    // console.log(foundCity);
-    this.currentCityRegister = foundCity.city_name
-    
-    if (foundCity) {
-      this.apiService.getBarangays(foundCity.city_code).subscribe({
-        next: (response: any) => {
-          // console.log(response);
-          this.barangays = response.barangays;
-        },
-        error: (error: any) => {
-          console.log('error fetching baranggays:', error);
-        }
-      });
+  labelClass(field: string): string {
+    const control = this.businessInfoForm.get(field);
+    if (control?.invalid && control?.touched) {
+      return 'block font-medium text-sm text-red-600';
     }
+    return 'block font-medium text-sm text-gray-700';
   }
 
-  getBarangay(event: Event) {
-    const selectElement = event.target as HTMLSelectElement;
-    const selectedOption = selectElement.options[selectElement.selectedIndex];
-    const barangayName = selectedOption?.text; 
-    // console.log(barangayName);
-    this.currentBarangayRegister = barangayName;
-  }
+  isInvalid(field: string): string | null {
+    const control = this.businessInfoForm.get(field);
+    if (!control || !control.touched || !control.errors) return null;
 
-  operationalBaranggay(event: Event) {
-    const selectElement = event.target as HTMLSelectElement;
-    const selectedOption = selectElement.options[selectElement.selectedIndex];
-    const barangayName = selectedOption?.text; 
-
-    // console.log(barangayName);
-    this.operationBarangayRegister = barangayName;
-  }
-
-  getBusinessCity() {
-    const city = 166803;
-
-    this.apiService.getBarangays(city).subscribe({
-      next: (response: any) => {
-        // console.log(response);
-        // this.barangays = response.barangays;
-        // console.log(this.barangays);
-      },
-      error: (error: any) => {
-        console.log('error fetching baranggays:', error);
+    if (control.errors['required']) {
+      return 'This field is required.';
+    }
+    if (control.errors['pattern']) {
+      if (field === 'tin') {
+        return 'Please enter a valid TIN (format: 123-456-789 or 123-456-789-000).';
       }
-    });
-  }
-
-  getProvinceAddress() {
-    this.apiService.getProvinces().subscribe({
-      next: (response: any) => {
-        // console.log(response);
-        this.provinces = response.provinces;
-      },
-      error: (error: any) => {
-        console.log('error fetching provinces:', error);
-      }
-    });
-  }
-
-  getBusinessTypeFunction() {
-    this.apiService.getBusinessType().subscribe({
-      next: (response: any) => {
-        this.businessTypes = response.businessType;
-        // console.log(this.businessTypes);
-      },
-      error: (error: any) => {
-        console.log('error fetching business type:', error);
-      }
-    });
-  }
-
-  confirmData(data:any) {
-    console.log(data);
-    this.apiService.businessStore(data).subscribe({
-      next: (response: any) => {
-        console.log(response);
-        if (response) {
-          Swal.fire({
-            icon: "success",
-            title: "Success",
-            text: "Business successfully created! Your application has been submitted for permit processing",
-            // confirmButtonColor: '#d33',
-            // confirmButtonText: 'Understood!'
-          }).then(() => {
-            this.router.navigate(['/application']).then(() => {
-              window.location.reload();
-            });
-          });
-        }
-      },
-      error: (error: any) => {
-        Swal.fire({
-          icon: "error",
-          title: "Opps...",
-          text: "Error saving permit form",
-          confirmButtonColor: '#d33',
-          confirmButtonText: 'Understood!'
-        })
-      }
-    });
-  }
-
-  openUploadModal(title: string, field: string) {
-    this.modalTitle = title;
-    this.activeField = field;
-    this.showModal = true;
-
-    // Restore preview if already uploaded before
-    this.previewUrl = this.documents[field]?.previewUrl || null;
-    this.activeFile = this.documents[field]?.file || null;
-  }
-
-  closeModal() {
-    this.showModal = false;
-    this.previewUrl = null;
-    this.activeFile = null;
-  }
-
-  triggerFileInput() {
-    this.fileInput.nativeElement.click();
-  }
-
-  onFileSelect(event: any) {
-    const file = event.target.files?.[0];
-    if (file) {
-      this.activeFile = file;
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.previewUrl = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  onFileDrop(event: DragEvent) {
-    event.preventDefault();
-    const file = event.dataTransfer?.files[0];
-    if (file) {
-      this.activeFile = file;
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.previewUrl = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  onDragOver(event: DragEvent) {
-    event.preventDefault();
-  }
-
-  onDragLeave(event: DragEvent) {
-    event.preventDefault();
-  }
-
-  confirmSelection() {
-    if (!this.previewUrl) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'No image selected',
-        text: 'Please select an image before continuing.',
-        confirmButtonColor: '#009800',
-      });
-      return;
+      return 'Invalid format.';
     }
 
-    if (this.activeField && this.activeFile && this.previewUrl) {
-      this.documents[this.activeField] = {
-        title: this.modalTitle,
-        file: this.activeFile,
-        previewUrl: this.previewUrl,
-      };
+    return null;
+  }
+
+  formatTin(): void {
+    const control = this.businessInfoForm.get('tin');
+    if (!control) return;
+
+    let value = control.value.replace(/[^0-9]/g, '');
+
+    if (value.length <= 3) {
+      value = value;
+    } else if (value.length <= 6) {
+      value = `${value.slice(0, 3)}-${value.slice(3)}`;
+    } else if (value.length <= 9) {
+      value = `${value.slice(0, 3)}-${value.slice(3, 6)}-${value.slice(6)}`;
+    } else {
+      value = `${value.slice(0, 3)}-${value.slice(3, 6)}-${value.slice(6, 9)}-${value.slice(9, 12)}`;
     }
 
-    Swal.fire({
-      icon: 'success',
-      title: 'Image selected!',
-      text: 'Your image has been successfully chosen.',
-      confirmButtonColor: '#009800',
-    }).then(() => {
-      this.closeModal();
-    });
+    control.setValue(value, { emitEvent: false });
   }
 
-  getUploadedDocuments() {
-    return Object.entries(this.documents).map(([key, doc]) => ({
-      field: key,
-      title: doc.title,
-      file: doc.file,
-    }));
+  filterProvinces() {
+    const value = this.businessInfoForm.get('province')?.value?.toLowerCase() || '';
+    this.filteredProvinces = this.allProvinces.filter(p => p.toLowerCase().includes(value));
   }
 
-  onSignatureSaved(base64Image: string) {
-    this.signatureImage = base64Image;
+  selectProvince(province: string) {
+    this.businessInfoForm.get('province')?.setValue(province);
+    this.provinceDropdownOpen = false;
+
+    // reset dependent fields
+    this.businessInfoForm.get('city')?.reset();
+    this.businessInfoForm.get('barangay')?.reset();
+    this.filteredCities = [];
+    this.filteredBarangays = [];
+  }
+
+  closeProvinceDropdown() {
+    setTimeout(() => (this.provinceDropdownOpen = false), 150);
+  }
+
+  // City methods
+  filterCities() {
+    const province = this.businessInfoForm.get('province')?.value;
+    const value = this.businessInfoForm.get('city')?.value?.toLowerCase() || '';
+    if (!province) return;
+    this.filteredCities = this.allCities[province].filter(c => c.toLowerCase().includes(value));
+  }
+
+  selectCity(city: string) {
+    this.businessInfoForm.get('city')?.setValue(city);
+    this.cityDropdownOpen = false;
+
+    // reset dependent barangay
+    this.businessInfoForm.get('barangay')?.reset();
+    this.filteredBarangays = [];
+  }
+
+  closeCityDropdown() {
+    setTimeout(() => (this.cityDropdownOpen = false), 150);
+  }
+
+  // Barangay methods
+  filterBarangays() {
+    const city = this.businessInfoForm.get('city')?.value;
+    const value = this.businessInfoForm.get('barangay')?.value?.toLowerCase() || '';
+    if (!city) return;
+    this.filteredBarangays = this.allBarangays[city].filter(b => b.toLowerCase().includes(value));
+  }
+
+  selectBarangay(barangay: string) {
+    this.businessInfoForm.get('barangay')?.setValue(barangay);
+    this.barangayDropdownOpen = false;
+  }
+
+  closeBarangayDropdown() {
+    setTimeout(() => (this.barangayDropdownOpen = false), 150);
+  }
+
+  filterGenderOptions() {
+    const input = this.businessInfoForm.get('gender')?.value.toLowerCase() || '';
+    this.filteredGenders = this.genderOptions.filter((g) =>
+      g.toLowerCase().includes(input)
+    );
+  }
+
+  selectGender(g: string) {
+    this.businessInfoForm.get('gender')?.setValue(g);
+    this.genderDropdownOpen = false;
+  }
+
+  closeGenderDropdown() {
+    setTimeout(() => (this.genderDropdownOpen = false), 150);
+  }
+
+  // 🏢 Organization filter
+  filterOrganizationOptions() {
+    const input = this.businessInfoForm.get('organizationType')?.value.toLowerCase() || '';
+    this.filteredOrganizations = this.organizationOptions.filter((o) =>
+      o.toLowerCase().includes(input)
+    );
+  }
+
+  selectOrganization(o: string) {
+    this.businessInfoForm.get('organizationType')?.setValue(o);
+    this.orgDropdownOpen = false;
+  }
+
+  closeOrgDropdown() {
+    setTimeout(() => (this.orgDropdownOpen = false), 150);
   }
 }

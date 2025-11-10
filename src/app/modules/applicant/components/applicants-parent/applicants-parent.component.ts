@@ -39,13 +39,21 @@ export class ApplicantsParentComponent {
 
     const segments = this.router.url
       .split('/')
-      .filter(seg => seg && !uuidRegex.test(seg) && !trackRegex.test(seg));
+      .filter(seg => seg);
 
-    
     let url = '';
     this.items = segments.map(segment => {
       url += `/${segment}`;
-      return { label: this.capitalize(segment), routerLink: url };
+
+      let label: string;
+
+      if (uuidRegex.test(segment) || trackRegex.test(segment)) {
+        label = 'Application Details';
+      } else {
+        label = this.capitalize(segment);
+      }
+
+      return { label, routerLink: url };
     });
   }
 

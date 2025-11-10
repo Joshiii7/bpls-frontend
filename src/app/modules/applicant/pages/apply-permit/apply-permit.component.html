@@ -1,907 +1,466 @@
-<main class="grid grid-cols-12 gap-3">
-
-    <!-- Payment Methods -->
-    <div class="col-span-12 lg:col-span-3 lg:sticky top-[12rem] self-start grid grid-cols-12 gap-3">
-
-        <div class="col-span-6 lg:col-span-12 flex flex-col justify-between bg-white rounded-lg border p-7 w-full h-auto">
-            <h2 class="font-bold text-lg mb-4">Type of Application <span class="font-normal text-red-600">*</span></h2>
-            <div class="grid grid-cols-2 gap-2 mb-4">
-                <div *ngFor="let type of applicationTypes">
-                    <label class="flex items-center text-sm">
-                        <input
-                            type="radio"
-                            name="applicationType"
-                            [(ngModel)]="selectedApplicationType"
-                            [value]="type.id"
-                            class="hidden"
-                        >
-                        <div class="border border-gray-900 border-2 me-2 w-5 h-5 flex items-center justify-center cursor-pointer">
-                            <span *ngIf="selectedApplicationType === type.id"  class="text-green-600 ps-1"><i class="fa-solid fa-check"></i></span>
-                        </div>
-                        <span class="cursor-pointer">{{ type.label }}</span>
-                    </label>
-                </div>
-            </div>
-            
-            <h2 class="font-bold text-lg mb-4">Payment Options <span class="font-normal text-red-600">*</span></h2>
-            <div class="grid grid-cols-2 gap-2">
-                <div *ngFor="let option of payments">
-                    <label class="flex items-center text-sm">
-                        <input
-                            type="radio"
-                            name="paymentOption"
-                            [(ngModel)]="selectedPayment"
-                            [value]="option.id"
-                            class="hidden"
-                        >
-                        <div class="border border-gray-900 border-2 me-2 w-5 h-5 flex items-center justify-center cursor-pointer">
-                            <span *ngIf="selectedPayment === option.id" class="text-green-600 ps-1"><i class="fa-solid fa-check"></i></span>
-                        </div>
-                        <span class="cursor-pointer">{{ option.payment }}</span>
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-span-6 lg:col-span-12 space-y-2">
-            <!-- Required Fields Note -->
-            <div class="bg-red-50 border-l-4 border-red-600 p-4 text-sm text-gray-800">
-                <strong>Note:</strong> 
-                All fields marked with <span class="text-red-600">*</span> are required.
-            </div>
-
-            <!-- Renewal Reminder -->
-            <div class="bg-red-50 border-l-4 border-red-600 p-4 text-sm text-gray-800">
-                <strong>For Renewal Applications:</strong> 
-                If your business is already registered in the system, go to your dashboard, select your business, and click 
-                <strong>Renew Permit</strong>. This will automatically reuse your existing business details.
-            </div>
-
-            <!-- Profile Reminder -->
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-sm text-gray-800">
-                <strong>Reminder:</strong> 
-                Your registered name and contact details will appear in the <strong>Owner Information</strong> section.
-                To make changes, please update your profile before submitting your application.
-            </div>
-        </div>
-
-    </div>
+<main class="grid grid-cols-12 gap-3 relative">
     
-    <!-- main section -->
-    <section class="col-span-12 lg:col-span-9">
-
-        <!-- Buttons -->
-        <section class="">
-            <div class="relative md:h-[4.3rem] h-[3rem] flex flex-row justify-between bg-white shadow-inner-custom border boder-gray-100 rounded-lg lg:items-center gap-2 w-full">
-                <div
-                    class="absolute top-.1 left-0 h-full bg-white border border-gray-300 rounded-lg transition-transform duration-300 ease-in-out"
-                    [ngStyle]="{'transform': 'translateX(' + (currentTab - 1) * 100 + '%)', 'width': '25%'}">
-                </div>
+    <!-- Payment and Type of Application Section -->
+    <section class="col-span-12 lg:col-span-3 bg-white rounded-2xl z-50 border p-6 self-start sticky top-[12.1rem]">
         
-                <!-- Tabs -->
-                <ul class="flex flex-row text-sm font-medium text-center w-full gap-2 relative z-10">
-                    <li class="w-[25%]" role="tab">
-                        <button
-                            (click)="tabIndex(1)"
-                            class="text-sm lg:text-md font-bold lg:h-[5rem] md:h-[4.3rem] h-[3rem] px-4 py-1 flex flex-col justify-center items-center w-full rounded-3xl relative">
-                            <span class="block md:hidden">A.</span>
-                            <span class="hidden md:block">A. BUSINESS INFORMATION</span>
-                        </button>
-                    </li>
-                    <li class="w-[25%]" role="tab">
-                        <button
-                            (click)="tabIndex(2)"
-                            class="text-sm lg:text-md font-bold lg:h-[5rem] md:h-[4.3rem] h-[3rem] px-4 py-1 flex flex-col justify-center items-center w-full rounded-3xl relative">
-                            <span class="block md:hidden">B.</span>
-                            <span class="hidden md:block">B. BUSINESS OPERATION</span>
-                        </button>
-                    </li>
-                    <li class="w-[25%]" role="tab">
-                        <button
-                            (click)="tabIndex(3)"
-                            class="text-sm lg:text-md font-bold lg:h-[5rem] md:h-[4.3rem] h-[3rem] px-4 py-1 flex flex-col justify-center items-center w-full rounded-3xl relative">
-                            <span class="block md:hidden">C.</span>
-                            <span class="hidden md:block">C. DOCUMENTS & LOCATION</span>
-                        </button>
-                    </li>
-                    <li class="w-[25%]" role="tab">
-                        <button
-                            (click)="tabIndex(4)"
-                            class="text-sm lg:text-md font-bold lg:h-[5rem] md:h-[4.3rem] h-[3rem] px-4 py-1 flex flex-col justify-center items-center w-full rounded-3xl relative">
-                            <span class="block md:hidden">D.</span>
-                            <span class="hidden md:block">D. REVIEW</span>
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </section>
+        <!-- Type of Application Form -->
+        <form [formGroup]="applicationTypeForm" class="mb-6">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">
+                Type of Application <span class="text-red-600">*</span>
+            </h2>
 
-        <section *ngIf="currentTab === 1" class="py-7 relative">
-            <form [formGroup]="permitForm" class="grid grid-cols-12 gap-3">
-    
-                <!-- Business Information -->
-                <div class="col-span-12 lg:col-span-7 p-7 lg:rounded-lg md:rounded-md rounded bg-white border">
-                    <h2 class="font-bold text-xl">Business Information</h2>
-                    <hr class="mt-3 border-t-2 border-gray-400 shadow-md">
-                    <div class="space-y-2 py-3">
-                        <div>
-                            <label class="text-sm font-light" [class.text-red-600]="permitForm.get('businessName')?.invalid && (permitForm.get('businessName')?.touched || permitForm.get('businessName')?.dirty)" for="businessName">
-                                Business Name <span class="text-red-600">*</span>
-                            </label>
-                            <input 
-                                type="text" 
-                                id="businessName" 
-                                formControlName="businessName" 
-                                class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400" 
-                                [class.border-red-500]="permitForm.get('businessName')?.invalid && (permitForm.get('businessName')?.touched || permitForm.get('businessName')?.dirty)"
-                                placeholder="Bislig Pizza Hub"
-                                required=""
-                            >
-                            <div *ngIf="permitForm.get('businessName')?.invalid && (permitForm.get('businessName')?.touched || permitForm.get('businessName')?.dirty)">
-                                <small class="text-red-500" *ngIf="permitForm.get('businessName')?.errors?.['required']">Business Name is required.</small>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-sm font-light" for="tradeName">Trade Name/Franchise (If applicable)</label>
-                            <input 
-                                type="text" 
-                                id="tradeName" 
-                                formControlName="tradeName" 
-                                class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                placeholder="Shakey’s Pizza" 
-                                required="">
-                        </div>
-                        <div>
-                            <label class="text-sm font-light" [class.text-red-600]="permitForm.get('dtiNumber')?.invalid && (permitForm.get('dtiNumber')?.touched || permitForm.get('dtiNumber')?.dirty)" for="dtiNumber">DTI/SEC/CDA Registration Number <span class="text-red-600">*</span></label>
-                            <input 
-                                type="text" 
-                                id="dtiNumber" 
-                                formControlName="dtiNumber" 
-                                class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                [class.border-red-500]="permitForm.get('dtiNumber')?.invalid && (permitForm.get('dtiNumber')?.touched || permitForm.get('dtiNumber')?.dirty)"
-                                placeholder="Enter DTI/SEC/CDA Registration Number" 
-                                required="">
-                            <div *ngIf="permitForm.get('dtiNumber')?.invalid && (permitForm.get('dtiNumber')?.touched || permitForm.get('dtiNumber')?.dirty)">
-                                <small class="text-red-500" *ngIf="permitForm.get('dtiNumber')?.errors?.['required']">DTI/SEC/CDA is required.</small>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-sm font-light" [class.text-red-600]="permitForm.get('registrationDate')?.invalid && (permitForm.get('registrationDate')?.touched || permitForm.get('registrationDate')?.dirty)" for="registrationDate">DTI/SEC/CDA Registration Issued <span class="text-red-600">*</span></label>
-                            <input
-                                type="date"
-                                id="registrationDate"
-                                formControlName="registrationDate"
-                                class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400"
-                                [class.border-red-500]="permitForm.get('registrationDate')?.invalid && (permitForm.get('registrationDate')?.touched || permitForm.get('registrationDate')?.dirty)"
-                                required=""
-                            >
-                            <div *ngIf="permitForm.get('registrationDate')?.invalid && (permitForm.get('registrationDate')?.touched || permitForm.get('registrationDate')?.dirty)">
-                                <small class="text-red-500" *ngIf="permitForm.get('registrationDate')?.errors?.['required']">Date of Registration is required.</small>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-sm font-light" [class.text-red-600]="permitForm.get('tinNumber')?.invalid && (permitForm.get('tinNumber')?.touched || permitForm.get('tinNumber')?.dirty)" for="tinNumber">Tax Identification Number (TIN) <span class="text-red-600">*</span></label>
-                            <input 
-                                type="text" 
-                                id="tinNumber" 
-                                (input)="onTinInput($event)"
-                                formControlName="tinNumber" 
-                                maxlength="15"
-                                class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                [class.border-red-500]="permitForm.get('tinNumber')?.invalid && (permitForm.get('tinNumber')?.touched || permitForm.get('tinNumber')?.dirty)"
-                                placeholder="Enter Tax Identification Number (TIN)" 
-                                required=""
-                            >
-                            <div *ngIf="permitForm.get('tinNumber')?.invalid && (permitForm.get('tinNumber')?.touched || permitForm.get('tinNumber')?.dirty)">
-                                <small class="text-red-500" *ngIf="permitForm.get('tinNumber')?.errors?.['required']">Tax Identification Number (TIN) is required.</small>
-                                <small class="text-red-500" *ngIf="permitForm.get('tinNumber')?.errors?.['pattern']">Please enter a valid TIN (format: 123-456-789 or 123-456-789-000).</small>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-sm font-light" [class.text-red-600]="permitForm.get('businessType')?.invalid && (permitForm.get('businessType')?.touched || permitForm.get('businessType')?.dirty)" for="businessType">Type of Organization <span class="text-red-600">*</span></label>
-                            <select 
-                                id="businessType" 
-                                formControlName="businessType" 
-                                class="bg-white border border-gray-300 text-sm rounded-lg focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-800 cursor-pointer"
-                                [ngClass]="{
-                                    'border-red-500 text-red-600': permitForm.get('businessType')?.invalid &&
-                                    (permitForm.get('businessType')?.touched || permitForm.get('businessType')?.dirty)
-                                }"
-                            >
-                                <option value="" disabled selected>Please Select</option>
-                                <option *ngFor="let businessType of businessTypes" [value]="businessType.id">{{ businessType.business_name }}</option>
-                            </select>
-                        </div>
-                        <div *ngIf="permitForm.get('businessType')?.value == '1' || permitForm.get('businessType')?.value == '2'">
-                            <label class="text-sm font-light" for="gender">Gender <span class="text-red-600">*</span></label>
-                            <select id="gender" formControlName="gender" class="bg-white border border-gray-300 text-sm rounded-lg focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-800 cursor-pointer">
-                                <option value="" disabled selected>Please Select</option>
-                                <option *ngFor="let gender of genders" [value]="gender.id">{{ gender.gender }}</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-    
-                <!-- Owner Information -->
-                <div class="col-span-12 lg:col-span-5 p-7 lg:rounded-lg md:rounded-md rounded bg-white border">
-                    <h2 class="font-bold text-xl">
-                        Owner's Information
-                        <span class="font-normal text-xs block mt-1">
-                            (If the business is a Corporation, Cooperative, or Partnership, please provide the name of the President or Officer in Charge)
-                        </span>
-                    </h2>
-                    <hr class="mt-3 border-t-2 border-gray-400 shadow-md">
-                    <div class="space-y-2 py-3">
-                        <div>
-                            <label [class.text-red-600]="permitForm.get('first_name')?.invalid && (permitForm.get('first_name')?.touched || permitForm.get('first_name')?.dirty)" class="text-sm font-light" for="first_name">Given Name <span class="text-red-600">*</span></label>
-                            <input 
-                                type="text" 
-                                id="first_name" 
-                                formControlName="first_name" 
-                                class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                [class.border-red-500]="permitForm.get('first_name')?.invalid && (permitForm.get('first_name')?.touched || permitForm.get('first_name')?.dirty)"
-                                placeholder="Joshi Angelo" 
-                                required="">
-                            <div *ngIf="permitForm.get('first_name')?.invalid && (permitForm.get('first_name')?.touched || permitForm.get('first_name')?.dirty)">
-                                <small class="text-red-500" *ngIf="permitForm.get('first_name')?.errors?.['required']">Given Name is required.</small>
-                            </div>
-                        </div>
-                        <div>
-                            <label [class.text-red-600]="permitForm.get('middle_name')?.invalid && (permitForm.get('middle_name')?.touched || permitForm.get('middle_name')?.dirty)" class="text-sm font-light" for="middle_name">Middle Name <span class="text-red-600">*</span></label>
-                            <input 
-                                type="text" 
-                                id="middle_name" 
-                                formControlName="middle_name" 
-                                class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                [class.border-red-500]="permitForm.get('middle_name')?.invalid && (permitForm.get('middle_name')?.touched || permitForm.get('middle_name')?.dirty)"
-                                placeholder="Zaballero" 
-                                required="">
-                            <div *ngIf="permitForm.get('middle_name')?.invalid && (permitForm.get('middle_name')?.touched || permitForm.get('middle_name')?.dirty)">
-                                <small class="text-red-500" *ngIf="permitForm.get('middle_name')?.errors?.['required']">Middle Name is required.</small>
-                            </div>
-                        </div>
-                        <div>
-                            <label [class.text-red-600]="permitForm.get('last_name')?.invalid && (permitForm.get('last_name')?.touched || permitForm.get('last_name')?.dirty)" class="text-sm font-light" for="last_name">Surname <span class="text-red-600">*</span></label>
-                            <input 
-                                type="text" 
-                                id="last_name" 
-                                formControlName="last_name" 
-                                class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                [class.border-red-500]="permitForm.get('last_name')?.invalid && (permitForm.get('last_name')?.touched || permitForm.get('last_name')?.dirty)"
-                                placeholder="Adlawan" 
-                                required="">
-                            <div *ngIf="permitForm.get('last_name')?.invalid && (permitForm.get('last_name')?.touched || permitForm.get('last_name')?.dirty)">
-                                <small class="text-red-500" *ngIf="permitForm.get('last_name')?.errors?.['required']">Surname is required.</small>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-sm font-light" for="suffix">Suffix (e.g. Jr. Sr. III.)</label>
-                            <input type="text" id="suffix" formControlName="suffix" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="Jr.">
-                        </div>
-                        <div>
-                            <label [class.text-red-600]="permitForm.get('number')?.invalid && (permitForm.get('number')?.touched || permitForm.get('number')?.dirty)" class="text-sm font-light" for="number">Contact Number <span class="text-red-600">*</span></label>
-                            <input 
-                                (change)="confirmDuplicate($event)" 
-                                type="text" 
-                                id="number" 
-                                formControlName="number" 
-                                class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                [class.border-red-500]="permitForm.get('number')?.invalid && (permitForm.get('number')?.touched || permitForm.get('number')?.dirty)"
-                                placeholder="09382943739" 
-                                required="">
-                            <div *ngIf="permitForm.get('number')?.invalid && (permitForm.get('number')?.touched || permitForm.get('number')?.dirty)">
-                                <small class="text-red-500" *ngIf="permitForm.get('number')?.errors?.['required']">Contact Number is required.</small>
-                            </div>
-                        </div>
-                        <div>
-                            <label [class.text-red-600]="permitForm.get('email')?.invalid && (permitForm.get('email')?.touched || permitForm.get('email')?.dirty)" class="text-sm font-light" for="email">Email Address <span class="text-red-600">*</span></label>
-                            <input 
-                                (change)="confirmDuplicateEmail($event)" 
-                                type="email" id="email" 
-                                formControlName="email" 
-                                class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                [class.border-red-500]="permitForm.get('email')?.invalid && (permitForm.get('email')?.touched || permitForm.get('email')?.dirty)"
-                                placeholder="sample@gmail.com" 
-                                required="">
-                            <div *ngIf="permitForm.get('email')?.invalid && (permitForm.get('email')?.touched || permitForm.get('email')?.dirty)">
-                                <small class="text-red-500" *ngIf="permitForm.get('email')?.errors?.['required']">Email is required.</small>
-                                <small class="text-red-500" *ngIf="permitForm.get('email')?.errors?.['email']">Invalid email format.</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-    
-                <!-- Main Office Primary Address -->
-                <div class="col-span-12 lg:col-span-5 p-7 lg:rounded-lg md:rounded-md rounded bg-white border">
-                    <h2 class="font-bold text-xl">Main Office Primary Address</h2>
-                    <hr class="mt-3 border-t-2 border-gray-400 shadow-md">
-                    <div class="space-y-2 py-3">
-                        <div>
-                            <label class="text-sm font-light" for="registerProvince">Province: <span class="text-red-600">*</span></label>
-                            <select id="registerProvince" formControlName="registerProvince" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-800 cursor-pointer" (change)="selectProvince()">
-                                <option value="" disabled>Please Select</option>
-                                <option *ngFor="let province of provinces" [value]="province.id">{{ province.province_name }}</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-sm font-light" for="registerCities">Cities: <span class="text-red-600">*</span></label>
-                            <select id="registerCities" formControlName="registerCities" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-800 cursor-pointer" (change)="selectCity()">
-                                <option value="" disabled>Please Select</option>
-                                <option *ngFor="let city of cities" [value]="city.id">{{ city.city_name }}</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-sm font-light" for="registerBaranggays">Baranggays: <span class="text-red-600">*</span></label>
-                            <select (change)="getBarangay($event)" id="registerBaranggays" formControlName="registerBaranggays" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-800 cursor-pointer">
-                                <option value="" disabled>Please Select</option>
-                                <option *ngFor="let barangay of barangays" [value]="barangay.id">{{ barangay.brgy_name }}</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label [class.text-red-600]="permitForm.get('registerZipCode')?.invalid && (permitForm.get('registerZipCode')?.touched || permitForm.get('registerZipCode')?.dirty)" class="text-sm font-light" for="zip_code">Zip Code <span class="text-red-600">*</span></label>
-                            <input 
-                                type="text" 
-                                id="zip_code" 
-                                formControlName="registerZipCode" 
-                                class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                [class.border-red-500]="permitForm.get('registerZipCode')?.invalid && (permitForm.get('registerZipCode')?.touched || permitForm.get('registerZipCode')?.dirty)"
-                                placeholder="e.g. 8311" 
-                                required="">
-                            <div *ngIf="permitForm.get('registerZipCode')?.invalid && (permitForm.get('registerZipCode')?.touched || permitForm.get('registerZipCode')?.dirty)">
-                                <small class="text-red-500" *ngIf="permitForm.get('registerZipCode')?.errors?.['required']">Zip Code is required.</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-    
-                <!-- Main Office Optional Address -->
-                <div class="col-span-12 lg:col-span-7 p-7 lg:rounded-lg md:rounded-md rounded bg-white border">
-                    <h2 class="font-bold text-xl">Main Office Optional Address</h2>
-                    <hr class="mt-3 border-t-2 border-gray-400 shadow-md">
-                    <div class="space-y-2 py-3">
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label [class.text-red-600]="permitForm.get('registerStreet')?.invalid && (permitForm.get('registerStreet')?.touched || permitForm.get('registerStreet')?.dirty)" class="text-sm font-light" for="street">Street Address <span class="text-red-600">*</span></label>
-                                <input 
-                                    type="text" 
-                                    id="street" 
-                                    formControlName="registerStreet" 
-                                    class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                    [class.border-red-500]="permitForm.get('registerStreet')?.invalid && (permitForm.get('registerStreet')?.touched || permitForm.get('registerStreet')?.dirty)"
-                                    placeholder="Enter Street Address"
-                                    required=""
-                                    >
-                                <div *ngIf="permitForm.get('registerStreet')?.invalid && (permitForm.get('registerStreet')?.touched || permitForm.get('registerStreet')?.dirty)">
-                                    <small class="text-red-500" *ngIf="permitForm.get('registerStreet')?.errors?.['required']">Street Address is required.</small>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-sm font-light" for="house">House/Bldg. no</label>
-                                <input type="text" id="house" formControlName="registerHouse" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="e.g. ###">
-                            </div>
-                            <div>
-                                <label class="text-sm font-light" for="name_building">Name of Building</label>
-                                <input type="text" id="name_building" formControlName="registerNameBuilding" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="Enter Building Name">
-                            </div>
-                            <div>
-                                <label class="text-sm font-light" for="lot_no">Lot no</label>
-                                <input type="text" id="lot_no" formControlName="registerLotNo" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="e.g. ###">
-                            </div>
-                            <div>
-                                <label class="text-sm font-light" for="block_no">Block no</label>
-                                <input type="text" id="block_no" formControlName="registerBlockNo" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="e.g. ###">
-                            </div>
-                            <div>
-                                <label class="text-sm font-light" for="subdivision">Subdivision</label>
-                                <input type="text" id="subdivision" formControlName="registerSubdivision" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="Enter Subdivision">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-    
-            </form>
-        </section>
-    
-        <section *ngIf="currentTab === 2" class="py-7 relative">
-            <form [formGroup]="permitOperationForm" class="grid grid-cols-12 gap-3">
-    
-                <!-- Business Operation -->
-                <div class="lg:col-span-6 col-span-12 p-7 lg:rounded-lg md:rounded-md rounded bg-white border">
-                    <h2 class="font-bold text-xl">Business Operation</h2>
-                    <hr class="mt-3 border-t-2 border-gray-400 shadow-md">
-                    <div class="space-y-2 py-3">
-                        <div>
-                            <label class="text-sm font-light" for="activity">Business Activity: <span class="text-red-600">*</span></label>
-                            <select id="activity" formControlName="activity" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-800 cursor-pointer">
-                                <option value="" disabled selected>Please Select</option>
-                                <option *ngFor="let activity of businessActivity" [value]="activity.id">{{ activity.activity }}</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label [class.text-red-600]="permitOperationForm.get('businessArea')?.invalid && (permitOperationForm.get('businessArea')?.touched || permitOperationForm.get('businessArea')?.dirty)" class="text-sm font-light" for="businessArea">Business Area (in sq.m.) <span class="text-red-600">*</span></label>
-                            <input 
-                                type="text" 
-                                id="businessArea" 
-                                formControlName="businessArea" 
-                                class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                [class.border-red-500]="permitOperationForm.get('businessArea')?.invalid && (permitOperationForm.get('businessArea')?.touched || permitOperationForm.get('businessArea')?.dirty) || permitOperationForm.get('businessArea')?.errors?.['pattern'] || permitOperationForm.get('businessArea')?.errors?.['min']"
-                                placeholder="Enter Business Area (in sq.m.)" 
-                                required="">
-                            <div *ngIf="permitOperationForm.get('businessArea')?.invalid && (permitOperationForm.get('businessArea')?.touched || permitOperationForm.get('businessArea')?.dirty)">
-                                <small class="text-red-500">Business Area (in sq.m.) is required.</small>
-                            </div>
-                            <div class="flex flex-col mt-1">
-                                <small class="text-red-500" *ngIf="permitOperationForm.get('businessArea')?.errors?.['pattern']">Only numeric values are allowed.</small>
-                                <small class="text-red-500" *ngIf="permitOperationForm.get('businessArea')?.errors?.['min']">Business area must be greater than or equal to 1.</small>
-                            </div>
-                        </div>
-                        <div>
-                            <label [class.text-red-600]="permitOperationForm.get('businessFloorArea')?.invalid && (permitOperationForm.get('businessFloorArea')?.touched || permitOperationForm.get('businessFloorArea')?.dirty)" class="text-sm font-light" for="businessFloorArea">Total Floor Area (in sq.m.) <span class="text-red-600">*</span></label>
-                            <input 
-                                type="text" 
-                                id="businessFloorArea" 
-                                formControlName="businessFloorArea" 
-                                class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                [class.border-red-500]="permitOperationForm.get('businessFloorArea')?.invalid && (permitOperationForm.get('businessFloorArea')?.touched || permitOperationForm.get('businessFloorArea')?.dirty)"
-                                placeholder="Enter Total Floor Area (in sq.m.)" 
-                                required="">
-                            <div *ngIf="permitOperationForm.get('businessFloorArea')?.invalid && (permitOperationForm.get('businessFloorArea')?.touched || permitOperationForm.get('businessFloorArea')?.dirty)">
-                                <small class="text-red-500" *ngIf="permitOperationForm.get('businessFloorArea')?.errors?.['required']">Total Floor Area (in sq.m.) is required.</small>
-                            </div>
-                            <div class="flex flex-col mt-1">
-                                <small class="text-red-500" *ngIf="permitOperationForm.get('businessFloorArea')?.errors?.['pattern']">Only numeric values are allowed.</small>
-                                <small class="text-red-500" *ngIf="permitOperationForm.get('businessFloorArea')?.errors?.['min']">Total floor area must be greater than or equal to 1.</small>
-                            </div>
-                        </div>
-                        <div>
-                            <label [class.text-red-600]="permitOperationForm.get('employees')?.invalid && (permitOperationForm.get('employees')?.touched || permitOperationForm.get('employees')?.dirty)" class="text-sm font-light" for="employees">No. of Employees Residing within LGU <span class="text-red-600">*</span></label>
-                            <input 
-                                type="number" 
-                                id="employees" 
-                                formControlName="employees" 
-                                class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                [class.border-red-500]="permitOperationForm.get('employees')?.invalid && (permitOperationForm.get('employees')?.touched || permitOperationForm.get('employees')?.dirty)"
-                                placeholder="e.g. 5" 
-                                required="" 
-                                min="0">
-                            <div *ngIf="permitOperationForm.get('employees')?.invalid && (permitOperationForm.get('employees')?.touched || permitOperationForm.get('employees')?.dirty)">
-                                <small class="text-red-500" *ngIf="permitOperationForm.get('employees')?.errors?.['required']">No. of Employees Residing within LGU is required.</small>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <h3 class="text-sm font-semibold mt-4">Total No. of Employees in Establishment <span class="text-red-600">*</span></h3>
-                            <div class="flex justify-between gap-2">
-                                <div class="w-[100%]">
-                                    <label [class.text-red-600]="permitOperationForm.get('no_male')?.invalid && (permitOperationForm.get('no_male')?.touched || permitOperationForm.get('no_male')?.dirty)" class="text-sm font-light" for="no_male">Male</label>
-                                    <input 
-                                        type="number" 
-                                        id="no_male" 
-                                        formControlName="no_male" 
-                                        class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                        [class.border-red-500]="permitOperationForm.get('no_male')?.invalid && (permitOperationForm.get('no_male')?.touched || permitOperationForm.get('no_male')?.dirty)"
-                                        placeholder="e.g. 4" 
-                                        required="" 
-                                        min="0">
-                                    <div *ngIf="permitOperationForm.get('no_male')?.invalid && (permitOperationForm.get('no_male')?.touched || permitOperationForm.get('no_male')?.dirty)">
-                                        <small class="text-red-500" *ngIf="permitOperationForm.get('no_male')?.errors?.['required']">This cannot be blanked.</small>
-                                    </div>
-                                </div>
-                                <div class="w-[100%]">
-                                    <label [class.text-red-600]="permitOperationForm.get('no_female')?.invalid && (permitOperationForm.get('no_female')?.touched || permitOperationForm.get('no_female')?.dirty)" class="text-sm font-light" for="no_female">Female</label>
-                                    <input 
-                                        type="number" 
-                                        id="no_female" 
-                                        formControlName="no_female" 
-                                        class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                        [class.border-red-500]="permitOperationForm.get('no_female')?.invalid && (permitOperationForm.get('no_female')?.touched || permitOperationForm.get('no_female')?.dirty)"
-                                        placeholder="e.g. 7" 
-                                        required="" 
-                                        min="0">
-                                    <div *ngIf="permitOperationForm.get('no_female')?.invalid && (permitOperationForm.get('no_female')?.touched || permitOperationForm.get('no_female')?.dirty)">
-                                        <small class="text-red-500" *ngIf="permitOperationForm.get('no_female')?.errors?.['required']">This cannot be blanked.</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <h3 class="text-sm font-semibold mt-4">No. of Delivery Vehicles (if applicable)</h3>
-                            <div class="flex justify-between gap-2">
-                                <div class="w-[100%]">
-                                    <label class="text-sm font-light" for="van">Van/Truck</label>
-                                    <input type="number" id="van" formControlName="van" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="e.g. 4" min="0">
-                                </div>
-                                <div class="w-[100%]">
-                                    <label class="text-sm font-light" for="motor">Motorcycle</label>
-                                    <input type="number" id="motor" formControlName="motor" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="e.g. 7" min="0">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-    
-                <!-- Business Address -->
-                <div class="lg:col-span-6 col-span-12 p-7 lg:rounded-lg md:rounded-md rounded bg-white border">
-                    <div class="flex justify-between items-center">
-                        <h2 class="font-bold text-xl">Business Address</h2>
-                        <div class="flex gap-2">
-                            <label for="same" class="text-sm cursor-pointer">Same as Main Office?</label>
-                            <input type="checkbox" id="same" formControlName="sameAsMainOffice" (change)="copyAddress($event)" class="cursor-pointer">
-                        </div>
-                    </div>
-                    <hr class="mt-3 border-t-2 border-gray-400 shadow-md">
-                    <div class="space-y-2 py-3">
-                        <div>
-                            <label class="text-sm font-light" for="province">Province: <span class="text-red-600">*</span></label>
-                            <select id="province" formControlName="province" class="cursor-not-allowed bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-800">
-                                <option value="">Surigao del Sur</option>
-                                <option *ngFor="let province of provinces" [value]="province.id">{{ province.province_name }}</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-sm font-light" for="city">Cities: <span class="text-red-600">*</span></label>
-                            <select id="city" formControlName="city" class="cursor-not-allowed bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-800">
-                                <option value="">Bislig City</option>
-                                <option *ngFor="let city of cities" [value]="city.id">{{ city.city_name }}</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-sm font-light" for="baranggays">Baranggays: <span class="text-red-600">*</span></label>
-                            <select (change)="operationalBaranggay($event)" id="baranggays" formControlName="baranggays" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-800" [ngStyle]="{'cursor': permitOperationForm.controls['baranggays'].disabled ? 'not-allowed' : 'pointer'}">
-                                <option value="" disabled selected>Please Select</option>
-                                <option *ngFor="let barangay of baranggaysArray" [value]="barangay.id">{{ barangay.brgy_name }}</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label [class.text-red-600]="permitOperationForm.get('zip_code')?.invalid && (permitOperationForm.get('zip_code')?.touched || permitOperationForm.get('zip_code')?.dirty)" class="text-sm font-light" for="zip_code">Zip Code <span class="text-red-600">*</span></label>
-                            <input 
-                                type="text" 
-                                id="zip_code" 
-                                formControlName="zip_code" 
-                                class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                [class.border-red-500]="permitOperationForm.get('zip_code')?.invalid && (permitOperationForm.get('zip_code')?.touched || permitOperationForm.get('zip_code')?.dirty)"
-                                placeholder="e.g. 8311" 
-                                required="">
-                            <div *ngIf="permitOperationForm.get('zip_code')?.invalid && (permitOperationForm.get('zip_code')?.touched || permitOperationForm.get('zip_code')?.dirty)">
-                                <small class="text-red-500" *ngIf="permitOperationForm.get('zip_code')?.errors?.['required']">Zip Code is required.</small>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label [class.text-red-600]="permitOperationForm.get('street')?.invalid && (permitOperationForm.get('street')?.touched || permitOperationForm.get('street')?.dirty)" class="text-sm font-light" for="street">Street Address <span class="text-red-600">*</span></label>
-                                <input 
-                                    type="text" 
-                                    id="street" 
-                                    formControlName="street" 
-                                    class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" 
-                                    [class.border-red-500]="permitOperationForm.get('street')?.invalid && (permitOperationForm.get('street')?.touched || permitOperationForm.get('street')?.dirty)"
-                                    placeholder="Enter Street Address"
-                                    required=""
-                                    >
-                                <div *ngIf="permitOperationForm.get('street')?.invalid && (permitOperationForm.get('street')?.touched || permitOperationForm.get('street')?.dirty)">
-                                    <small class="text-red-500" *ngIf="permitOperationForm.get('zip_code')?.errors?.['required']">Street Address is required.</small>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-sm font-light" for="house">House/Bldg. no</label>
-                                <input type="text" id="house" formControlName="house" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="e.g. ###">
-                            </div>
-                            <div>
-                                <label class="text-sm font-light" for="name_building">Name of Building</label>
-                                <input type="text" id="name_building" formControlName="name_building" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="Enter Building Name">
-                            </div>
-                            <div>
-                                <label class="text-sm font-light" for="lot_no">Lot no</label>
-                                <input type="text" id="lot_no" formControlName="lot_no" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="e.g. ###">
-                            </div>
-                            <div>
-                                <label class="text-sm font-light" for="block_no">Block no</label>
-                                <input type="text" id="block_no" formControlName="block_no" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="e.g. ###">
-                            </div>
-                            <div>
-                                <label class="text-sm font-light" for="subdivision">Subdivision</label>
-                                <input type="text" id="subdivision" formControlName="subdivision" class="bg-white border border-gray-300 text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-400" placeholder="Enter Subdivision">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-    
-            </form>
-        </section>
-    
-        <section *ngIf="currentTab === 3" class="py-7 relative">
             <div class="grid grid-cols-12 gap-3">
-    
-                <!-- Map -->
-                <div class="lg:col-span-7 col-span-12 h-[50dvh]">
-                    <app-map (locationSelected)="onLocationSelected($event)"></app-map>
-                </div>
+                <label class="col-span-6 flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="radio"
+                        name="applicationType"
+                        formControlName="applicationType"
+                        value="new"
+                        class="text-primary focus:ring-primary"
+                    />
+                    <span>New</span>
+                </label>
 
-                <!-- Map Instruction -->
-                <div class="lg:col-span-5 col-span-12 h-[50dvh] bg-white border border-gray-100 p-5 rounded-lg shadow-inner overflow-y-auto">
-                    <h3 class="text-lg font-bold mb-4">Why Do You Need the Map?</h3>
-                    <p class="text-sm text-gray-700 mb-3">
-                        The map is an important feature of this system as it helps both applicants and administrators visualize the exact location of a business. It ensures that:
-                    </p>
-                    <ul class="list-disc pl-5 space-y-2 text-sm text-gray-700">
-                        <li>Businesses are located within the jurisdiction of the local government unit.</li>
-                        <li>Business zones are easily identified for compliance with zoning regulations.</li>
-                        <li>Local authorities can facilitate inspections more efficiently.</li>
-                        <li>Transparency and accountability are improved for both applicants and officials.</li>
-                    </ul>
+                <label class="col-span-6 flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="radio"
+                        name="applicationType"
+                        formControlName="applicationType"
+                        value="renew"
+                        class="text-primary focus:ring-primary"
+                    />
+                    <span>Renewal</span>
+                </label>
+            </div>
+        </form>
 
-                    <h3 class="text-lg font-bold mt-6 mb-4">How to Use the Map</h3>
-                    <ol class="list-decimal pl-5 space-y-3 text-sm text-gray-700">
-                        <li>Move or drag the map background until your business location is positioned at the center pin.</li>
-                        <li>Zoom in or out if necessary for more precise positioning.</li>
-                        <li>Ensure that the central pin matches your actual business address.</li>
-                        <li>Save or confirm the pinned location to include it in your application.</li>
-                    </ol>
+        <hr class="my-5 border-gray-300" />
 
-                    <p class="mt-4 text-sm text-gray-700">
-                        Make sure the pin is centered on your exact business location to avoid delays in approval or inspection issues.
-                    </p>
-                </div>
-    
-                <!-- Uploading of Documents -->
-                <div class="col-span-12">
-                    <h3 class="text-2xl font-bold mb-3">Upload Supporting Documents</h3>
-                    <p class="text-md text-gray-700 mb-3">
-                        Please upload the required supporting documents. Ensure that the uploaded images meet the following criteria:
-                    </p>
-                    <ul class="list-disc ps-7 space-y-2 text-sm text-gray-700 mb-6">
-                        <li>The images must not be blurry and should have readable text.</li>
-                        <li>Files should be in a supported format such as PNG, JPG, or JPEG.</li>
-                        <li>Ensure the documents are complete and legible to avoid processing delays.</li>
-                    </ul>
+        <!-- Payment Option Form -->
+        <form [formGroup]="paymentOptionForm">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">
+                Payment Option <span class="text-red-600">*</span>
+            </h2>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <!-- Proof of Registration -->
-                        <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
-                            <span class="text-gray-800 font-medium">Proof of Registration (DTI/SEC/CDA) <span class="text-red-600">*</span></span>
-                            <button (click)="openUploadModal('Proof of Registration (DTI/SEC/CDA)', 'file1')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
-                                <i class="fa-solid fa-upload text-white text-lg"></i>
-                            </button>
-                        </div>
+            <div class="grid grid-cols-12 gap-3">
+                <label class="col-span-6 flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="radio"
+                        name="paymentOption"
+                        formControlName="paymentOption"
+                        value="annual"
+                        class="text-primary focus:ring-primary"
+                    />
+                    <span>Annual</span>
+                </label>
 
-                        <!-- Authority to Use of Place of Business -->
-                        <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
-                            <span class="text-gray-800 font-medium">Authority to Use of Place of Business (Proof of Ownership/Contract of Lease) <span class="text-red-600">*</span></span>
-                            <button (click)="openUploadModal('Authority to Use of Place of Business (Proof of Ownership/Contract of Lease)', 'file2')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
-                                <i class="fa-solid fa-upload text-white text-lg"></i>
-                            </button>
-                        </div>
+                <label class="col-span-6 flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="radio"
+                        name="paymentOption"
+                        formControlName="paymentOption"
+                        value="bi-annual"
+                        class="text-primary focus:ring-primary"
+                    />
+                    <span>Bi-Annual</span>
+                </label>
 
-                        <!-- Fire Safety Inspection Certificate -->
-                        <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
-                            <span class="text-gray-800 font-medium">Fire Safety Inspection Certificate <span class="text-red-600">*</span></span>
-                            <button (click)="openUploadModal('Fire Safety Inspection Certificate', 'file3')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
-                                <i class="fa-solid fa-upload text-white text-lg"></i>
-                            </button>
-                        </div>
+                <label class="col-span-6 flex items-center gap-2 cursor-pointer">
+                    <input
+                        type="radio"
+                        name="paymentOption"
+                        formControlName="paymentOption"
+                        value="quarterly"
+                        class="text-primary focus:ring-primary"
+                    />
+                    <span>Quarterly</span>
+                </label>
+            </div>
+        </form>
+    </section>
 
-                        <!-- >Sanitary Permit / Health Clearance -->
-                        <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
-                            <span class="text-gray-800 font-medium">Sanitary Permit <span class="text-red-600">*</span></span>
-                            <button (click)="openUploadModal('Sanitary Permit / Health Clearance', 'file4')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
-                                <i class="fa-solid fa-upload text-white text-lg"></i>
-                            </button>
-                        </div>
+    <section class="col-span-12 lg:col-span-9 bg-white rounded-2xl border p-6">
+        <!-- Tabs -->
+        <div class="flex border-b mb-5">
+            <button
+                *ngFor="let tab of tabs"
+                (click)="activeTab = tab.key"
+                [ngClass]="{
+                    'text-primary border-primary': activeTab === tab.key,
+                    'text-gray-500 border-transparent': activeTab !== tab.key
+                }"
+                class="px-4 py-2 border-b-2 font-semibold transition w-full">
+                {{ tab.label }}
+            </button>
+        </div>
 
-                        <!-- Environmental Clearance / Barangay Clearance -->
-                        <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
-                            <span class="text-gray-800 font-medium">Barangay Clearance <span class="text-red-600">*</span></span>
-                            <button (click)="openUploadModal('Environmental Clearance / Barangay Clearance', 'file6')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
-                                <i class="fa-solid fa-upload text-white text-lg"></i>
-                            </button>
-                        </div>
+        <!-- Business Info -->
+        <div *ngIf="activeTab === 'businessInfo'" class="space-y-4">
+            <form [formGroup]="businessInfoForm" class="grid grid-cols-12 gap-4">
+                
+                <!-- Business Information -->
+                <fieldset class="col-span-12 lg:col-span-7 border border-gray-300 rounded-xl p-5 space-y-4">
+                    <legend class="text-lg font-semibold text-gray-700 px-2">Business Information</legend>
 
-                        <!-- Occupancy Permit -->
-                        <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
-                            <span class="text-gray-800 font-medium">Occupancy Permit Building Official <span class="text-red-600">*</span></span>
-                            <button (click)="openUploadModal('Occupancy Permit', 'file7')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
-                                <i class="fa-solid fa-upload text-white text-lg"></i>
-                            </button>
-                        </div>
-
+                    <!-- Business Name -->
+                    <div>
+                        <label [ngClass]="labelClass('businessName')">
+                            Business Name <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            formControlName="businessName"
+                            placeholder="Enter business name"
+                            [ngClass]="inputClass('businessName')"
+                        />
+                        <p *ngIf="isInvalid('businessName')" class="text-red-500 text-sm mt-1">
+                            Business name is required.
+                        </p>
                     </div>
 
-                    <div 
-                        *ngIf="showModal" 
-                        class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-                        (click)="closeModal()"
-                    >
-                        <div 
-                            (click)="$event.stopPropagation()"
-                            class="bg-white w-[90%] max-w-xl rounded-lg shadow-lg"
+                    <!-- Trade Name -->
+                    <div>
+                        <label class="block font-medium text-sm text-gray-700">Trade Name / Franchise (if applicable)</label>
+                        <input
+                            class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
+                            type="text"
+                            formControlName="tradeName"
+                            placeholder="Enter trade name or franchise"
+                        />
+                    </div>
+
+                    <!-- Registration Number -->
+                    <div>
+                        <label [ngClass]="labelClass('registrationNumber')">
+                            DTI/SEC/CDA Registration Number <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            formControlName="registrationNumber"
+                            placeholder="Enter registration number"
+                            [ngClass]="inputClass('registrationNumber')"
+                        />
+                        <p *ngIf="isInvalid('registrationNumber')" class="text-red-500 text-sm mt-1">
+                            This field is required.
+                        </p>
+                    </div>
+
+                    <!-- Registration Date -->
+                    <div>
+                        <label [ngClass]="labelClass('registrationDate')">
+                            DTI/SEC/CDA Registration Date <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="date"
+                            formControlName="registrationDate"
+                            [ngClass]="inputClass('registrationDate')"
+                        />
+                    </div>
+
+                    <!-- Tax Identification Number (TIN) -->
+                    <div>
+                        <label [ngClass]="labelClass('tin')">
+                            Tax Identification Number (TIN) <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            formControlName="tin"
+                            maxlength="15"
+                            (input)="formatTin()"
+                            placeholder="000-000-000-000"
+                            [ngClass]="inputClass('tin')"
+                        />
+                        <p *ngIf="isInvalid('tin')" class="text-red-500 text-sm mt-1">
+                            {{ isInvalid('tin') }}
+                        </p>
+                    </div>
+
+                    <!-- Type of Organization (Searchable) -->
+                    <div class="relative">
+                        <label [ngClass]="labelClass('organizationType')">
+                            Type of Organization <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            formControlName="organizationType"
+                            placeholder="Search or select organization type..."
+                            (focus)="orgDropdownOpen = true"
+                            (input)="filterOrganizationOptions()"
+                            (blur)="closeOrgDropdown()"
+                            [ngClass]="inputClass('organizationType')"
+                        />
+                        <ul
+                            *ngIf="orgDropdownOpen && filteredOrganizations.length > 0"
+                            class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
                         >
-                            <div class="flex justify-between items-center bg-primary text-white px-4 py-2 rounded-t-lg">
-                                <h3 class="text-lg font-semibold">Document Upload</h3>
-                                <button (click)="closeModal()" class="text-white text-2xl leading-none">&times;</button>
-                            </div>
-
-                            <div class="p-5">
-                                <h4 class="text-lg font-semibold mb-2 uppercase">{{ modalTitle }}</h4>
-
-                                <div
-                                    class="border-2 border-dashed border-gray-300 rounded-lg h-60 flex justify-center items-center text-gray-400 text-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition relative"
-                                    (click)="triggerFileInput()"
-                                    (drop)="onFileDrop($event)"
-                                    (dragover)="onDragOver($event)"
-                                    (dragleave)="onDragLeave($event)"
-                                >
-                                    <ng-container *ngIf="!previewUrl; else previewBlock">
-                                        <span>Drag & drop files here ...</span>
-                                    </ng-container>
-
-                                    <ng-template #previewBlock>
-                                        <img [src]="previewUrl" class="absolute inset-0 w-full h-full object-cover rounded-lg" />
-                                    </ng-template>
-                                </div>
-
-                                <input type="file" #fileInput accept=".jpg,.jpeg,.png" class="hidden" (change)="onFileSelect($event)" />
-
-                                <div class="mt-4 flex justify-between items-center">
-                                    <p class="text-sm text-primary bg-green-50 p-2 rounded-md">
-                                        Please upload a file not exceeding <b>25MB</b>.
-                                    </p>
-                                    <div class="flex gap-3">
-                                        <button 
-                                            (click)="confirmSelection()" 
-                                            class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition cursor-pointer"
-                                        >
-                                            Select This File
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            <li
+                                *ngFor="let o of filteredOrganizations"
+                                (mousedown)="selectOrganization(o)"
+                                class="px-3 py-2 hover:bg-green-500 hover:text-white text-sm cursor-pointer transition"
+                            >
+                                {{ o }}
+                            </li>
+                        </ul>
+                        <p *ngIf="isInvalid('organizationType')" class="text-red-500 text-sm mt-1">
+                            Please select an organization type.
+                        </p>
                     </div>
-                </div>
 
-                <div class="col-span-12">
-                    <app-signature-pad (signatureSaved)="onSignatureSaved($event)"></app-signature-pad>
-                </div>
-    
-            </div>
-        </section>
-    
-        <section *ngIf="currentTab === 4" class="py-7 relative">
-            <app-form
-                [businessName]="permitForm.get('businessName')?.value"
-                [franchiseName]="permitForm.get('tradeName')?.value"
-                [dtiNumber]="permitForm.get('dtiNumber')?.value"
-                [registrationDate]="permitForm.get('registrationDate')?.value"
-                [tinNumber]="permitForm.get('tinNumber')?.value"
-                [surname]="permitForm.get('last_name')?.value"
-                [givenname]="permitForm.get('first_name')?.value"
-                [middlename]="permitForm.get('middle_name')?.value"
-                [suffix]="permitForm.get('suffix')?.value"
-                [email]="permitForm.get('email')?.value"
-                [number]="permitForm.get('number')?.value"
-    
-                [subdivision]="permitForm.get('subdivision')?.value"
-                [block_no]="permitForm.get('block_no')?.value"
-                [lot_no]="permitForm.get('lot_no')?.value"
-                [name_building]="permitForm.get('name_building')?.value"
-                [house_no]="permitForm.get('house')?.value"
-                [street]="permitForm.get('registerStreet')?.value"
-                [barangay]="currentBarangayRegister"
-                [city]="currentCityRegister"
-                [province]="currentProvinceRegister"
-                [zipCode]="permitForm.get('zip_code')?.value"
-    
-                [operational_subdivision]="permitOperationForm.get('subdivision')?.value"
-                [operational_block_no]="permitOperationForm.get('block_no')?.value"
-                [operational_lot_no]="permitOperationForm.get('lot_no')?.value"
-                [operational_name_building]="permitOperationForm.get('name_building')?.value"
-                [operational_house_no]="permitOperationForm.get('house')?.value"
-                [operationalStreet]="permitOperationForm.get('street')?.value"
-                [operationalBarangay]="operationBarangayRegister"
-                [operationalCity]="'Bislig City'"
-                [operationalProvince]="'Surigao del Sur'"
-                [operationalZipCode]="permitOperationForm.get('zip_code')?.value"
-    
-                [businessArea]="permitOperationForm.get('businessArea')?.value"
-                [businessFloorArea]="permitOperationForm.get('businessFloorArea')?.value"
-                [totalFemale]="permitOperationForm.get('no_female')?.value"
-                [totalMale]="permitOperationForm.get('no_male')?.value"
-                [totalEmployee]="permitOperationForm.get('employees')?.value"
-                [businessActivity]="permitOperationForm.get('activity')?.value"
-    
-                [paymentType]="selectedPayment"
-                [businessType]="permitForm.get('businessType')?.value"
-                [gender]="permitForm.get('gender')?.value"
-                [isNew]="selectedApplicationType"
-                [no_van]="permitOperationForm.get('van')?.value"
-                [no_motor]="permitOperationForm.get('motor')?.value"
-                [image]="signatureImage"
-            ></app-form>
-    
-            <div class="mt-5">
-                <button (click)="confirmDetails()" type="button" class="w-full focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-md text-sm px-5 py-2.5 me-2 dark:bg-green-600 dark:hover:bg-green-800 dark:focus:ring-green-800">
-                    Submit
-                </button>
-            </div>
-        </section>
+                    <!-- Gender (Searchable) -->
+                    <div *ngIf="showGender" class="relative">
+                        <label [ngClass]="labelClass('gender')">
+                            Gender <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            formControlName="gender"
+                            placeholder="Search or type gender..."
+                            (focus)="genderDropdownOpen = true"
+                            (input)="filterGenderOptions()"
+                            (blur)="closeGenderDropdown()"
+                            [ngClass]="inputClass('gender')"
+                        />
+                        <ul
+                            *ngIf="genderDropdownOpen && filteredGenders.length > 0"
+                            class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
+                        >
+                            <li
+                                *ngFor="let g of filteredGenders"
+                                (mousedown)="selectGender(g)"
+                                class="px-3 py-2 hover:bg-green-500 hover:text-white text-md cursor-pointer transition"
+                            >
+                                {{ g }}
+                            </li>
+                        </ul>
+                        <p *ngIf="isInvalid('gender')" class="text-red-500 text-sm mt-1">
+                            Gender is required.
+                        </p>
+                    </div>
+                </fieldset>
 
-        <!-- Buttons -->
-        <section class="relative">
-            <div class="flex justify-between items-center">
-                <!-- Previous Button -->
-                <button
-                    type="button"
-                    class="flex items-center gap-2 bg-primary hover:bg-primary/90 rounded-md p-3 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                    (click)="prevTab()"
-                    [disabled]="currentTab === 1"
-                >
-                    <i class="fas fa-arrow-left"></i>
-                    Previous
-                </button>
+                <!-- Owner's Information -->
+                <fieldset class="col-span-12 lg:col-span-5 border border-gray-300 rounded-xl p-5 space-y-4">
+                    <legend class="text-lg font-semibold text-gray-700 px-2">Owner's Information</legend>
 
-                <!-- Next Button -->
-                <button
-                    type="button"
-                    class="flex items-center gap-2 bg-primary hover:bg-primary/90 rounded-md p-3 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                    (click)="nextTab()"
-                    [disabled]="currentTab === totalTabs"
-                >
-                    Next
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
-        </section>
+                    <!-- Given Name -->
+                    <div>
+                        <label [ngClass]="labelClass('givenName')">
+                            Given Name <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            formControlName="givenName"
+                            placeholder="Enter given name"
+                            [ngClass]="inputClass('givenName')"
+                        />
+                        <p *ngIf="isInvalid('givenName')" class="text-red-500 text-sm mt-1">
+                            Given name is required.
+                        </p>
+                    </div>
+
+                    <!-- Middle Name -->
+                    <div>
+                        <label [ngClass]="labelClass('middleName')">
+                            Middle Name <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            formControlName="middleName"
+                            placeholder="Enter middle name"
+                            [ngClass]="inputClass('middleName')"
+                        />
+                        <p *ngIf="isInvalid('middleName')" class="text-red-500 text-sm mt-1">
+                            Middle name is required.
+                        </p>
+                    </div>
+
+                    <!-- Surname -->
+                    <div>
+                        <label [ngClass]="labelClass('surname')">
+                            Surname <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            formControlName="surname"
+                            placeholder="Enter surname"
+                            [ngClass]="inputClass('surname')"
+                        />
+                        <p *ngIf="isInvalid('surname')" class="text-red-500 text-sm mt-1">
+                            Surname is required.
+                        </p>
+                    </div>
+
+                    <!-- Suffix (Optional) -->
+                    <div>
+                        <label class="block font-medium text-sm text-gray-700">
+                            Suffix (Optional)
+                        </label>
+                        <input
+                            type="text"
+                            formControlName="suffix"
+                            placeholder="Jr., Sr., III, etc."
+                            class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
+                        />
+                    </div>
+
+                    <!-- Contact Number -->
+                    <div>
+                        <label [ngClass]="labelClass('contactNumber')">
+                            Contact Number <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            formControlName="contactNumber"
+                            placeholder="+63 912 345 6789"
+                            [ngClass]="inputClass('contactNumber')"
+                        />
+                        <p *ngIf="isInvalid('contactNumber')" class="text-red-500 text-sm mt-1">
+                            Contact number is required.
+                        </p>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label [ngClass]="labelClass('email')">
+                            Email <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="email"
+                            formControlName="email"
+                            placeholder="example@email.com"
+                            [ngClass]="inputClass('email')"
+                        />
+                        <p *ngIf="isInvalid('email')" class="text-red-500 text-sm mt-1">
+                            Please enter a valid email.
+                        </p>
+                    </div>
+                </fieldset>
+
+                <!-- Main Office Primary Address -->
+                <fieldset class="col-span-12 lg:col-span-6 border border-gray-300 rounded-xl p-5 space-y-4">
+                    <legend class="text-lg font-semibold text-gray-700 px-2">Main Office Primary Address</legend>
+
+                    <!-- Province (Searchable) -->
+                    <div class="relative">
+                        <label [ngClass]="labelClass('province')">
+                            Province <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            formControlName="province"
+                            placeholder="Search or select province..."
+                            (focus)="provinceDropdownOpen = true"
+                            (input)="filterProvinces()"
+                            (blur)="closeProvinceDropdown()"
+                            class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
+                            [ngClass]="inputClass('province')"
+                        />
+                        <ul
+                            *ngIf="provinceDropdownOpen && filteredProvinces.length > 0"
+                            class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
+                        >
+                            <li
+                                *ngFor="let p of filteredProvinces"
+                                (mousedown)="selectProvince(p)"
+                                class="px-3 py-2 hover:bg-green-500 hover:text-white cursor-pointer transition text-sm"
+                            >
+                                {{ p }}
+                            </li>
+                        </ul>
+                        <p *ngIf="isInvalid('province')" class="text-red-500 text-sm mt-1">
+                            Province is required.
+                        </p>
+                    </div>
+
+                    <!-- City / Municipality (Searchable, depends on Province) -->
+                    <div class="relative">
+                        <label [ngClass]="labelClass('city')">
+                            City / Municipality <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            formControlName="city"
+                            placeholder="Search or select city..."
+                            [disabled]="!businessInfoForm.get('province')?.value"
+                            (focus)="cityDropdownOpen = true"
+                            (input)="filterCities()"
+                            (blur)="closeCityDropdown()"
+                            class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
+                            [ngClass]="inputClass('city')"
+                        />
+                        <ul
+                            *ngIf="cityDropdownOpen && filteredCities.length > 0"
+                            class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
+                        >
+                            <li
+                                *ngFor="let c of filteredCities"
+                                (mousedown)="selectCity(c)"
+                                class="px-3 py-2 hover:bg-green-500 hover:text-white cursor-pointer transition text-sm"
+                            >
+                                {{ c }}
+                            </li>
+                        </ul>
+                        <p *ngIf="isInvalid('city')" class="text-red-500 text-sm mt-1">
+                            City is required.
+                        </p>
+                    </div>
+
+                    <!-- Barangay (Searchable, depends on City) -->
+                    <div class="relative">
+                        <label [ngClass]="labelClass('barangay')">
+                            Barangay <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            formControlName="barangay"
+                            placeholder="Search or select barangay..."
+                            [disabled]="!businessInfoForm.get('city')?.value"
+                            (focus)="barangayDropdownOpen = true"
+                            (input)="filterBarangays()"
+                            (blur)="closeBarangayDropdown()"
+                            class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
+                            [ngClass]="inputClass('barangay')"
+                        />
+                        <ul
+                            *ngIf="barangayDropdownOpen && filteredBarangays.length > 0"
+                            class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
+                        >
+                            <li
+                                *ngFor="let b of filteredBarangays"
+                                (mousedown)="selectBarangay(b)"
+                                class="px-3 py-2 hover:bg-green-500 hover:text-white cursor-pointer transition text-sm"
+                            >
+                                {{ b }}
+                            </li>
+                        </ul>
+                        <p *ngIf="isInvalid('barangay')" class="text-red-500 text-sm mt-1">
+                            Barangay is required.
+                        </p>
+                    </div>
+
+                    <!-- Zip Code -->
+                    <div>
+                        <label [ngClass]="labelClass('zipCode')">
+                            Zip Code <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            formControlName="zipCode"
+                            placeholder="Enter zip code"
+                            class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
+                            [ngClass]="inputClass('zipCode')"
+                        />
+                        <p *ngIf="isInvalid('zipCode')" class="text-red-500 text-sm mt-1">
+                            Zip code is required.
+                        </p>
+                    </div>
+                </fieldset>
+
+
+            </form>
+        </div>
     </section>
 </main>
 
-<div 
-    *ngIf="confirmation" 
-    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50" 
-    (click)="closeModalOutside($event)"
->
-  
-    <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full relative" (click)="$event.stopPropagation()">
-        
-        <!-- Modal Header -->
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">Terms and Conditions</h2>
-        
-        <!-- Terms and Conditions Content -->
-        <p class="text-gray-700 text-sm mb-4">
-            Are you sure you want to submit your application now?
-        </p>
-        <p class="text-gray-700 text-sm mb-4">
-            I DECLARE UNDER PENALTY OF PERJURY that all information in this application 
-            is true and correct based on my personal knowledge and authentic records 
-            submitted to the Municipality of Bislig. Any false or misleading information 
-            supplied, or production of fake/falsified documents shall be grounds for 
-            appropriate legal action against me and automatically revokes the permit.
-        </p>
-        <p class="text-gray-700 text-sm mb-4">
-            I hereby agree that all personal data (as defined under the Data Privacy 
-            Law of 2012 and its Implementing Rules and Regulations) and account 
-            transaction information or records with the Municipality of Bislig 
-            Government may be processed, profiled, or shared to requesting parties 
-            or for the purpose of any court, legal process, examination, inquiry, and 
-            audit or investigation of any authority.
-        </p>
 
-        <!-- Checkbox to Enable Submit -->
-        <div class="flex items-center gap-2 mb-4">
-            <input type="checkbox" id="agree" [(ngModel)]="isChecked" class="w-4 h-4">
-            <label for="agree" class="text-sm text-gray-700">I agree to the terms and conditions</label>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="flex justify-end gap-2">
-            <button (click)="closeModal()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
-                Cancel
-            </button>
-            <button (click)="confirmSubmission()" 
-                    [disabled]="!isChecked"
-                    class="px-4 py-2 rounded-md text-white transition-colors"
-                    [ngClass]="isChecked ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'">
-                Confirm & Submit
-            </button>
-        </div>
-
-    </div>
-</div>
-
-<app-loader *ngIf="isLoading"></app-loader>
+<!-- <app-loader *ngIf="isLoading"></app-loader> -->
