@@ -1,0 +1,458 @@
+<form [formGroup]="businessInfoForm" class="grid grid-cols-12 gap-4">
+    
+    <!-- Business Information -->
+    <fieldset class="col-span-12 lg:col-span-7 border border-gray-300 rounded-xl p-5 space-y-4">
+        <legend class="text-lg font-semibold text-gray-700 px-2">Business Information</legend>
+
+        <!-- Business Name -->
+        <div>
+            <label [ngClass]="labelClass('businessName')">
+                Business Name <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="businessName"
+                placeholder="Enter business name"
+                [ngClass]="inputClass('businessName')"
+            />
+            <p *ngIf="isInvalid('businessName')" class="text-red-500 text-sm mt-1">
+                Business name is required.
+            </p>
+        </div>
+
+        <!-- Trade Name -->
+        <div>
+            <label class="block font-medium text-sm text-gray-700">Trade Name / Franchise (if applicable)</label>
+            <input
+                class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
+                type="text"
+                formControlName="tradeName"
+                placeholder="Enter trade name or franchise"
+            />
+        </div>
+
+        <!-- Registration Number -->
+        <div>
+            <label [ngClass]="labelClass('registrationNumber')">
+                DTI/SEC/CDA Registration Number <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="registrationNumber"
+                placeholder="Enter registration number"
+                [ngClass]="inputClass('registrationNumber')"
+            />
+            <p *ngIf="isInvalid('registrationNumber')" class="text-red-500 text-sm mt-1">
+                This field is required.
+            </p>
+        </div>
+
+        <!-- Registration Date -->
+        <div>
+            <label [ngClass]="labelClass('registrationDate')">
+                DTI/SEC/CDA Registration Date <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="date"
+                formControlName="registrationDate"
+                [ngClass]="inputClass('registrationDate')"
+            />
+        </div>
+
+        <!-- Tax Identification Number (TIN) -->
+        <div>
+            <label [ngClass]="labelClass('tin')">
+                Tax Identification Number (TIN) <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="tin"
+                maxlength="15"
+                (input)="formatTin()"
+                placeholder="000-000-000-000"
+                [ngClass]="inputClass('tin')"
+            />
+            <p *ngIf="isInvalid('tin')" class="text-red-500 text-sm mt-1">
+                {{ isInvalid('tin') }}
+            </p>
+        </div>
+
+        <!-- Type of Organization (Searchable) -->
+        <div class="relative">
+            <label [ngClass]="labelClass('organizationType')">
+                Type of Organization <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="organizationType"
+                placeholder="Search or select organization type..."
+                (focus)="orgDropdownOpen = true"
+                (input)="filterOrganizationOptions()"
+                (keydown)="handleOrganizationKeydown($event)"
+                (blur)="closeOrgDropdown()"
+                [ngClass]="inputClass('organizationType')"
+            />
+            <ul
+                *ngIf="orgDropdownOpen && filteredOrganizations.length > 0"
+                class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
+            >
+                <li
+                    *ngFor="let o of filteredOrganizations; let i = index"
+                    (mousedown)="selectOrganization(o)"
+                    [class.bg-green-500]="i === highlightedOrganizationIndex"
+                    [class.text-white]="i === highlightedOrganizationIndex"
+                    class="px-3 py-2 hover:bg-green-500 hover:text-white text-sm cursor-pointer transition"
+                >
+                    {{ o }}
+                </li>
+            </ul>
+            <p *ngIf="isInvalid('organizationType')" class="text-red-500 text-sm mt-1">
+                Please select an organization type.
+            </p>
+        </div>
+
+        <!-- Gender (Searchable) -->
+        <div *ngIf="showGender" class="relative">
+            <label [ngClass]="labelClass('gender')">
+                Gender <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="gender"
+                placeholder="Search or type gender..."
+                (focus)="genderDropdownOpen = true"
+                (input)="filterGenderOptions()"
+                (keydown)="handleGenderKeydown($event)"
+                (blur)="closeGenderDropdown()"
+                [ngClass]="inputClass('gender')"
+            />
+            <ul
+                *ngIf="genderDropdownOpen && filteredGenders.length > 0"
+                class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
+            >
+                <li
+                    *ngFor="let g of filteredGenders; let i = index"
+                    (mousedown)="selectGender(g)"
+                    [class.bg-green-500]="i === highlightedGenderIndex"
+                    [class.text-white]="i === highlightedGenderIndex"
+                    class="px-3 py-2 hover:bg-green-500 hover:text-white text-md cursor-pointer transition"
+                >
+                    {{ g }}
+                </li>
+            </ul>
+            <p *ngIf="isInvalid('gender')" class="text-red-500 text-sm mt-1">
+                Gender is required.
+            </p>
+        </div>
+    </fieldset>
+
+    <!-- Owner's Information -->
+    <fieldset class="col-span-12 lg:col-span-5 border border-gray-300 rounded-xl p-5 space-y-4">
+        <legend class="text-lg font-semibold text-gray-700 px-2">Owner's Information</legend>
+
+        <!-- Given Name -->
+        <div>
+            <label [ngClass]="labelClass('givenName')">
+                Given Name <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="givenName"
+                placeholder="Enter given name"
+                [ngClass]="inputClass('givenName')"
+            />
+            <p *ngIf="isInvalid('givenName')" class="text-red-500 text-sm mt-1">
+                Given name is required.
+            </p>
+        </div>
+
+        <!-- Middle Name -->
+        <div>
+            <label [ngClass]="labelClass('middleName')">
+                Middle Name <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="middleName"
+                placeholder="Enter middle name"
+                [ngClass]="inputClass('middleName')"
+            />
+            <p *ngIf="isInvalid('middleName')" class="text-red-500 text-sm mt-1">
+                Middle name is required.
+            </p>
+        </div>
+
+        <!-- Surname -->
+        <div>
+            <label [ngClass]="labelClass('surname')">
+                Surname <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="surname"
+                placeholder="Enter surname"
+                [ngClass]="inputClass('surname')"
+            />
+            <p *ngIf="isInvalid('surname')" class="text-red-500 text-sm mt-1">
+                Surname is required.
+            </p>
+        </div>
+
+        <!-- Suffix (Optional) -->
+        <div>
+            <label class="block font-medium text-sm text-gray-700">
+                Suffix (Optional)
+            </label>
+            <input
+                type="text"
+                formControlName="suffix"
+                placeholder="Jr., Sr., III, etc."
+                class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
+            />
+        </div>
+
+        <!-- Contact Number -->
+        <div>
+            <label [ngClass]="labelClass('contactNumber')">
+                Contact Number <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="contactNumber"
+                placeholder="+63 912 345 6789"
+                [ngClass]="inputClass('contactNumber')"
+            />
+            <p *ngIf="isInvalid('contactNumber')" class="text-red-500 text-sm mt-1">
+                Contact number is required.
+            </p>
+        </div>
+
+        <!-- Email -->
+        <div>
+            <label [ngClass]="labelClass('email')">
+                Email <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="email"
+                formControlName="email"
+                placeholder="example@email.com"
+                [ngClass]="inputClass('email')"
+            />
+            <p *ngIf="isInvalid('email')" class="text-red-500 text-sm mt-1">
+                Please enter a valid email.
+            </p>
+        </div>
+    </fieldset>
+
+    <!-- Main Office Primary Address -->
+    <fieldset class="col-span-12 lg:col-span-5 border border-gray-300 rounded-xl p-5 space-y-4">
+        <legend class="text-lg font-semibold text-gray-700 px-2">Main Office Primary Address</legend>
+
+        <!-- Province (Searchable) -->
+        <div class="relative">
+            <label [ngClass]="labelClass('province')">
+                Province <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="province"
+                placeholder="Search or select province..."
+                (focus)="provinceDropdownOpen = true"
+                (input)="filterProvinces()"
+                (keydown)="handleProvinceKeydown($event)"
+                (blur)="closeProvinceDropdown()"
+                [ngClass]="inputClass('province')"
+            />
+            <ul
+                *ngIf="provinceDropdownOpen && filteredProvinces.length > 0"
+                class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
+            >
+                <li
+                    *ngFor="let p of filteredProvinces; let i = index"
+                    (mousedown)="selectProvince(p)"
+                    [class.bg-green-500]="i === highlightedProvinceIndex"
+                    [class.text-white]="i === highlightedProvinceIndex"
+                    class="px-3 py-2 hover:bg-green-500 hover:text-white cursor-pointer transition text-sm"
+                >
+                    {{ p.province_name }}
+                </li>
+            </ul>
+            <p *ngIf="isInvalid('province')" class="text-red-500 text-sm mt-1">
+                Province is required.
+            </p>
+        </div>
+
+        <!-- City / Municipality (Searchable, depends on Province) -->
+        <div class="relative">
+            <label [ngClass]="labelClass('city')">
+                City / Municipality <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="city"
+                placeholder="Search or select city..."
+                [disabled]="!businessInfoForm.get('province')?.value"
+                (focus)="cityDropdownOpen = true"
+                (input)="filterCities()"
+                (keydown)="handleCityKeydown($event)"
+                (blur)="closeCityDropdown()"
+                [ngClass]="inputClass('city')"
+            />
+            <ul
+                *ngIf="cityDropdownOpen && filteredCities.length > 0"
+                class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
+            >
+                <li
+                    *ngFor="let c of filteredCities; let i = index"
+                    (mousedown)="selectCity(c)"
+                    [class.bg-green-500]="i === highlightedCityIndex"
+                    [class.text-white]="i === highlightedCityIndex"
+                    class="px-3 py-2 hover:bg-green-500 hover:text-white cursor-pointer transition text-sm"
+                >
+                    {{ c.city_name }}
+                </li>
+            </ul>
+            <p *ngIf="isInvalid('city')" class="text-red-500 text-sm mt-1">
+                City is required.
+            </p>
+        </div>
+
+        <!-- Barangay (Searchable, depends on City) -->
+        <div class="relative">
+            <label [ngClass]="labelClass('barangay')">
+                Barangay <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="barangay"
+                placeholder="Search or select barangay..."
+                [disabled]="!businessInfoForm.get('city')?.value"
+                (focus)="barangayDropdownOpen = true"
+                (input)="filterBarangays()"
+                (keydown)="handleBarangayKeydown($event)"
+                (blur)="closeBarangayDropdown()"
+                [ngClass]="inputClass('barangay')"
+            />
+            <ul
+                *ngIf="barangayDropdownOpen && filteredBarangays.length > 0"
+                class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
+            >
+                <li
+                    *ngFor="let b of filteredBarangays; let i = index"
+                    (mousedown)="selectBarangay(b)"
+                    [class.bg-green-500]="i === highlightedBarangayIndex"
+                    [class.text-white]="i === highlightedBarangayIndex"
+                    class="px-3 py-2 hover:bg-green-500 hover:text-white cursor-pointer transition text-sm"
+                >
+                    {{ b.brgy_name }}
+                </li>
+            </ul>
+            <p *ngIf="isInvalid('barangay')" class="text-red-500 text-sm mt-1">
+                Barangay is required.
+            </p>
+        </div>
+
+        <!-- Zip Code -->
+        <div>
+            <label [ngClass]="labelClass('zipCode')">
+                Zip Code <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="zipCode"
+                placeholder="Enter zip code"
+                [ngClass]="inputClass('zipCode')"
+            />
+            <p *ngIf="isInvalid('zipCode')" class="text-red-500 text-sm mt-1">
+                Zip code is required.
+            </p>
+        </div>
+    </fieldset>
+
+    <!-- Main Office Optional Address -->
+    <fieldset class="col-span-12 lg:col-span-7 border border-gray-300 rounded-xl p-5 grid grid-cols-12 gap-4 self-start">
+        <legend class="text-lg font-semibold text-gray-700 px-2">Main Office Optional Address</legend>
+
+        <!-- Street Address (Required) -->
+        <div class="col-span-12 lg:col-span-6">
+            <label [ngClass]="labelClass('streetAddress')">
+                Street Address <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="streetAddress"
+                placeholder="Enter street address"
+                [ngClass]="inputClass('streetAddress')"
+            />
+            <p *ngIf="isInvalid('streetAddress')" class="text-red-500 text-sm mt-1">
+                Street address is required.
+            </p>
+        </div>
+
+        <!-- House/Bldg. No (Optional) -->
+        <div class="col-span-12 lg:col-span-6">
+            <label class="block font-medium text-sm text-gray-700">
+                House/Bldg. No (Optional)
+            </label>
+            <input
+                type="text"
+                formControlName="houseNumber"
+                placeholder="Enter house or building number"
+                class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
+            />
+        </div>
+
+        <!-- Name of Building (Optional) -->
+        <div class="col-span-12 lg:col-span-6">
+            <label class="block font-medium text-sm text-gray-700">
+                Name of Building (Optional)
+            </label>
+            <input
+                type="text"
+                formControlName="buildingName"
+                placeholder="Enter building name"
+                class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
+            />
+        </div>
+
+        <!-- Lot No (Optional) -->
+        <div class="col-span-12 lg:col-span-6">
+            <label class="block font-medium text-sm text-gray-700">
+                Lot No (Optional)
+            </label>
+            <input
+                type="text"
+                formControlName="lotNumber"
+                placeholder="Enter lot number"
+                class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
+            />
+        </div>
+
+        <!-- Block No (Optional) -->
+        <div class="col-span-12 lg:col-span-6">
+            <label class="block font-medium text-sm text-gray-700">
+                Block No (Optional)
+            </label>
+            <input
+                type="text"
+                formControlName="blockNumber"
+                placeholder="Enter block number"
+                class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
+            />
+        </div>
+
+        <!-- Subdivision (Optional) -->
+        <div class="col-span-12 lg:col-span-6">
+            <label class="block font-medium text-sm text-gray-700">
+                Subdivision (Optional)
+            </label>
+            <input
+                type="text"
+                formControlName="subdivision"
+                placeholder="Enter subdivision name"
+                class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
+            />
+        </div>
+    </fieldset>
+
+</form>

@@ -18,4 +18,16 @@ export class ApplicantService extends ApiService {
   patchUserProfile(data: any, id: any): Observable<any> {
     return this.http.patch<any>(`${this.Root_URL}/applicants-profile/${id}`, data, { headers: this.getHeaders() });
   }
+
+  getProvinces(): Observable<any> {
+    return this.http.get<any>(`${this.Root_URL}/provinces`, { headers: this.getHeaders() });
+  }
+
+  getCities(province: any): Observable<any> {
+    return this.http.get<any>(`${this.Root_URL}/cities/${province}`, { headers: this.getHeaders() });
+  }
+
+  getBaranggays(cities: any): Observable<any> {
+    return this.http.get<any>(`${this.Root_URL}/barangays/${cities}`, { headers: this.getHeaders() });
+  }
 }

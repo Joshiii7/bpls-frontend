@@ -58,7 +58,6 @@ import { AdminParentComponent } from './modules/admin/components/admin-parent/ad
 import { AdminHeaderComponent } from './modules/admin/components/admin-header/admin-header.component';
 import { AdminSidebarComponent } from './modules/admin/components/admin-sidebar/admin-sidebar.component';
 import { ApplicantDashboardComponent } from './modules/applicant/pages/applicant-dashboard/applicant-dashboard.component';
-import { ApplyPermitComponent } from './modules/applicant/pages/apply-permit/apply-permit.component';
 import { ApplicantApplicationDetailsComponent } from './modules/applicant/pages/applicant-application-details/applicant-application-details.component';
 import { HomeComponent } from './modules/landing/pages/home/home.component';
 
@@ -115,7 +114,6 @@ const analytics = getAnalytics(app);
     AdminHeaderComponent,
     AdminSidebarComponent,
     ApplicantDashboardComponent,
-    ApplyPermitComponent,
     ApplicantApplicationDetailsComponent,
     HomeComponent,
   ],
