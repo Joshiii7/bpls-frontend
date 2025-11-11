@@ -96,8 +96,13 @@
         </div>
 
         <!-- Business Information -->
-        <div *ngIf="activeTab === 'businessInfo'" class="space-y-4">
+        <div [hidden]="activeTab !== 'businessInfo'" class="space-y-4">
             <app-business-information-form (formValueChange)="onBusinessInfoFormChange($event)"></app-business-information-form>
+        </div>
+
+        <!-- Business Operation -->
+        <div [hidden]="activeTab !== 'businessOperation'" class="space-y-4">
+            <app-business-operation-form [mainAddressForm]="businessInfoForm"></app-business-operation-form>
         </div>
     </section>
 </main>

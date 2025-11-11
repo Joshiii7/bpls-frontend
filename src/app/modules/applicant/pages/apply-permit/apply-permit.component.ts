@@ -21,6 +21,8 @@ export class ApplyPermitComponent {
   businessInfoForm!: FormGroup;
   businessOpeForm!: FormGroup;
 
+  businessInfoData: any = {};
+
   constructor(
     private api: ApplicantService,
     private fb: FormBuilder,
@@ -37,7 +39,9 @@ export class ApplyPermitComponent {
   }
 
   onBusinessInfoFormChange(event: { formType: string; form: FormGroup }) {
-    this.businessInfoForm = event.form;
+    if (event.formType === 'businessInfo') {
+        this.businessInfoForm = event.form;
+    }
   }
 
   onFormChange(formType: string, form: FormGroup) {

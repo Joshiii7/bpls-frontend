@@ -1,1 +1,362 @@
-<p>business-operation-form works!</p>
+<form [formGroup]="businessOperationForm" class="grid grid-cols-12 gap-4">
+    
+    <!-- Business Operation -->
+    <fieldset class="col-span-12 lg:col-span-6 border border-gray-300 rounded-xl p-5 space-y-4">
+        <legend class="text-lg font-semibold text-gray-700 px-2">Business Operation</legend>
+
+        <!-- Business Activity (Searchable) -->
+        <div class="relative">
+            <label [ngClass]="labelClass('businessActivity')">
+                Business Activity <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="businessActivity"
+                placeholder="Search or select business activity..."
+                (focus)="businessActivityDropdownOpen = true"
+                (input)="filterBusinessActivities()"
+                (keydown)="handleBusinessActivityKeydown($event)"
+                (blur)="closeBusinessActivityDropdown()"
+                [ngClass]="inputClass('businessActivity')"
+            />
+            <ul
+                *ngIf="businessActivityDropdownOpen && filteredBusinessActivities.length > 0"
+                class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
+            >
+                <li
+                    *ngFor="let activity of filteredBusinessActivities; let i = index"
+                    (mousedown)="selectBusinessActivity(activity)"
+                    [class.bg-green-500]="i === highlightedBusinessActivityIndex"
+                    [class.text-white]="i === highlightedBusinessActivityIndex"
+                    class="px-3 py-2 hover:bg-green-500 hover:text-white cursor-pointer transition text-sm"
+                >
+                    {{ activity.name }}
+                </li>
+            </ul>
+            <p *ngIf="isInvalid('businessActivity')" class="text-red-500 text-sm mt-1">
+                Business activity is required.
+            </p>
+        </div>
+
+        <!-- Business Area -->
+        <div>
+            <label [ngClass]="labelClass('businessArea')">
+                Business Area (sq.m) <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="number"
+                formControlName="businessArea"
+                placeholder="Enter business area in sq.m"
+                [ngClass]="inputClass('businessArea')"
+            />
+            <p *ngIf="isInvalid('businessArea')" class="text-red-500 text-sm mt-1">
+                Business area is required.
+            </p>
+        </div>
+
+        <!-- Total Floor Area -->
+        <div>
+            <label [ngClass]="labelClass('totalFloorArea')">
+                Total Floor Area (sq.m) <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="number"
+                formControlName="totalFloorArea"
+                placeholder="Enter total floor area in sq.m"
+                [ngClass]="inputClass('totalFloorArea')"
+            />
+            <p *ngIf="isInvalid('totalFloorArea')" class="text-red-500 text-sm mt-1">
+                Total floor area is required.
+            </p>
+        </div>
+
+        <!-- Employees Residing within LGU -->
+        <div>
+            <label [ngClass]="labelClass('employeesWithinLGU')">
+                No. of Employees Residing within LGU <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="number"
+                formControlName="employeesWithinLGU"
+                placeholder="Enter number of employees residing within LGU"
+                [ngClass]="inputClass('employeesWithinLGU')"
+            />
+            <p *ngIf="isInvalid('employeesWithinLGU')" class="text-red-500 text-sm mt-1">
+                This field is required.
+            </p>
+        </div>
+
+        <!-- Total Employees -->
+        <div formGroupName="totalEmployees" class="grid grid-cols-2 gap-4">
+            <div>
+                <label [ngClass]="labelClass('totalEmployees.male')">
+                    Total Male Employees <span class="text-red-600">*</span>
+                </label>
+                <input
+                    type="number"
+                    formControlName="male"
+                    placeholder="e.g. 2"
+                    [ngClass]="inputClass('totalEmployees.male')"
+                />
+                <p *ngIf="businessOperationForm.get('totalEmployees.male')?.invalid && businessOperationForm.get('totalEmployees.male')?.touched"
+                class="text-red-500 text-sm mt-1">
+                    Required.
+                </p>
+            </div>
+            <div>
+                <label [ngClass]="labelClass('totalEmployees.female')">
+                    Total Female Employees <span class="text-red-600">*</span>
+                </label>
+                <input
+                    type="number"
+                    formControlName="female"
+                    placeholder="e.g. 10"
+                    [ngClass]="inputClass('totalEmployees.female')"
+                />
+                <p *ngIf="businessOperationForm.get('totalEmployees.female')?.invalid && businessOperationForm.get('totalEmployees.female')?.touched"
+                class="text-red-500 text-sm mt-1">
+                    Required.
+                </p>
+            </div>
+        </div>
+
+        <!-- Delivery Vehicles -->
+        <div formGroupName="deliveryVehicles" class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block font-medium text-sm text-gray-700">
+                    No. of Vans/Trucks
+                </label>
+                <input
+                    type="number"
+                    formControlName="vanOrTruck"
+                    placeholder="e.g. 4"
+                    class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
+                />
+            </div>
+            <div>
+                <label class="block font-medium text-sm text-gray-700">
+                    No. of Motorcycles
+                </label>
+                <input
+                    type="number"
+                    formControlName="motorcycle"
+                    placeholder="e.g. 5"
+                    class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
+                />
+            </div>
+        </div>
+
+    </fieldset>
+
+    <!-- Business Address -->
+    <fieldset class="col-span-12 lg:col-span-6 border border-gray-300 rounded-xl p-5 space-y-4">
+        <legend class="text-lg font-semibold text-gray-700 px-2">Business Address</legend>
+
+        <!-- Same as Main Address Checkbox -->
+        <div class="flex items-center gap-2 mb-4">
+            <input
+                type="checkbox"
+                id="sameAsMainAddress"
+                [checked]="sameAsMainAddress"
+                (change)="toggleSameAsMainAddress($event)"
+                class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500 cursor-pointer"
+            />
+            <label for="sameAsMainAddress" class="text-gray-700 font-medium cursor-pointer">
+                Same as Main Office Address
+            </label>
+        </div>
+
+        <!-- Province (Searchable) -->
+        <div class="relative">
+            <label [ngClass]="labelClass('province')">
+                Province <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="province"
+                placeholder="Search or select province..."
+                (focus)="provinceDropdownOpen = true"
+                (input)="filterProvinces()"
+                (keydown)="handleProvinceKeydown($event)"
+                (blur)="closeProvinceDropdown()"
+                [ngClass]="inputClass('province')"
+            />
+            <ul
+                *ngIf="provinceDropdownOpen && filteredProvinces.length > 0"
+                class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
+            >
+                <li
+                    *ngFor="let p of filteredProvinces; let i = index"
+                    (mousedown)="selectProvince(p)"
+                    [class.bg-green-500]="i === highlightedProvinceIndex"
+                    [class.text-white]="i === highlightedProvinceIndex"
+                    class="px-3 py-2 hover:bg-green-500 hover:text-white cursor-pointer transition text-sm"
+                >
+                    {{ p.province_name }}
+                </li>
+            </ul>
+            <p *ngIf="isInvalid('province')" class="text-red-500 text-sm mt-1">
+                Province is required.
+            </p>
+        </div>
+
+        <!-- City / Municipality (Searchable) -->
+        <div class="relative">
+            <label [ngClass]="labelClass('city')">
+                City / Municipality <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="city"
+                placeholder="Search or select city..."
+                [disabled]="!businessOperationForm.get('province')?.value"
+                (focus)="cityDropdownOpen = true"
+                (input)="filterCities()"
+                (keydown)="handleCityKeydown($event)"
+                (blur)="closeCityDropdown()"
+                [ngClass]="inputClass('city')"
+            />
+            <ul
+                *ngIf="cityDropdownOpen && filteredCities.length > 0"
+                class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
+            >
+                <li
+                    *ngFor="let c of filteredCities; let i = index"
+                    (mousedown)="selectCity(c)"
+                    [class.bg-green-500]="i === highlightedCityIndex"
+                    [class.text-white]="i === highlightedCityIndex"
+                    class="px-3 py-2 hover:bg-green-500 hover:text-white cursor-pointer transition text-sm"
+                >
+                    {{ c.city_name }}
+                </li>
+            </ul>
+            <p *ngIf="isInvalid('city')" class="text-red-500 text-sm mt-1">
+                City is required.
+            </p>
+        </div>
+
+        <!-- Barangay (Searchable) -->
+        <div class="relative">
+            <label [ngClass]="labelClass('barangay')">
+                Barangay <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="barangay"
+                placeholder="Search or select barangay..."
+                [disabled]="!businessOperationForm.get('city')?.value"
+                (focus)="barangayDropdownOpen = true"
+                (input)="filterBarangays()"
+                (keydown)="handleBarangayKeydown($event)"
+                (blur)="closeBarangayDropdown()"
+                [ngClass]="inputClass('barangay')"
+            />
+            <ul
+                *ngIf="barangayDropdownOpen && filteredBarangays.length > 0"
+                class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
+            >
+                <li
+                    *ngFor="let b of filteredBarangays; let i = index"
+                    (mousedown)="selectBarangay(b)"
+                    [class.bg-green-500]="i === highlightedBarangayIndex"
+                    [class.text-white]="i === highlightedBarangayIndex"
+                    class="px-3 py-2 hover:bg-green-500 hover:text-white cursor-pointer transition text-sm"
+                >
+                    {{ b.brgy_name }}
+                </li>
+            </ul>
+            <p *ngIf="isInvalid('barangay')" class="text-red-500 text-sm mt-1">
+                Barangay is required.
+            </p>
+        </div>
+
+        <!-- Zip Code -->
+        <div>
+            <label [ngClass]="labelClass('zipCode')">
+                Zip Code <span class="text-red-600">*</span>
+            </label>
+            <input
+                type="text"
+                formControlName="zipCode"
+                placeholder="Enter zip code"
+                [ngClass]="inputClass('zipCode')"
+            />
+            <p *ngIf="isInvalid('zipCode')" class="text-red-500 text-sm mt-1">
+                Zip code is required.
+            </p>
+        </div>
+
+        <!-- Optional Fields: Street, House, Building, Lot, Block, Subdivision -->
+        <div class="grid grid-cols-12 gap-4">
+            <div class="col-span-12 lg:col-span-6">
+                <label [ngClass]="labelClass('streetAddress')">
+                    Street Address <span class="text-red-600">*</span>
+                </label>
+                <input
+                    type="text"
+                    formControlName="streetAddress"
+                    placeholder="Enter street address"
+                    [ngClass]="inputClass('streetAddress')"
+                />
+                <p *ngIf="isInvalid('streetAddress')" class="text-red-500 text-sm mt-1">
+                    Street address is required.
+                </p>
+            </div>
+            <div class="col-span-12 lg:col-span-6">
+                <label class="block font-medium text-sm text-gray-700">
+                    House/Bldg. No (Optional)
+                </label>
+                <input
+                    type="text"
+                    formControlName="houseNumber"
+                    placeholder="Enter house or building number"
+                    class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
+                />
+            </div>
+            <div class="col-span-12 lg:col-span-6">
+                <label class="block font-medium text-sm text-gray-700">
+                    Name of Building (Optional)
+                </label>
+                <input
+                    type="text"
+                    formControlName="buildingName"
+                    placeholder="Enter building name"
+                    class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
+                />
+            </div>
+            <div class="col-span-12 lg:col-span-6">
+                <label class="block font-medium text-sm text-gray-700">
+                    Lot No (Optional)
+                </label>
+                <input
+                    type="text"
+                    formControlName="lotNumber"
+                    placeholder="Enter lot number"
+                    class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
+                />
+            </div>
+            <div class="col-span-12 lg:col-span-6">
+                <label class="block font-medium text-sm text-gray-700">
+                    Block No (Optional)
+                </label>
+                <input
+                    type="text"
+                    formControlName="blockNumber"
+                    placeholder="Enter block number"
+                    class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
+                />
+            </div>
+            <div class="col-span-12 lg:col-span-6">
+                <label class="block font-medium text-sm text-gray-700">
+                    Subdivision (Optional)
+                </label>
+                <input
+                    type="text"
+                    formControlName="subdivision"
+                    placeholder="Enter subdivision name"
+                    class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
+                />
+            </div>
+        </div>
+    </fieldset>
+</form>
