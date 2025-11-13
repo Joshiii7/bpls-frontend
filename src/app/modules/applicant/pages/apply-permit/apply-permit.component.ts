@@ -1,6 +1,7 @@
 import { Component, EnvironmentInjector } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApplicantService } from '../../services/applicant.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-apply-permit',
@@ -26,7 +27,9 @@ export class ApplyPermitComponent {
   constructor(
     private api: ApplicantService,
     private fb: FormBuilder,
-  ) {}
+  ) {
+    document.title = 'BPLS | Apply Permit';
+  }
 
   ngOnInit(): void {
     this.applicationTypeForm = this.fb.group({
@@ -69,11 +72,16 @@ export class ApplyPermitComponent {
     }
 
     if (currentForm) {
-      console.log('Hello');
       currentForm.markAllAsTouched();
 
       if (currentForm.invalid) {
-        alert('Please complete all required fields before proceeding.');
+        Swal.fire({
+          icon: 'warning',
+          title: 'Incomplete Form',
+          text: 'Please complete all required fields before proceeding.',
+          confirmButtonText: 'Understood',
+          confirmButtonColor: '#d33',
+        });
         return false;
       }
     }

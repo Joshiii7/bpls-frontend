@@ -26,7 +26,9 @@ export class ApplicantDashboardComponent {
   constructor(
     private router: Router,
     private api: ApplicantService
-  ) {}
+  ) {
+    document.title = 'BPLS | Applications';
+  }
   
   ngOnInit() {
     this.emitNavigationState.emit(true);

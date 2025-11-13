@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApplicantService } from '../../services/applicant.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-business-operation-form',
@@ -86,20 +87,46 @@ export class BusinessOperationFormComponent implements OnInit {
     this.sameAsMainAddress = checked;
 
     if (checked && this.mainAddressForm) {
-        this.businessOperationForm.patchValue({
-            province: this.mainAddressForm.get('province')?.value,
-            city: this.mainAddressForm.get('city')?.value,
-            barangay: this.mainAddressForm.get('barangay')?.value,
-            zipCode: this.mainAddressForm.get('zipCode')?.value,
-            streetAddress: this.mainAddressForm.get('streetAddress')?.value,
-            houseNumber: this.mainAddressForm.get('houseNumber')?.value,
-            buildingName: this.mainAddressForm.get('buildingName')?.value,
-            lotNumber: this.mainAddressForm.get('lotNumber')?.value,
-            blockNumber: this.mainAddressForm.get('blockNumber')?.value,
-            subdivision: this.mainAddressForm.get('subdivision')?.value
+      const province = this.mainAddressForm.get('province')?.value?.trim();
+      const city = this.mainAddressForm.get('city')?.value?.trim();
+      const barangay = this.mainAddressForm.get('barangay')?.value?.trim();
+      const zipCode = this.mainAddressForm.get('zipCode')?.value?.trim();
+      const streetAddress = this.mainAddressForm.get('streetAddress')?.value?.trim();
+      const houseNumber = this.mainAddressForm.get('houseNumber')?.value?.trim();
+      const buildingName = this.mainAddressForm.get('buildingName')?.value?.trim();
+      const lotNumber = this.mainAddressForm.get('lotNumber')?.value?.trim();
+      const blockNumber = this.mainAddressForm.get('blockNumber')?.value?.trim();
+      const subdivision = this.mainAddressForm.get('subdivision')?.value?.trim();
+
+      const isEmptyField = [province, city, barangay, zipCode, streetAddress, houseNumber, buildingName, lotNumber, blockNumber, subdivision]
+        .some(field => !field);
+
+      const isValidLocation = province === 'Surigao del Sur' && city === 'Bislig City';
+
+      if (isEmptyField || !isValidLocation) {
+        this.sameAsMainAddress = false;
+        
+        Swal.fire({
+          icon: 'warning',
+          title: 'Invalid Address',
+          text: 'This functionality is only available for businesses compliant with the designated zoning regulations.',
+          confirmButtonColor: '#d33',
+          confirmButtonText: 'Understood!'
         });
-    } else {
-        this.businessOperationForm.reset();
+      } else {
+        this.businessOperationForm.patchValue({
+          province,
+          city,
+          barangay,
+          zipCode,
+          streetAddress,
+          houseNumber,
+          buildingName,
+          lotNumber,
+          blockNumber,
+          subdivision
+        });
+      }
     }
   }
 
@@ -167,6 +194,7 @@ export class BusinessOperationFormComponent implements OnInit {
 
   handleProvinceKeydown(event: KeyboardEvent) {
     const key = event.key;
+    this.selectProvince('Surigao del Sur');
 
     if (!this.provinceDropdownOpen || this.filteredProvinces.length === 0) return;
 
@@ -180,8 +208,8 @@ export class BusinessOperationFormComponent implements OnInit {
         (this.highlightedProvinceIndex - 1 + this.filteredProvinces.length) %
         this.filteredProvinces.length;
     } else if (key === 'Enter') {
-      event.preventDefault();
       const selected = this.filteredProvinces[this.highlightedProvinceIndex];
+      event.preventDefault();
       if (selected) this.selectProvince(selected);
     } else if (key === 'Escape') {
       this.provinceDropdownOpen = false;

@@ -11,6 +11,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BusinessInformationFormComponent } from './components/business-information-form/business-information-form.component';
 import { ApplyPermitComponent } from './pages/apply-permit/apply-permit.component';
 import { BusinessOperationFormComponent } from './components/business-operation-form/business-operation-form.component';
+import { BusinessDocumentsFormComponent } from './components/business-documents-form/business-documents-form.component';
+import { ApplicationReviewComponent } from './components/application-review/application-review.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,9 @@ import { BusinessOperationFormComponent } from './components/business-operation-
     ApplicantProfileComponent,
     BusinessInformationFormComponent,
     ApplyPermitComponent,
-    BusinessOperationFormComponent
+    BusinessOperationFormComponent,
+    BusinessDocumentsFormComponent,
+    ApplicationReviewComponent
   ],
   imports: [
     CommonModule,

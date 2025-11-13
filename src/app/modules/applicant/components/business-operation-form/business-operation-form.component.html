@@ -175,29 +175,12 @@
                 type="text"
                 formControlName="province"
                 placeholder="Search or select province..."
-                (focus)="provinceDropdownOpen = true"
                 (input)="filterProvinces()"
                 (keydown)="handleProvinceKeydown($event)"
                 (blur)="closeProvinceDropdown()"
                 [ngClass]="inputClass('province')"
+                readonly
             />
-            <ul
-                *ngIf="provinceDropdownOpen && filteredProvinces.length > 0"
-                class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
-            >
-                <li
-                    *ngFor="let p of filteredProvinces; let i = index"
-                    (mousedown)="selectProvince(p)"
-                    [class.bg-green-500]="i === highlightedProvinceIndex"
-                    [class.text-white]="i === highlightedProvinceIndex"
-                    class="px-3 py-2 hover:bg-green-500 hover:text-white cursor-pointer transition text-sm"
-                >
-                    {{ p.province_name }}
-                </li>
-            </ul>
-            <p *ngIf="isInvalid('province')" class="text-red-500 text-sm mt-1">
-                Province is required.
-            </p>
         </div>
 
         <!-- City / Municipality (Searchable) -->
