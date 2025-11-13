@@ -43,7 +43,9 @@ export class ApplyPermitComponent {
 
   onBusinessInfoFormChange(event: { formType: string; form: FormGroup }) {
     if (event.formType === 'businessInfo') {
-        this.businessInfoForm = event.form;
+      this.businessInfoForm = event.form;
+    } else if (event.formType === 'businessOperation') {
+      this.businessOpeForm = event.form
     }
   }
 
@@ -52,7 +54,7 @@ export class ApplyPermitComponent {
       case 'businessInfo':
         this.businessInfoForm = form;
         break;
-      case 'ownerInfo':
+      case 'businessOperation':
         this.businessOpeForm = form;
         break;
     }
@@ -66,7 +68,7 @@ export class ApplyPermitComponent {
       case 'businessInfo':
         currentForm = this.businessInfoForm;
         break;
-      case 'ownerInfo':
+      case 'businessOperation':
         currentForm = this.businessOpeForm;
         break;
     }
@@ -91,9 +93,14 @@ export class ApplyPermitComponent {
 
   switchTab(tabKey: string) {
     if (this.activeTab === tabKey) return;
-    if (this.canSwitchTab(tabKey)) {
-      this.activeTab = tabKey;
-    }
-  }
 
+    const currentIndex = this.tabs.findIndex(t => t.key === this.activeTab);
+    const nextIndex = this.tabs.findIndex(t => t.key === tabKey);
+
+    if (nextIndex > currentIndex && !this.canSwitchTab(tabKey)) {
+      return;
+    }
+
+    this.activeTab = tabKey;
+  }
 }

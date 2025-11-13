@@ -93,6 +93,7 @@
                 [ngClass]="inputClass('organizationType')"
             />
             <ul
+                #orgList
                 *ngIf="orgDropdownOpen && filteredOrganizations.length > 0"
                 class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
             >
@@ -127,6 +128,7 @@
                 [ngClass]="inputClass('gender')"
             />
             <ul
+                #genderList
                 *ngIf="genderDropdownOpen && filteredGenders.length > 0"
                 class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
             >
@@ -135,7 +137,7 @@
                     (mousedown)="selectGender(g)"
                     [class.bg-green-500]="i === highlightedGenderIndex"
                     [class.text-white]="i === highlightedGenderIndex"
-                    class="px-3 py-2 hover:bg-green-500 hover:text-white text-md cursor-pointer transition"
+                    class="px-3 py-2 hover:bg-green-500 hover:text-white text-sm cursor-pointer transition"
                 >
                     {{ g }}
                 </li>
@@ -221,6 +223,7 @@
                 formControlName="contactNumber"
                 placeholder="+63 912 345 6789"
                 [ngClass]="inputClass('contactNumber')"
+                (input)="formatPHNumber($event)"
             />
             <p *ngIf="isInvalid('contactNumber')" class="text-red-500 text-sm mt-1">
                 Contact number is required.
@@ -257,13 +260,14 @@
                 type="text"
                 formControlName="province"
                 placeholder="Search or select province..."
-                (focus)="provinceDropdownOpen = true"
+                (focus)="openProvinceDropdown()"
                 (input)="filterProvinces()"
                 (keydown)="handleProvinceKeydown($event)"
                 (blur)="closeProvinceDropdown()"
                 [ngClass]="inputClass('province')"
             />
             <ul
+                #provinceList
                 *ngIf="provinceDropdownOpen && filteredProvinces.length > 0"
                 class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
             >
@@ -292,13 +296,14 @@
                 formControlName="city"
                 placeholder="Search or select city..."
                 [disabled]="!businessInfoForm.get('province')?.value"
-                (focus)="cityDropdownOpen = true"
+                (focus)="openCityDropdown()"
                 (input)="filterCities()"
                 (keydown)="handleCityKeydown($event)"
                 (blur)="closeCityDropdown()"
                 [ngClass]="inputClass('city')"
             />
             <ul
+                #cityList
                 *ngIf="cityDropdownOpen && filteredCities.length > 0"
                 class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
             >
@@ -327,13 +332,14 @@
                 formControlName="barangay"
                 placeholder="Search or select barangay..."
                 [disabled]="!businessInfoForm.get('city')?.value"
-                (focus)="barangayDropdownOpen = true"
+                (focus)="openBarangayDropdown()"
                 (input)="filterBarangays()"
                 (keydown)="handleBarangayKeydown($event)"
                 (blur)="closeBarangayDropdown()"
                 [ngClass]="inputClass('barangay')"
             />
             <ul
+                #barangayList
                 *ngIf="barangayDropdownOpen && filteredBarangays.length > 0"
                 class="absolute z-10 w-full bg-white border rounded-md mt-1 shadow max-h-40 overflow-y-auto"
             >

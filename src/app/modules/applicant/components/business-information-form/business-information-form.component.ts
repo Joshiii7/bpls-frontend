@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApplicantService } from '../../services/applicant.service';
 
@@ -9,6 +9,12 @@ import { ApplicantService } from '../../services/applicant.service';
 })
 export class BusinessInformationFormComponent implements OnInit {
   @Output() formValueChange = new EventEmitter<{ formType: string; form: FormGroup }>();
+  @ViewChild('orgList') orgListRef!: ElementRef;
+  @ViewChild('genderList') genderListRef!: ElementRef;
+  @ViewChild('provinceList') provinceListRef!: ElementRef;
+  @ViewChild('cityList') cityListRef!: ElementRef;
+  @ViewChild('barangayList') barangayListRef!: ElementRef;
+
   businessInfoForm!: FormGroup;
 
   genderOptions = ['Male', 'Female'];
@@ -78,7 +84,7 @@ export class BusinessInformationFormComponent implements OnInit {
       zipCode: ['', Validators.required],
 
       // Main Office Optional Address
-      streetAddress: ['', Validators.required], // required
+      streetAddress: ['', Validators.required],
       houseNumber: [''],
       buildingName: [''],
       lotNumber: [''],
@@ -172,6 +178,29 @@ export class BusinessInformationFormComponent implements OnInit {
     control.setValue(value, { emitEvent: false });
   }
 
+  formatPHNumber(event: any) {
+    let input = event.target.value;
+
+    if (!input.startsWith('+63')) {
+      input = '+63' + input.replace(/\D/g, '');
+    } else {
+      input = '+63' + input.slice(3).replace(/\D/g, '');
+    }
+
+    if (input.length > 3 && input[3] === '0') {
+      input = '+63' + input.slice(4);
+    }
+
+    const digits = input.slice(3);
+    let formatted = '+63 ';
+    if (digits.length > 0) formatted += digits.substring(0, 3);
+    if (digits.length >= 4) formatted += ' ' + digits.substring(3, 6);
+    if (digits.length >= 7) formatted += ' ' + digits.substring(6, 10);
+
+    event.target.value = formatted;
+    this.businessInfoForm.get('contactNumber')?.setValue(formatted, { emitEvent: false });
+  }
+
   // Province
   filterProvinces() {
     const value = this.businessInfoForm.get('province')?.value?.toLowerCase() || '';
@@ -190,9 +219,10 @@ export class BusinessInformationFormComponent implements OnInit {
     this.filteredCities = [];
     this.filteredBarangays = [];
 
-    this.api.getCities(province.province_code).subscribe({
+    // Load all cities from JSON, then filter by selected province
+    this.api.getCities().subscribe({
       next: (cities: any[]) => {
-        this.allCities = cities;
+        this.allCities = cities.filter(c => c.province_code === province.province_code);
       },
       error: (err) => console.error('Error fetching cities:', err)
     });
@@ -213,9 +243,10 @@ export class BusinessInformationFormComponent implements OnInit {
     this.businessInfoForm.get('barangay')?.reset();
     this.filteredBarangays = [];
 
-    this.api.getBaranggays(city.city_code).subscribe({
+    // Load all barangays, then filter by city_code
+    this.api.getBaranggays().subscribe({
       next: (barangays: any[]) => {
-        this.allBarangays = barangays;
+        this.allBarangays = barangays.filter(b => b.city_code === city.city_code);
       },
       error: (err) => console.error('Error fetching barangays:', err)
     });
@@ -243,11 +274,13 @@ export class BusinessInformationFormComponent implements OnInit {
       event.preventDefault();
       this.highlightedProvinceIndex =
         (this.highlightedProvinceIndex + 1) % this.filteredProvinces.length;
+      this.scrollToHighlighted(this.provinceListRef, this.highlightedProvinceIndex);
     } else if (key === 'ArrowUp') {
       event.preventDefault();
       this.highlightedProvinceIndex =
         (this.highlightedProvinceIndex - 1 + this.filteredProvinces.length) %
         this.filteredProvinces.length;
+      this.scrollToHighlighted(this.provinceListRef, this.highlightedProvinceIndex);
     } else if (key === 'Enter') {
       event.preventDefault();
       const selected = this.filteredProvinces[this.highlightedProvinceIndex];
@@ -256,6 +289,7 @@ export class BusinessInformationFormComponent implements OnInit {
       this.provinceDropdownOpen = false;
     }
   }
+
 
   handleCityKeydown(event: KeyboardEvent) {
     const key = event.key;
@@ -266,11 +300,13 @@ export class BusinessInformationFormComponent implements OnInit {
       event.preventDefault();
       this.highlightedCityIndex =
         (this.highlightedCityIndex + 1) % this.filteredCities.length;
+      this.scrollToHighlighted(this.cityListRef, this.highlightedCityIndex);
     } else if (key === 'ArrowUp') {
       event.preventDefault();
       this.highlightedCityIndex =
         (this.highlightedCityIndex - 1 + this.filteredCities.length) %
         this.filteredCities.length;
+      this.scrollToHighlighted(this.cityListRef, this.highlightedCityIndex);
     } else if (key === 'Enter') {
       event.preventDefault();
       const selected = this.filteredCities[this.highlightedCityIndex];
@@ -289,17 +325,41 @@ export class BusinessInformationFormComponent implements OnInit {
       event.preventDefault();
       this.highlightedBarangayIndex =
         (this.highlightedBarangayIndex + 1) % this.filteredBarangays.length;
+        this.scrollToHighlighted(this.barangayListRef, this.highlightedBarangayIndex);
     } else if (key === 'ArrowUp') {
       event.preventDefault();
       this.highlightedBarangayIndex =
         (this.highlightedBarangayIndex - 1 + this.filteredBarangays.length) %
         this.filteredBarangays.length;
+        this.scrollToHighlighted(this.barangayListRef, this.highlightedBarangayIndex);
     } else if (key === 'Enter') {
       event.preventDefault();
       const selected = this.filteredBarangays[this.highlightedBarangayIndex];
       if (selected) this.selectBarangay(selected);
     } else if (key === 'Escape') {
       this.barangayDropdownOpen = false;
+    }
+  }
+
+  openProvinceDropdown() {
+    this.provinceDropdownOpen = true;
+    this.filteredProvinces = [...this.allProvinces];
+    this.highlightedProvinceIndex = 0;
+  }
+
+  openCityDropdown() {
+    if (this.businessInfoForm.get('province')?.value) {
+      this.cityDropdownOpen = true;
+      this.filteredCities = [...this.allCities];
+      this.highlightedCityIndex = 0;
+    }
+  }
+
+  openBarangayDropdown() {
+    if (this.businessInfoForm.get('city')?.value) {
+      this.barangayDropdownOpen = true;
+      this.filteredBarangays = [...this.allBarangays];
+      this.highlightedBarangayIndex = 0;
     }
   }
 
@@ -311,11 +371,13 @@ export class BusinessInformationFormComponent implements OnInit {
       event.preventDefault();
       this.highlightedOrganizationIndex =
         (this.highlightedOrganizationIndex + 1) % this.filteredOrganizations.length;
+      this.scrollToHighlighted(this.orgListRef, this.highlightedOrganizationIndex);
     } else if (key === 'ArrowUp') {
       event.preventDefault();
       this.highlightedOrganizationIndex =
         (this.highlightedOrganizationIndex - 1 + this.filteredOrganizations.length) %
         this.filteredOrganizations.length;
+      this.scrollToHighlighted(this.orgListRef, this.highlightedOrganizationIndex);
     } else if (key === 'Enter') {
       event.preventDefault();
       const selected = this.filteredOrganizations[this.highlightedOrganizationIndex];
@@ -333,11 +395,13 @@ export class BusinessInformationFormComponent implements OnInit {
       event.preventDefault();
       this.highlightedGenderIndex =
         (this.highlightedGenderIndex + 1) % this.filteredGenders.length;
+      this.scrollToHighlighted(this.genderListRef, this.highlightedGenderIndex);
     } else if (key === 'ArrowUp') {
       event.preventDefault();
       this.highlightedGenderIndex =
         (this.highlightedGenderIndex - 1 + this.filteredGenders.length) %
         this.filteredGenders.length;
+      this.scrollToHighlighted(this.genderListRef, this.highlightedGenderIndex);
     } else if (key === 'Enter') {
       event.preventDefault();
       const selected = this.filteredGenders[this.highlightedGenderIndex];
@@ -390,5 +454,27 @@ export class BusinessInformationFormComponent implements OnInit {
 
   closeOrgDropdown() {
     setTimeout(() => (this.orgDropdownOpen = false), 150);
+  }
+
+  scrollToHighlighted(listRef: ElementRef, index: number) {
+    if (!listRef) return;
+    const listEl = listRef.nativeElement as HTMLElement;
+    const itemEl = listEl.children[index] as HTMLElement;
+
+    if (itemEl) {
+      const itemTop = itemEl.offsetTop;
+      const itemBottom = itemTop + itemEl.offsetHeight;
+      const listScrollTop = listEl.scrollTop;
+      const listHeight = listEl.clientHeight;
+
+      // Scroll down
+      if (itemBottom > listScrollTop + listHeight) {
+        listEl.scrollTop = itemBottom - listHeight;
+      }
+      // Scroll up
+      else if (itemTop < listScrollTop) {
+        listEl.scrollTop = itemTop;
+      }
+    }
   }
 }

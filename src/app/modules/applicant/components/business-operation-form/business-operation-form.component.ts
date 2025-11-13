@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApplicantService } from '../../services/applicant.service';
 import Swal from 'sweetalert2';
@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./business-operation-form.component.css']
 })
 export class BusinessOperationFormComponent implements OnInit {
+  @Output() formValueChange = new EventEmitter<{ formType: string; form: FormGroup }>();
   @Input() mainAddressForm!: FormGroup;
   businessOperationForm!: FormGroup;
 
@@ -80,6 +81,10 @@ export class BusinessOperationFormComponent implements OnInit {
       blockNumber: [''],
       subdivision: ['']
     });
+
+    this.businessOperationForm.valueChanges.subscribe(() => {
+      this.formValueChange.emit({ formType: 'businessOperation', form: this.businessOperationForm });
+    });
   }
 
   toggleSameAsMainAddress(event: Event) {
@@ -148,12 +153,12 @@ export class BusinessOperationFormComponent implements OnInit {
     this.filteredCities = [];
     this.filteredBarangays = [];
 
-    this.api.getCities(province.province_code).subscribe({
-      next: (cities: any[]) => {
-        this.allCities = cities;
-      },
-      error: (err) => console.error('Error fetching cities:', err)
-    });
+    // this.api.getCities(province.province_code).subscribe({
+    //   next: (cities: any[]) => {
+    //     this.allCities = cities;
+    //   },
+    //   error: (err) => console.error('Error fetching cities:', err)
+    // });
   }
 
   // City
@@ -171,12 +176,12 @@ export class BusinessOperationFormComponent implements OnInit {
     this.businessOperationForm.get('barangay')?.reset();
     this.filteredBarangays = [];
 
-    this.api.getBaranggays(city.city_code).subscribe({
-      next: (barangays: any[]) => {
-        this.allBarangays = barangays;
-      },
-      error: (err) => console.error('Error fetching barangays:', err)
-    });
+    // this.api.getBaranggays(city.city_code).subscribe({
+    //   next: (barangays: any[]) => {
+    //     this.allBarangays = barangays;
+    //   },
+    //   error: (err) => console.error('Error fetching barangays:', err)
+    // });
   }
 
   // Barangay

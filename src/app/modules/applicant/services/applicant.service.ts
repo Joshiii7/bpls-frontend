@@ -20,14 +20,14 @@ export class ApplicantService extends ApiService {
   }
 
   getProvinces(): Observable<any> {
-    return this.http.get<any>(`${this.Root_URL}/provinces`, { headers: this.getHeaders() });
+    return this.http.get<any>('assets/address/province.json');
   }
 
-  getCities(province: any): Observable<any> {
-    return this.http.get<any>(`${this.Root_URL}/cities/${province}`, { headers: this.getHeaders() });
+  getCities(): Observable<any> {
+    return this.http.get<any>('assets/address/city.json');
   }
 
-  getBaranggays(cities: any): Observable<any> {
-    return this.http.get<any>(`${this.Root_URL}/barangays/${cities}`, { headers: this.getHeaders() });
+  getBaranggays(): Observable<any> {
+    return this.http.get<any>('assets/address/barangay.json');
   }
 }

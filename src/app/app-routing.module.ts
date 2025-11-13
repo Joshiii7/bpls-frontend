@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './pages/user/dashboard/dashboard.component';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
-import { AuthGuard } from './guards/auth.guard';
 import { PermitOverviewApplicationsComponent } from './pages/admin/permit-approvals/permit-overview-applications/permit-overview-applications.component';
 import { PermitViewApplicationDetailsComponent } from './pages/admin/permit-approvals/permit-view-application-details/permit-view-application-details.component';
 import { AccessDeniedPageComponent } from './pages/access-denied-page/access-denied-page.component';
@@ -39,7 +38,6 @@ const routes: Routes = [
   {
     path: 'application',
     component: PermitParentElementComponent,
-    canActivate: [AuthGuard],
     data: {
       allowedRoles: ['business_owner'],
       breadcrumb: 'Dashboard',
@@ -73,7 +71,6 @@ const routes: Routes = [
   {
     path: 'admin-dashboard',
     component: AdminParentComponent,
-    canActivate: [AuthGuard],
     data: {
       allowedRoles: ['admin'],
       breadcrumb: 'Admin Dashboard' 
@@ -88,7 +85,6 @@ const routes: Routes = [
   {
     path: 'under-review-applications',
     component: AdminParentComponent,
-    canActivate: [AuthGuard],
     data: { allowedRoles: ['admin'] },
     children: [
       {
@@ -106,7 +102,6 @@ const routes: Routes = [
   {
     path: 'approved-applications',
     component: AdminParentComponent,
-    canActivate: [AuthGuard],
     data: { allowedRoles: ['admin'] },
     children: [
       {
@@ -122,7 +117,6 @@ const routes: Routes = [
   {
     path: 'declined-applications',
     component: AdminParentComponent,
-    canActivate: [AuthGuard],
     data: { allowedRoles: ['admin'] },
     children: [
       {
@@ -138,7 +132,6 @@ const routes: Routes = [
   {
     path: 'permit-schedule',
     component: AdminParentComponent,
-    canActivate: [AuthGuard],
     data: {
       allowedRoles: ['admin'],
       breadcrumb: 'Permit Schedule' 

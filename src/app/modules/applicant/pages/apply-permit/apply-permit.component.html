@@ -1,7 +1,7 @@
 <main class="grid grid-cols-12 gap-3 relative">
     
     <!-- Payment and Type of Application Section -->
-    <section class="col-span-12 lg:col-span-3 sticky top-[12.1rem] grid grid-cols-12 gap-3 self-start">
+    <section class="col-span-12 lg:col-span-3 bg-white sticky top-[12.1rem] grid grid-cols-12 gap-3 self-start z-50">
         
         <div class="col-span-6 lg:col-span-12 bg-white rounded-2xl z-50 border p-6">
             <!-- Type of Application Form -->
@@ -126,7 +126,7 @@
 
         <!-- Business Operation -->
         <div [hidden]="activeTab !== 'businessOperation'" class="space-y-4">
-            <app-business-operation-form [mainAddressForm]="businessInfoForm"></app-business-operation-form>
+            <app-business-operation-form (formValueChange)="onBusinessInfoFormChange($event)" [mainAddressForm]="businessInfoForm"></app-business-operation-form>
         </div>
 
         <!-- Business Documents & Location -->
