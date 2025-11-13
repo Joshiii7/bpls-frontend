@@ -290,7 +290,6 @@ export class BusinessInformationFormComponent implements OnInit {
     }
   }
 
-
   handleCityKeydown(event: KeyboardEvent) {
     const key = event.key;
 

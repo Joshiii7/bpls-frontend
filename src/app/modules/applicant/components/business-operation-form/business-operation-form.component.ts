@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApplicantService } from '../../services/applicant.service';
 import Swal from 'sweetalert2';
@@ -11,34 +11,27 @@ import Swal from 'sweetalert2';
 export class BusinessOperationFormComponent implements OnInit {
   @Output() formValueChange = new EventEmitter<{ formType: string; form: FormGroup }>();
   @Input() mainAddressForm!: FormGroup;
+
+  @ViewChild('barangayList') barangayListRef!: ElementRef;
+  @ViewChild('buinessActivity') buinessActivityRef!: ElementRef;
+  
   businessOperationForm!: FormGroup;
 
-  businessActivityDropdownOpen = false;
+  businessActivityDropdownOpen: boolean = false;
   filteredBusinessActivities: any[] = [];
   highlightedBusinessActivityIndex = 0;
 
-  sameAsMainAddress = false;
-
-  provinceDropdownOpen = false;
-  cityDropdownOpen = false;
-  barangayDropdownOpen = false;
-
-  allProvinces: { province_name: string; province_code: string }[] = [];
-  filteredProvinces: { province_name: string; province_code: string }[] = [];
-
-  allCities: { city_name: string; city_code: string }[] = [];
-  filteredCities: { city_name: string; city_code: string }[] = [];
+  sameAsMainAddress: boolean = false;
+  barangayDropdownOpen: boolean = false;
 
   allBarangays: { brgy_name: string; brgy_code: string }[] = [];
   filteredBarangays: { brgy_name: string; brgy_code: string }[] = [];
 
-  highlightedProvinceIndex: number = -1;
-  highlightedCityIndex: number = -1;
   highlightedBarangayIndex: number = -1;
 
   businessActivities = [
     { name: 'Main Office' },
-    { name: 'Branc Office' },
+    { name: 'Branch Office' },
     { name: 'Admin Office Only' },
     { name: 'Warehouse' },
     { name: 'Others' },
@@ -70,8 +63,8 @@ export class BusinessOperationFormComponent implements OnInit {
         motorcycle: ['']
       }),
 
-      province: ['', Validators.required],
-      city: ['', Validators.required],
+      province: ['Surigao del Sur', Validators.required],
+      city: ['Bislig City', Validators.required],
       barangay: ['', Validators.required],
       zipCode: ['', Validators.required],
       streetAddress: ['', Validators.required],
@@ -84,6 +77,17 @@ export class BusinessOperationFormComponent implements OnInit {
 
     this.businessOperationForm.valueChanges.subscribe(() => {
       this.formValueChange.emit({ formType: 'businessOperation', form: this.businessOperationForm });
+    });
+
+    this.initBarangays();
+  }
+
+  initBarangays() {
+    this.api.getBaranggays().subscribe({
+      next: (barangays: any[]) => {
+        this.allBarangays = barangays.filter(b => b.city_code === '166803');
+      },
+      error: (err) => console.error('Error fetching barangays:', err)
     });
   }
 
@@ -120,8 +124,6 @@ export class BusinessOperationFormComponent implements OnInit {
         });
       } else {
         this.businessOperationForm.patchValue({
-          province,
-          city,
           barangay,
           zipCode,
           streetAddress,
@@ -133,194 +135,6 @@ export class BusinessOperationFormComponent implements OnInit {
         });
       }
     }
-  }
-
-  // Province
-  filterProvinces() {
-    const value = this.businessOperationForm.get('province')?.value?.toLowerCase() || '';
-    this.filteredProvinces = this.allProvinces.filter(p =>
-      p.province_name.toLowerCase().includes(value)
-    );
-  }
-
-  selectProvince(province: any) {
-    this.businessOperationForm.get('province')?.setValue(province.province_name);
-    this.provinceDropdownOpen = false;
-
-    // reset dependent fields
-    this.businessOperationForm.get('city')?.reset();
-    this.businessOperationForm.get('barangay')?.reset();
-    this.filteredCities = [];
-    this.filteredBarangays = [];
-
-    // this.api.getCities(province.province_code).subscribe({
-    //   next: (cities: any[]) => {
-    //     this.allCities = cities;
-    //   },
-    //   error: (err) => console.error('Error fetching cities:', err)
-    // });
-  }
-
-  // City
-  filterCities() {
-    const value = this.businessOperationForm.get('city')?.value?.toLowerCase() || '';
-    this.filteredCities = this.allCities.filter(c =>
-      c.city_name.toLowerCase().includes(value)
-    );
-  }
-
-  selectCity(city: any) {
-    this.businessOperationForm.get('city')?.setValue(city.city_name);
-    this.cityDropdownOpen = false;
-
-    this.businessOperationForm.get('barangay')?.reset();
-    this.filteredBarangays = [];
-
-    // this.api.getBaranggays(city.city_code).subscribe({
-    //   next: (barangays: any[]) => {
-    //     this.allBarangays = barangays;
-    //   },
-    //   error: (err) => console.error('Error fetching barangays:', err)
-    // });
-  }
-
-  // Barangay
-  filterBarangays() {
-    const value = this.businessOperationForm.get('barangay')?.value?.toLowerCase() || '';
-    this.filteredBarangays = this.allBarangays.filter(b =>
-      b.brgy_name.toLowerCase().includes(value)
-    );
-  }
-
-  selectBarangay(barangay: any) {
-    this.businessOperationForm.get('barangay')?.setValue(barangay.brgy_name);
-    this.barangayDropdownOpen = false;
-  }
-
-  handleProvinceKeydown(event: KeyboardEvent) {
-    const key = event.key;
-    this.selectProvince('Surigao del Sur');
-
-    if (!this.provinceDropdownOpen || this.filteredProvinces.length === 0) return;
-
-    if (key === 'ArrowDown') {
-      event.preventDefault();
-      this.highlightedProvinceIndex =
-        (this.highlightedProvinceIndex + 1) % this.filteredProvinces.length;
-    } else if (key === 'ArrowUp') {
-      event.preventDefault();
-      this.highlightedProvinceIndex =
-        (this.highlightedProvinceIndex - 1 + this.filteredProvinces.length) %
-        this.filteredProvinces.length;
-    } else if (key === 'Enter') {
-      const selected = this.filteredProvinces[this.highlightedProvinceIndex];
-      event.preventDefault();
-      if (selected) this.selectProvince(selected);
-    } else if (key === 'Escape') {
-      this.provinceDropdownOpen = false;
-    }
-  }
-
-  handleCityKeydown(event: KeyboardEvent) {
-    const key = event.key;
-
-    if (!this.cityDropdownOpen || this.filteredCities.length === 0) return;
-
-    if (key === 'ArrowDown') {
-      event.preventDefault();
-      this.highlightedCityIndex =
-        (this.highlightedCityIndex + 1) % this.filteredCities.length;
-    } else if (key === 'ArrowUp') {
-      event.preventDefault();
-      this.highlightedCityIndex =
-        (this.highlightedCityIndex - 1 + this.filteredCities.length) %
-        this.filteredCities.length;
-    } else if (key === 'Enter') {
-      event.preventDefault();
-      const selected = this.filteredCities[this.highlightedCityIndex];
-      if (selected) this.selectCity(selected);
-    } else if (key === 'Escape') {
-      this.cityDropdownOpen = false;
-    }
-  }
-
-  handleBarangayKeydown(event: KeyboardEvent) {
-    const key = event.key;
-
-    if (!this.barangayDropdownOpen || this.filteredBarangays.length === 0) return;
-
-    if (key === 'ArrowDown') {
-      event.preventDefault();
-      this.highlightedBarangayIndex =
-        (this.highlightedBarangayIndex + 1) % this.filteredBarangays.length;
-    } else if (key === 'ArrowUp') {
-      event.preventDefault();
-      this.highlightedBarangayIndex =
-        (this.highlightedBarangayIndex - 1 + this.filteredBarangays.length) %
-        this.filteredBarangays.length;
-    } else if (key === 'Enter') {
-      event.preventDefault();
-      const selected = this.filteredBarangays[this.highlightedBarangayIndex];
-      if (selected) this.selectBarangay(selected);
-    } else if (key === 'Escape') {
-      this.barangayDropdownOpen = false;
-    }
-  }
-
-  closeProvinceDropdown() {
-    setTimeout(() => (this.provinceDropdownOpen = false), 150);
-  }
-
-  closeCityDropdown() {
-    setTimeout(() => (this.cityDropdownOpen = false), 150);
-  }
-
-  closeBarangayDropdown() {
-    setTimeout(() => (this.barangayDropdownOpen = false), 150);
-  }
-
-  filterBusinessActivities() {
-    const value = this.businessOperationForm.get('businessActivity')?.value?.toLowerCase() || '';
-    this.filteredBusinessActivities = this.businessActivities.filter(activity =>
-      activity.name.toLowerCase().includes(value)
-    );
-    this.highlightedBusinessActivityIndex = 0;
-  }
-
-  handleBusinessActivityKeydown(event: KeyboardEvent) {
-    const maxIndex = this.filteredBusinessActivities.length - 1;
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      this.highlightedBusinessActivityIndex =
-        this.highlightedBusinessActivityIndex < maxIndex
-          ? this.highlightedBusinessActivityIndex + 1
-          : 0;
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      this.highlightedBusinessActivityIndex =
-        this.highlightedBusinessActivityIndex > 0
-          ? this.highlightedBusinessActivityIndex - 1
-          : maxIndex;
-    } else if (event.key === 'Enter') {
-      event.preventDefault();
-      if (this.filteredBusinessActivities[this.highlightedBusinessActivityIndex]) {
-        this.selectBusinessActivity(this.filteredBusinessActivities[this.highlightedBusinessActivityIndex]);
-      }
-    }
-  }
-
-  selectBusinessActivity(activity: any) {
-    this.businessOperationForm.get('businessActivity')?.setValue(activity.name);
-    this.businessActivityDropdownOpen = false;
-    this.filteredBusinessActivities = [];
-  }
-
-  /** Close the dropdown when input loses focus */
-  closeBusinessActivityDropdown() {
-    // Small delay to allow click event on list item
-    setTimeout(() => {
-      this.businessActivityDropdownOpen = false;
-    }, 150);
   }
 
   inputClass(field: string): string {
@@ -356,5 +170,125 @@ export class BusinessOperationFormComponent implements OnInit {
     }
 
     return null;
+  }
+
+  // Barangay
+  filterBarangays() {
+    const value = this.businessOperationForm.get('barangay')?.value?.toLowerCase() || '';
+    this.filteredBarangays = this.allBarangays.filter(b =>
+      b.brgy_name.toLowerCase().includes(value)
+    );
+  }
+
+  selectBarangay(barangay: any) {
+    this.businessOperationForm.get('barangay')?.setValue(barangay.brgy_name);
+    this.barangayDropdownOpen = false;
+  }
+
+  handleBarangayKeydown(event: KeyboardEvent) {
+    const key = event.key;
+
+    if (!this.barangayDropdownOpen || this.filteredBarangays.length === 0) return;
+
+    if (key === 'ArrowDown') {
+      event.preventDefault();
+      this.highlightedBarangayIndex =
+        (this.highlightedBarangayIndex + 1) % this.filteredBarangays.length;
+        this.scrollToHighlighted(this.barangayListRef, this.highlightedBarangayIndex);
+    } else if (key === 'ArrowUp') {
+      event.preventDefault();
+      this.highlightedBarangayIndex =
+        (this.highlightedBarangayIndex - 1 + this.filteredBarangays.length) %
+        this.filteredBarangays.length;
+        this.scrollToHighlighted(this.barangayListRef, this.highlightedBarangayIndex);
+    } else if (key === 'Enter') {
+      event.preventDefault();
+      const selected = this.filteredBarangays[this.highlightedBarangayIndex];
+      if (selected) this.selectBarangay(selected);
+    } else if (key === 'Escape') {
+      this.barangayDropdownOpen = false;
+    }
+  }
+
+  openBarangayDropdown() {
+    if (this.businessOperationForm.get('city')?.value) {
+      this.barangayDropdownOpen = true;
+      this.filteredBarangays = [...this.allBarangays];
+      this.highlightedBarangayIndex = 0;
+    }
+  }
+
+  closeBarangayDropdown() {
+    setTimeout(() => (this.barangayDropdownOpen = false), 150);
+  }
+
+  filterBusinessActivities() {
+    const value = this.businessOperationForm.get('businessActivity')?.value?.toLowerCase() || '';
+    this.filteredBusinessActivities = this.businessActivities.filter(activity =>
+      activity.name.toLowerCase().includes(value)
+    );
+    this.highlightedBusinessActivityIndex = 0;
+  }
+
+  handleBusinessActivityKeydown(event: KeyboardEvent) {
+    const maxIndex = this.filteredBusinessActivities.length - 1;
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.highlightedBusinessActivityIndex =
+        this.highlightedBusinessActivityIndex < maxIndex
+          ? this.highlightedBusinessActivityIndex + 1
+          : 0;
+          this.scrollToHighlighted(this.buinessActivityRef, this.highlightedBusinessActivityIndex);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.highlightedBusinessActivityIndex =
+        this.highlightedBusinessActivityIndex > 0
+          ? this.highlightedBusinessActivityIndex - 1
+          : maxIndex;
+          this.scrollToHighlighted(this.buinessActivityRef, this.highlightedBusinessActivityIndex);
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (this.filteredBusinessActivities[this.highlightedBusinessActivityIndex]) {
+        this.selectBusinessActivity(this.filteredBusinessActivities[this.highlightedBusinessActivityIndex]);
+      }
+    }
+  }
+
+  selectBusinessActivity(activity: any) {
+    this.businessOperationForm.get('businessActivity')?.setValue(activity.name);
+    this.businessActivityDropdownOpen = false;
+    this.filteredBusinessActivities = [];
+  }
+
+  openBusinessActivityDropdown() {
+    this.businessActivityDropdownOpen = true;
+    this.filteredBusinessActivities = [...this.businessActivities];
+    this.highlightedBusinessActivityIndex = 0;
+  }
+
+  closeBusinessActivityDropdown() {
+    this.businessActivityDropdownOpen = false;
+  }
+
+  scrollToHighlighted(listRef: ElementRef, index: number) {
+    if (!listRef) return;
+    const listEl = listRef.nativeElement as HTMLElement;
+    const itemEl = listEl.children[index] as HTMLElement;
+
+    if (itemEl) {
+      const itemTop = itemEl.offsetTop;
+      const itemBottom = itemTop + itemEl.offsetHeight;
+      const listScrollTop = listEl.scrollTop;
+      const listHeight = listEl.clientHeight;
+
+      // Scroll down
+      if (itemBottom > listScrollTop + listHeight) {
+        listEl.scrollTop = itemBottom - listHeight;
+      }
+      // Scroll up
+      else if (itemTop < listScrollTop) {
+        listEl.scrollTop = itemTop;
+      }
+    }
   }
 }
