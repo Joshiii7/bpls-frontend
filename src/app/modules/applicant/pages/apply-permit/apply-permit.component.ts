@@ -22,7 +22,10 @@ export class ApplyPermitComponent {
   businessInfoForm!: FormGroup;
   businessOpeForm!: FormGroup;
 
-  businessInfoData: any = {};
+  businessDocuments: any;  
+  mapLocation: any;
+
+  applicationData: any = {};
 
   constructor(
     private api: ApplicantService,
@@ -39,14 +42,59 @@ export class ApplyPermitComponent {
     this.paymentOptionForm = this.fb.group({
       paymentOption: ['', Validators.required],
     });
+
+    this.applicationTypeForm.valueChanges.subscribe(() => this.emitFormData());
+    this.paymentOptionForm.valueChanges.subscribe(() => this.emitFormData());
+  }
+
+  private emitFormData() {
+    const applicationType = this.applicationTypeForm.get('applicationType')?.value;
+    const paymentOption = this.paymentOptionForm.get('paymentOption')?.value;
+
+    this.applicationData = {
+      ...this.applicationData,
+      applicationType,
+      paymentOption,
+    };
+
+    console.log('✅ Updated applicationData:', this.applicationData);
+  }
+
+  handleBusinessOperationData(data: any) {
+    const { documents, location } = data;
+
+    this.businessDocuments = documents;
+    this.mapLocation = location;
+
+    this.applicationData.documents = documents;
+    this.applicationData.location = location;
+
+    this.updateApplicationData();
   }
 
   onBusinessInfoFormChange(event: { formType: string; form: FormGroup }) {
     if (event.formType === 'businessInfo') {
       this.businessInfoForm = event.form;
+      this.applicationData.businessInfo = event.form.value;
     } else if (event.formType === 'businessOperation') {
       this.businessOpeForm = event.form
+      this.applicationData.businessOperation = event.form.value;
     }
+
+    this.updateApplicationData();
+  }
+
+  updateApplicationData() {
+    this.applicationData = {
+      ...this.applicationData,
+      businessInfo: this.businessInfoForm?.value || null,
+      businessOperation: this.businessOpeForm?.value || null,
+      documents: this.businessDocuments || null,
+      location: this.mapLocation || null,
+    };
+
+    // Debug
+    console.log('✅ Combined Application Data:', this.applicationData);
   }
 
   onFormChange(formType: string, form: FormGroup) {

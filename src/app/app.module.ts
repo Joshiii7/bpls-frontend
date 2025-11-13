@@ -2,23 +2,15 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getDatabase } from 'firebase/database';
-import { AngularFireModule } from '@angular/fire/compat'
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './partials/header/header.component';
-import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { DashboardComponent } from './pages/user/dashboard/dashboard.component';
 import { SidebarModule } from 'primeng/sidebar';
 import { SidebarComponent } from './partials/sidebar/sidebar.component';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
-import { ApplicationComponent } from './pages/user/applications/application/application.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -26,9 +18,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CountUpModule } from 'ngx-countup';
 import { AuthComponent } from './auth/auth.component';
-import { FormComponent } from './components/form/form.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { MapComponent } from './components/map/map.component';
 import { PermitOverviewApplicationsComponent } from './pages/admin/permit-approvals/permit-overview-applications/permit-overview-applications.component';
 import { PermitViewApplicationDetailsComponent } from './pages/admin/permit-approvals/permit-view-application-details/permit-view-application-details.component';
 import { ApplicationParentElementComponent } from './pages/admin/permit-approvals/application-parent-element/application-parent-element.component';
@@ -61,32 +51,13 @@ import { ApplicantDashboardComponent } from './modules/applicant/pages/applicant
 import { ApplicantApplicationDetailsComponent } from './modules/applicant/pages/applicant-application-details/applicant-application-details.component';
 import { HomeComponent } from './modules/landing/pages/home/home.component';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDteaccknTxLOY2hOXeluL5aH88B7q-ob8",
-  authDomain: "bpls-54e21.firebaseapp.com",
-  databaseURL: "https://bpls-54e21-default-rtdb.firebaseio.com",
-  projectId: "bpls-54e21",
-  storageBucket: "bpls-54e21.firebasestorage.app",
-  messagingSenderId: "1028038457025",
-  appId: "1:1028038457025:web:18c1c53acb0f4125e04640",
-  measurementId: "G-JSGTB33V9T"
-};
-
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    LandingPageComponent,
-    DashboardComponent,
     SidebarComponent,
     AdminDashboardComponent,
-    ApplicationComponent,
     AuthComponent,
-    FormComponent,
-    MapComponent,
     PermitOverviewApplicationsComponent,
     PermitViewApplicationDetailsComponent,
     ApplicationParentElementComponent,
@@ -134,7 +105,6 @@ const analytics = getAnalytics(app);
     BrowserAnimationsModule,
     ConfirmDialogModule,
     BreadcrumbModule,
-    AngularFireModule.initializeApp(firebaseConfig),
     AuthModule.forRoot({
       domain: 'dev-i13gsn8mlryu6ru5.us.auth0.com',
       clientId: 'jIYgngTr6txEA5XjnFnHh2K0KvZzmrHt',

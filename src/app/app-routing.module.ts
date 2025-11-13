@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DashboardComponent } from './pages/user/dashboard/dashboard.component';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
 import { PermitOverviewApplicationsComponent } from './pages/admin/permit-approvals/permit-overview-applications/permit-overview-applications.component';
 import { PermitViewApplicationDetailsComponent } from './pages/admin/permit-approvals/permit-view-application-details/permit-view-application-details.component';
@@ -43,14 +42,6 @@ const routes: Routes = [
       breadcrumb: 'Dashboard',
     },
     children: [
-      {
-        path: '',
-        component: DashboardComponent,
-        data: {
-          allowedRoles: ['business_owner'],
-          breadcrumb: 'Dashboards',
-        }
-      },
       {
         path: 'apply-permit',
         component: NewPermitComponent,

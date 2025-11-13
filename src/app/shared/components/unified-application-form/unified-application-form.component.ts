@@ -52,9 +52,9 @@ export class UnifiedApplicationFormComponent {
   @Input('operational_subdivision') operational_subdivision: string = '';
   
   @Input('businessActivity') businessActivity: number = 0;
-  @Input('paymentType') paymentType: number = 0;
   @Input('businessType') businessType: number = 0;
   @Input('gender') gender: number = 0;
+  @Input('paymentType') paymentType: number = 0;
   @Input('isNew') isNew: number = 0;
 
   @Input() image: string | null = null;

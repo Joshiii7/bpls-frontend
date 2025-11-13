@@ -107,12 +107,11 @@ export class BusinessOperationFormComponent implements OnInit {
       const blockNumber = this.mainAddressForm.get('blockNumber')?.value?.trim();
       const subdivision = this.mainAddressForm.get('subdivision')?.value?.trim();
 
-      const isEmptyField = [province, city, barangay, zipCode, streetAddress, houseNumber, buildingName, lotNumber, blockNumber, subdivision]
-        .some(field => !field);
+      const isValidLocation =
+        province?.trim().toLowerCase() === 'surigao del sur' &&
+        city?.trim().toLowerCase() === 'bislig city';
 
-      const isValidLocation = province === 'Surigao del Sur' && city === 'Bislig City';
-
-      if (isEmptyField || !isValidLocation) {
+      if (!isValidLocation) {
         this.sameAsMainAddress = false;
         
         Swal.fire({
@@ -122,6 +121,9 @@ export class BusinessOperationFormComponent implements OnInit {
           confirmButtonColor: '#d33',
           confirmButtonText: 'Understood!'
         });
+
+        return;
+
       } else {
         this.businessOperationForm.patchValue({
           barangay,
@@ -133,6 +135,8 @@ export class BusinessOperationFormComponent implements OnInit {
           blockNumber,
           subdivision
         });
+
+        return;
       }
     }
   }

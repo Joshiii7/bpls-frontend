@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -7,8 +7,11 @@ import Swal from 'sweetalert2';
   styleUrls: ['./business-documents-form.component.css']
 })
 export class BusinessDocumentsFormComponent implements OnInit {
+  @Output() formDataChange = new EventEmitter<any>();
+
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-  selectedLocation: any;
+
+  selectedLocation: any = null;
   showModal = false;
   modalTitle = '';
   activeField = '';
@@ -38,6 +41,8 @@ export class BusinessDocumentsFormComponent implements OnInit {
   onLocationSelected(location: { lng: number; lat: number }) {
     this.selectedLocation = location;
     console.log('Location received from child:', location);
+
+    this.emitFormData();
   }
 
   openUploadModal(title: string, field: string) {
@@ -119,6 +124,15 @@ export class BusinessDocumentsFormComponent implements OnInit {
       title: 'Image selected!',
       text: 'Your image has been successfully chosen.',
       confirmButtonColor: '#009800',
+    });
+
+    this.emitFormData();
+  }
+
+  emitFormData() {
+    this.formDataChange.emit({
+      documents: this.documents,
+      location: this.selectedLocation,
     });
   }
 }

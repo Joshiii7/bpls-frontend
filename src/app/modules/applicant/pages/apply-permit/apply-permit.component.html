@@ -4,6 +4,7 @@
     <section class="col-span-12 lg:col-span-3 bg-white sticky top-[12.1rem] grid grid-cols-12 gap-3 self-start z-50">
         
         <div class="col-span-6 lg:col-span-12 bg-white rounded-2xl z-50 border p-6">
+            
             <!-- Type of Application Form -->
             <form [formGroup]="applicationTypeForm" class="mb-6">
                 <h2 class="text-lg font-semibold text-gray-700 mb-4">
@@ -131,12 +132,21 @@
 
         <!-- Business Documents & Location -->
         <div [hidden]="activeTab !== 'documentsLocation'">
-            <app-business-documents-form></app-business-documents-form>
+            <app-business-documents-form (formDataChange)="handleBusinessOperationData($event)"></app-business-documents-form>
         </div>
 
         <!-- Reviewal of Documents -->
         <div [hidden]="activeTab !== 'review'">
-            <app-application-review></app-application-review>
+            <app-application-review
+                [applicationData]="applicationData"
+            ></app-application-review>
+
+            <button
+                type="button"
+                class="mt-4 px-8 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-white font-medium tracking-wide w-full"
+            >
+                Submit Application
+            </button>
         </div>
     </section>
 </main>

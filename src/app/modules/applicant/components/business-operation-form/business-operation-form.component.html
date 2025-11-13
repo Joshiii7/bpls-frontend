@@ -131,7 +131,7 @@
                     type="number"
                     formControlName="vanOrTruck"
                     placeholder="e.g. 4"
-                    class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
+                    class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
                 />
             </div>
             <div>
@@ -142,7 +142,7 @@
                     type="number"
                     formControlName="motorcycle"
                     placeholder="e.g. 5"
-                    class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
+                    class="bg-white border text-sm rounded-md block w-full p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-green-500"
                 />
             </div>
         </div>
@@ -160,7 +160,7 @@
                 id="sameAsMainAddress"
                 [checked]="sameAsMainAddress"
                 (change)="toggleSameAsMainAddress($event)"
-                class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500 cursor-pointer"
+                class="w-4 h-4 border-gray-300 rounded cursor-pointer checkbox-green"
             />
             <label for="sameAsMainAddress" class="text-gray-700 font-medium cursor-pointer">
                 Same as Main Office Address
