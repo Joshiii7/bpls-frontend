@@ -4,13 +4,20 @@
         class="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800"
     >
         <p>
-            You can pre-fill your permit application with your profile information. Updating your profile is optional, and you can still enter details manually each time you apply.
+            Please pre-fill your profile information first before applying for a permit. This ensures your application is faster and more accurate.
         </p>
     </section>
 
     <section class="flex justify-between items-center mb-6">
         <h2 class="font-bold text-xl">Business Permit Applications</h2>
-        <button (click)="newApplication()" type="button" class="bg-primary text-white p-2 rounded-md hover:bg-primary/90 transition-all duration-300">+ New Application</button>
+        <button 
+            (click)="newApplication()" 
+            type="button" 
+            class="bg-primary text-white p-2 rounded-md hover:bg-primary/90 transition-all duration-300"
+            [disabled]="showProfileWarning"
+        >
+            + New Application
+        </button>
     </section>
 
     <section class="bg-white rounded-lg border px-5 py-7 mt-4">
