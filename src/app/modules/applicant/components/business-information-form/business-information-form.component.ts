@@ -106,6 +106,7 @@ export class BusinessInformationFormComponent implements OnInit {
     });
 
     this.initAddress();
+    this.initUserProfile();
   }
 
   initAddress() {
@@ -115,6 +116,24 @@ export class BusinessInformationFormComponent implements OnInit {
       },
       error: (err: any) => {
         console.error("error fetching provinces: ", err)
+      }
+    });
+  }
+
+  initUserProfile() {
+    this.api.getUserProfile().subscribe({
+      next: (response: any) => {
+        this.businessInfoForm.patchValue({
+          givenName: response.first_name,
+          middleName: response.middle_name,
+          surname: response.last_name,
+          suffix: response.suffix,
+          contactNumber: response.number,
+          email: response.email,
+        });
+      },
+      error: (err: any) => {
+        console.error("error fetching user profile: ", err);
       }
     });
   }
