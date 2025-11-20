@@ -14,6 +14,7 @@ import { BusinessOperationFormComponent } from './components/business-operation-
 import { BusinessDocumentsFormComponent } from './components/business-documents-form/business-documents-form.component';
 import { ApplicationReviewComponent } from './components/application-review/application-review.component';
 import { ApplicantApplicationDetailsComponent } from './pages/applicant-application-details/applicant-application-details.component';
+import { NotificationComponent } from './components/notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ApplicantApplicationDetailsComponent } from './pages/applicant-applicat
     ApplicantApplicationDetailsComponent,
     BusinessOperationFormComponent,
     BusinessDocumentsFormComponent,
-    ApplicationReviewComponent
+    ApplicationReviewComponent,
+    NotificationComponent
   ],
   imports: [
     CommonModule,

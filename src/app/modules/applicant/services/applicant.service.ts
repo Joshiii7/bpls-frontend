@@ -26,6 +26,10 @@ export class ApplicantService extends ApiService {
   submitApplicantApplication(payload: any): Observable<any> {
     return this.http.post<any>(`${this.Root_URL}/applicants-application`, payload, { headers: this.getHeaders() });
   }
+
+  getSystemNotification(): Observable<any> {
+    return this.http.get<any>(`${this.Root_URL}/system-notifications`, { headers: this.getHeaders() });
+  }
   
   checkPhoneNumber(number: string): Observable<any> {
     return this.http.get<any>(`${this.Root_URL}/check-phone?number=${number}`, { headers: this.getHeaders() });
