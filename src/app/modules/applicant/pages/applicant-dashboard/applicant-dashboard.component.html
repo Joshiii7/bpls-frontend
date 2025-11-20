@@ -37,7 +37,12 @@
                         </th>
                         <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
                             <p class="block font-semibold text-sm text-slate-800">
-                                Status
+                                Transaction Status
+                            </p>
+                        </th>
+                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
+                            <p class="block font-semibold text-sm text-slate-800">
+                                Application Status
                             </p>
                         </th>
                         <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
@@ -72,7 +77,7 @@
                     
                     <tr *ngFor="let application of paginatedApplications; let i = index" class="hover:bg-slate-50 border-b border-slate-200">
                         <td class="px-4 py-2 border-b">
-                            <p class="text-sm text-slate-900 font-semibold">{{ application.track_number }}</p>
+                            <p class="text-sm text-slate-900 font-semibold">{{ application.tracking_number }}</p>
                         </td>
                         <td class="px-4 py-2 border-b">
                             <p class="text-sm text-slate-500">{{ application.business_name }}</p>
@@ -83,6 +88,11 @@
                         <td class="px-4 py-2 border-b">
                             <span [ngClass]="getBadgeClass(application.status)" class="px-2 py-1 text-sm font-semibold rounded">
                                 {{ application.status }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-2 border-b">
+                            <span [ngClass]="getBadgeClass(application.application_status)" class="px-2 py-1 text-sm font-semibold rounded">
+                                {{ application.application_status }}
                             </span>
                         </td>
                         <td class="px-4 py-2 border-b">
@@ -135,4 +145,5 @@
             </div>
         </div>
     </section>
+
 </main>

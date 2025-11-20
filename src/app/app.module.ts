@@ -27,19 +27,15 @@ import { AuthModule } from '@auth0/auth0-angular';
 import { SampleSidebarComponent } from './partials/sample-sidebar/sample-sidebar.component';
 import { ReviewMapComponent } from './components/review-map/review-map.component';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
-import { NewPermitComponent } from './pages/user/manage-permit/new-permit/new-permit.component';
-import { PermitParentElementComponent } from './pages/user/manage-permit/permit-parent-element/permit-parent-element.component';
 import { PermitApprovedApplicationComponent } from './pages/admin/permit-approved/permit-approved-application/permit-approved-application.component';
 import { PermitApprovedParentComponent } from './pages/admin/permit-approved/permit-approved-parent/permit-approved-parent.component';
 import { PermitDeclinedApplicationsComponent } from './pages/admin/permit-declined/permit-declined-applications/permit-declined-applications.component';
 import { PermitDeclinedParentComponent } from './pages/admin/permit-declined/permit-declined-parent/permit-declined-parent.component';
-import { MyApplicationParentComponent } from './pages/user/applications/my-application-parent/my-application-parent.component';
 import { ApplicantsHeaderComponent } from './partials/applicants-header/applicants-header.component';
 import { ScheduleComponent } from './pages/admin/schedule/schedule.component';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
 import { NotificationDropdownComponent } from './components/notification-dropdown/notification-dropdown.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
-import { ViewApplicationComponent } from './pages/user/applications/view-application/view-application.component';
 import { PermitReviewComponent } from './modules/admin/pages/permit-review/permit-review.component';
 import { PermitApprovedComponent } from './modules/admin/pages/permit-approved/permit-approved.component';
 import { PermitDeclinedComponent } from './modules/admin/pages/permit-declined/permit-declined.component';
@@ -48,7 +44,6 @@ import { AdminParentComponent } from './modules/admin/components/admin-parent/ad
 import { AdminHeaderComponent } from './modules/admin/components/admin-header/admin-header.component';
 import { AdminSidebarComponent } from './modules/admin/components/admin-sidebar/admin-sidebar.component';
 import { ApplicantDashboardComponent } from './modules/applicant/pages/applicant-dashboard/applicant-dashboard.component';
-import { ApplicantApplicationDetailsComponent } from './modules/applicant/pages/applicant-application-details/applicant-application-details.component';
 import { HomeComponent } from './modules/landing/pages/home/home.component';
 
 @NgModule({
@@ -64,19 +59,15 @@ import { HomeComponent } from './modules/landing/pages/home/home.component';
     AccessDeniedPageComponent,
     SampleSidebarComponent,
     ReviewMapComponent,
-    NewPermitComponent,
-    PermitParentElementComponent,
     PermitApprovedApplicationComponent,
     PermitApprovedParentComponent,
     PermitDeclinedApplicationsComponent,
     PermitDeclinedParentComponent,
-    MyApplicationParentComponent,
     ApplicantsHeaderComponent,
     ScheduleComponent,
     SignaturePadComponent,
     NotificationDropdownComponent,
     NotificationsComponent,
-    ViewApplicationComponent,
     PermitReviewComponent,
     PermitApprovedComponent,
     PermitDeclinedComponent,
@@ -85,7 +76,6 @@ import { HomeComponent } from './modules/landing/pages/home/home.component';
     AdminHeaderComponent,
     AdminSidebarComponent,
     ApplicantDashboardComponent,
-    ApplicantApplicationDetailsComponent,
     HomeComponent,
   ],
   imports: [

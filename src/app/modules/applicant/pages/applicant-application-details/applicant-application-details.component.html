@@ -16,4 +16,98 @@
             </div>
         </div>
     </section>
+
+    <section class="col-span-12 lg:col-span-9">
+
+        <section class="flex justify-center items-center">
+            <app-unified-application-form
+                [businessName]="businessName"
+                [franchiseName]="franchiseName"
+                [dtiNumber]="dtiNumber"
+                [registrationDate]="dti_registration_date"
+                [tinNumber]="tinNumber"
+
+                [surname]="surname"
+                [givenname]="givenname"
+                [middlename]="middlename"
+                [suffix]="suffix"
+                [email]="email"
+                [number]="number"
+                
+                [businessArea]="businessArea"
+                [totalMale]="totalMale"
+                [totalFemale]="totalFemale"
+                [totalEmployee]="totalEmployee"
+                [gender]="gender"
+                [paymentType]="paymentType"
+                [businessType]="businessType"
+                [businessActivity]="businessActivity"
+                [isNew]="isNew"
+
+                [date_of_receipt]="date_of_receipt"
+                [tracking_number]="tracking_number"
+                [business_id_number]="business_id_number"
+
+                [province]="province"
+                [city]="city"
+                [barangay]="barangay"
+                [zipCode]="zipCode"
+                [street]="street"
+                [house_no]="house_no"
+                [name_building]="name_building"
+                [lot_no]="lot_no"
+                [block_no]="block_no"
+                [subdivision]="subdivision"
+
+                [operationalProvince]="operationalProvince"
+                [operationalCity]="operationalCity"
+                [operationalBarangay]="operationalBarangay"
+                [operationalZipCode]="operationalZipCode"
+                [operationalStreet]="operationalStreet"
+                [operational_house_no]="operational_house_no"
+                [operational_name_building]="operational_name_building"
+                [operational_lot_no]="operational_lot_no"
+                [operational_block_no]="operational_block_no"
+                [operational_subdivision]="operational_subdivision"
+
+                [image]="signature"
+            ></app-unified-application-form>
+
+        </section>
+    
+        <section class="mt-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 border-b border-slate-200 pb-2">
+				<i class="fa-solid fa-file"></i>
+				Uploaded Documents
+			</h2>
+
+			<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+				
+				<!-- Map -->
+				<div *ngIf="lat && lng" class="col-span-1 flex flex-col items-center bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow p-3">
+					<div class="w-full h-48 rounded-lg overflow-hidden mb-2">
+						<!-- <app-review-map [lat]="lat" [lng]="lng"></app-review-map> -->
+					</div>
+					<p class="text-sm text-slate-600 font-medium mt-1">Business Location</p>
+				</div>
+
+				<!-- Document Images -->
+				<div 
+					*ngFor="let picture of pictures; let i = index" 
+					class="col-span-1 flex flex-col items-center bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow p-3"
+				>
+					<a [href]="picture.file_path" target="_blank" class="w-full h-48 rounded-lg overflow-hidden mb-2">
+						<img
+							[src]="picture.file_path"
+							[alt]="picture.type"
+							class="h-full w-full object-cover rounded-lg hover:scale-105 transition-transform duration-300"
+						/>
+					</a>
+					<p class="text-sm text-slate-600 font-medium text-center truncate w-full">
+						{{ picture.type || 'Document' }}
+					</p>
+				</div>
+			</div>
+        </section>
+    </section>
 </main>

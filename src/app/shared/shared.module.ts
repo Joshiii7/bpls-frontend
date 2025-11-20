@@ -9,7 +9,8 @@ import { UnifiedApplicationFormComponent } from './components/unified-applicatio
   declarations: [
     FooterComponent, 
     LoaderComponent, 
-    MapComponent, UnifiedApplicationFormComponent
+    MapComponent, 
+    UnifiedApplicationFormComponent
   ],
   imports: [CommonModule],
   exports: [

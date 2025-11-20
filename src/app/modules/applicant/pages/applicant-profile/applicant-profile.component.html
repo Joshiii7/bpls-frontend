@@ -122,12 +122,20 @@
                     <input 
                         id="number" 
                         formControlName="number" 
+                        (blur)="checkUniqueNumber()"
                         (input)="onNumberInput($event)"
                         maxlength="16"
                         placeholder="+63 9## ### ####"
                         class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
                         [ngClass]="{'border-red-500': profileForm.get('number')?.invalid && profileForm.get('number')?.touched}" 
                     />
+
+                    <div 
+                        *ngIf="profileForm.get('number')?.errors?.['phoneTaken']"
+                        class="text-red-500 text-xs mt-1"
+                    >
+                        This phone number is already registered.
+                    </div>
                 </div>
 
                 <div>

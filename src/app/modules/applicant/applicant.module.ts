@@ -13,6 +13,7 @@ import { ApplyPermitComponent } from './pages/apply-permit/apply-permit.componen
 import { BusinessOperationFormComponent } from './components/business-operation-form/business-operation-form.component';
 import { BusinessDocumentsFormComponent } from './components/business-documents-form/business-documents-form.component';
 import { ApplicationReviewComponent } from './components/application-review/application-review.component';
+import { ApplicantApplicationDetailsComponent } from './pages/applicant-application-details/applicant-application-details.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { ApplicationReviewComponent } from './components/application-review/appl
     ApplicantProfileComponent,
     BusinessInformationFormComponent,
     ApplyPermitComponent,
+    ApplicantApplicationDetailsComponent,
     BusinessOperationFormComponent,
     BusinessDocumentsFormComponent,
     ApplicationReviewComponent

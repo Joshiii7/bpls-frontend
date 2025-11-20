@@ -19,6 +19,18 @@ export class ApplicantService extends ApiService {
     return this.http.patch<any>(`${this.Root_URL}/applicants-profile/${id}`, data, { headers: this.getHeaders() });
   }
 
+  getApplicantApplicationDetails(uuid: any): Observable<any> {
+    return this.http.get<any>(`${this.Root_URL}/applicants-application/${uuid}`, { headers: this.getHeaders() });
+  }
+
+  submitApplicantApplication(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.Root_URL}/applicants-application`, payload, { headers: this.getHeaders() });
+  }
+  
+  checkPhoneNumber(number: string): Observable<any> {
+    return this.http.get<any>(`${this.Root_URL}/check-phone?number=${number}`, { headers: this.getHeaders() });
+  }
+
   getProvinces(): Observable<any> {
     return this.http.get<any>('assets/address/province.json');
   }

@@ -29,6 +29,10 @@ export class ApiService {
     return this.http.get<any>(`${this.Root_URL}/userRole`, { headers: this.getHeaders() });
   }
 
+  public get baseUrl(): string {
+    return this.Base_URL;
+  }
+
   public getToken(): string | null {
     return localStorage.getItem('t');
   }

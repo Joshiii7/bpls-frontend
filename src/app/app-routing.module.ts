@@ -4,14 +4,10 @@ import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-das
 import { PermitOverviewApplicationsComponent } from './pages/admin/permit-approvals/permit-overview-applications/permit-overview-applications.component';
 import { PermitViewApplicationDetailsComponent } from './pages/admin/permit-approvals/permit-view-application-details/permit-view-application-details.component';
 import { AccessDeniedPageComponent } from './pages/access-denied-page/access-denied-page.component';
-import { PermitParentElementComponent } from './pages/user/manage-permit/permit-parent-element/permit-parent-element.component';
-import { NewPermitComponent } from './pages/user/manage-permit/new-permit/new-permit.component';
 import { PermitApprovedApplicationComponent } from './pages/admin/permit-approved/permit-approved-application/permit-approved-application.component';
 import { PermitDeclinedApplicationsComponent } from './pages/admin/permit-declined/permit-declined-applications/permit-declined-applications.component';
 import { ScheduleComponent } from './pages/admin/schedule/schedule.component';
-import { ViewApplicationComponent } from './pages/user/applications/view-application/view-application.component';
 import { AdminParentComponent } from './modules/admin/components/admin-parent/admin-parent.component';
-import { HomeComponent } from './modules/landing/pages/home/home.component';
 
 const routes: Routes = [
   // Public Routes
@@ -27,35 +23,11 @@ const routes: Routes = [
       import('./modules/auth/auth.module').then(m => m.AuthModule) 
   },
 
+  // Business Owner's Routes
   { 
     path: 'applications', 
     loadChildren: () => 
       import('./modules/applicant/applicant.module').then(m => m.ApplicantModule) 
-  },
-
-  // Business Owner's Routes
-  {
-    path: 'application',
-    component: PermitParentElementComponent,
-    data: {
-      allowedRoles: ['business_owner'],
-      breadcrumb: 'Dashboard',
-    },
-    children: [
-      {
-        path: 'apply-permit',
-        component: NewPermitComponent,
-        data: { 
-          allowedRoles: ['business_owner'],
-          breadcrumb: 'Apply for Permit new' 
-        },
-      },
-      {
-        path: 'application-details/:uuid',
-        component: ViewApplicationComponent,
-        data: { breadcrumb: 'Application Details' },
-      }
-    ],
   },
 
   // Admin Routings

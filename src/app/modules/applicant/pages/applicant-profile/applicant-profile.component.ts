@@ -2,6 +2,7 @@ import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ApplicantService } from '../../services/applicant.service';
+import { map, catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-applicant-profile',
@@ -67,24 +68,50 @@ export class ApplicantProfileComponent {
     });
   }
 
+  checkUniqueNumber() {
+    const numberControl = this.profileForm.get('number');
+    const number = numberControl?.value?.trim();
+
+    if (!number) return;
+
+    this.api.checkPhoneNumber(number).subscribe({
+      next: (res: any) => {
+        if (res.exists) {
+          numberControl?.setErrors({ phoneTaken: true });
+        } else {
+          
+          if (numberControl?.hasError('phoneTaken')) {
+            numberControl.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+            numberControl?.setErrors(null);
+          }
+        }
+      },
+      error: (err: any) => {
+        console.error("error fetching api: ", err);
+      }
+    });
+  }
+
   onNumberInput(event: any) {
-    let value = event.target.value.replace(/\D+/g, '');
+    let input = event.target.value;
 
-    if (!value.startsWith('63')) {
-      value = '63' + value.replace(/^0+/, '');
+    if (!input.startsWith('+63')) {
+      input = '+63' + input.replace(/\D/g, '');
+    } else {
+      input = '+63' + input.slice(3).replace(/\D/g, '');
     }
 
-    value = value.substring(0, 12);
-
-    let formatted = '+';
-
-    for (let i = 0; i < value.length; i++) {
-      formatted += value[i];
-
-      if (i === 1) formatted += ' ';
-      else if (i === 4) formatted += ' '; 
-      else if (i === 7) formatted += ' '; 
+    if (input.length > 3 && input[3] === '0') {
+      input = '+63' + input.slice(4);
     }
+
+    const digits = input.slice(3);
+    let formatted = '+63 ';
+    if (digits.length > 0) formatted += digits.substring(0, 3);
+    if (digits.length >= 4) formatted += ' ' + digits.substring(3, 6);
+    if (digits.length >= 7) formatted += ' ' + digits.substring(6, 10);
+
+    event.target.value = formatted;
 
     this.profileForm.patchValue({ number: formatted }, { emitEvent: false });
   }

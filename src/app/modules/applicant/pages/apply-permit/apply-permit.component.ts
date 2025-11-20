@@ -2,6 +2,7 @@ import { Component, EnvironmentInjector } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApplicantService } from '../../services/applicant.service';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-apply-permit',
@@ -9,6 +10,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./apply-permit.component.css']
 })
 export class ApplyPermitComponent {
+  isLoading: boolean = false;
   activeTab = 'businessInfo';
   tabs = [
     { key: 'businessInfo', label: 'A. Business Information' },
@@ -30,6 +32,7 @@ export class ApplyPermitComponent {
   constructor(
     private api: ApplicantService,
     private fb: FormBuilder,
+    private router: Router
   ) {
     document.title = 'BPLS | Apply Permit';
   }
@@ -56,8 +59,6 @@ export class ApplyPermitComponent {
       applicationType,
       paymentOption,
     };
-
-    console.log('✅ Updated applicationData:', this.applicationData);
   }
 
   handleBusinessOperationData(data: any) {
@@ -92,9 +93,6 @@ export class ApplyPermitComponent {
       documents: this.businessDocuments || null,
       location: this.mapLocation || null,
     };
-
-    // Debug
-    console.log('✅ Combined Application Data:', this.applicationData);
   }
 
   onFormChange(formType: string, form: FormGroup) {
@@ -150,5 +148,71 @@ export class ApplyPermitComponent {
     }
 
     this.activeTab = tabKey;
+  }
+
+  submitData() {
+    this.isLoading = true;
+    const formData = new FormData();
+
+    function appendFormData(fd: FormData, data: any, parentKey = '') {
+      Object.entries(data).forEach(([key, value]) => {
+        const formKey = parentKey ? `${parentKey}[${key}]` : key;
+
+        if (value === null || value === undefined) return;
+
+        if (value instanceof File) {
+          fd.append(formKey, value);
+        } else if (Array.isArray(value)) {
+          value.forEach((item, index) => {
+            if (item instanceof File) {
+              fd.append(`${formKey}[${index}]`, item);
+            } else if (typeof item === 'object') {
+              appendFormData(fd, item, `${formKey}[${index}]`);
+            } else {
+              fd.append(`${formKey}[${index}]`, item.toString());
+            }
+          });
+        } else if (typeof value === 'object') {
+          appendFormData(fd, value, formKey);
+        } else {
+          fd.append(formKey, value.toString());
+        }
+      });
+    }
+
+    appendFormData(formData, {
+      applicationType: this.applicationData.applicationType,
+      paymentOption: this.applicationData.paymentOption,
+      businessInfo: this.applicationData.businessInfo,
+      businessOperation: this.applicationData.businessOperation,
+      documents: Object.values(this.applicationData.documents),
+    });
+
+    this.api.submitApplicantApplication(formData).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.isLoading = false;
+        Swal.fire({
+          title: 'Application Submitted!',
+          text: 'Your business permit application has been successfully submitted.',
+          icon: 'success',
+          confirmButtonColor: '#008900',
+          confirmButtonText: 'OK',
+        }).then(() => {
+          this.router.navigate(['/applications']);
+        });
+      },
+      error: (err: any) => {
+        console.error('error submitting your application: ', err);
+        this.isLoading = false;
+        Swal.fire({
+          title: 'Submission Failed',
+          text: 'There was an error submitting your application. Please try again.',
+          icon: 'error',
+          confirmButtonColor: '#ff0000ff',
+          confirmButtonText: 'Close',
+        });
+      }
+    });
   }
 }
