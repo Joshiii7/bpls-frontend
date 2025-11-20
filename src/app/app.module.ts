@@ -10,7 +10,6 @@ import { ToastModule } from 'primeng/toast';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { SidebarModule } from 'primeng/sidebar';
 import { SidebarComponent } from './partials/sidebar/sidebar.component';
-import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -49,7 +48,6 @@ import { HomeComponent } from './modules/landing/pages/home/home.component';
     AppComponent,
     HeaderComponent,
     SidebarComponent,
-    AdminDashboardComponent,
     AuthComponent,
     PermitOverviewApplicationsComponent,
     PermitViewApplicationDetailsComponent,
