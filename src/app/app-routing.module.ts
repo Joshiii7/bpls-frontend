@@ -17,6 +17,7 @@ const routes: Routes = [
       import('./modules/landing/landing.module').then(m => m.LandingModule),
   },
 
+  // Auth Routes
   { 
     path: 'auth', 
     loadChildren: () => 
@@ -29,22 +30,15 @@ const routes: Routes = [
     loadChildren: () => 
       import('./modules/applicant/applicant.module').then(m => m.ApplicantModule) 
   },
-
-  // Admin Routings
-  {
-    path: 'admin-dashboard',
-    component: AdminParentComponent,
-    data: {
-      allowedRoles: ['admin'],
-      breadcrumb: 'Admin Dashboard' 
-    },
-    children: [
-      {
-        path: '',
-        component: AdminDashboardComponent,
-      }
-    ]
+  
+  // Admin Routes
+  { 
+    path: 'admin', 
+    loadChildren: () => 
+      import('./modules/admin/admin.module').then(m => m.AdminModule) 
   },
+
+
   {
     path: 'under-review-applications',
     component: AdminParentComponent,

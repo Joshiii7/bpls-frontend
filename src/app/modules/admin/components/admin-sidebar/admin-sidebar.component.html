@@ -1,298 +1,119 @@
-<!-- Sidebar for lg and above -->
-<div
-    *ngIf="!isMdOrBelow"
-    id="sidebar"
-    class="flex flex-col bg-gray-800 text-white h-full transition-all duration-300 sticky top-0"
-    [ngClass]="{
-        'w-64': isSidebarOpen || isHovered,
-        'w-16': !isSidebarOpen && !isHovered,
-    }"
-    (mouseenter)="onHover(true)"
-    (mouseleave)="onHover(false)"
->
-
-    <div class="flex flex-col gap-4 justify-between items-center">
-        <div class="mt-5">
-            <img class="w-12" src="../../../assets/images/logo/bislig lgu logo.png" alt="bislig logo">
-        </div>
-        <div class="w-full ps-5 h-10">
-            <div *ngIf="isSidebarOpen || isHovered">
-                <h1 class="text-white text-sm font-semibold">Business Permit</h1>
+<div class="flex h-screen">
+    
+    <!-- Sidebar -->
+    <div class="w-64 bg-gray-900 text-white flex flex-col">
+        
+        <!-- Logo -->
+        <div class="flex flex-col gap-4 justify-between items-center">
+            <div class="mt-5">
+                <img src="../../../assets/images/logo/bislig lgu logo.png" alt="Bislig Logo" width="70">
+            </div>
+            <div class="w-full ps-5 h-10">
+                <h1 class="text-primary text-md font-semibold">Business Permit</h1>
                 <p class="text-xs">City of Bislig, Surigao del Sur</p>
             </div>
         </div>
-    </div>
+        
+        <!-- Menu -->
+        <nav class="flex-1 px-4 py-6">
+            <ul class="">
+                
+                <!-- Dashboard -->
+                <li class="relative group">
+                    <a 
+                        [routerLink]="'/admin'" 
+                        [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/admin'}"
+                        class="flex items-center p-3 rounded relative overflow-hidden transition-colors"
+                    >
+                        <!-- Hover bar -->
+                        <span class="absolute left-0 top-0 h-full w-0 bg-[#008900] transition-all duration-300 ease-out group-hover:w-full"></span>
+                        <i class="fas fa-tachometer-alt w-5 z-10"></i>
+                        <span class="ml-3 z-10 relative">Dashboard</span>
+                    </a>
+                </li>
 
-    <!-- Navigation -->
-    <nav class="mt-5">
-        <ul>
-            <!-- Main Divider -->
-            <div class="px-5 py-3 text-sm bg-[#0E141C] text-white flex items-center gap-2">
-                <i class="fas fa-layer-group"></i>
-                <span *ngIf="isSidebarOpen || isHovered">Main</span>
-            </div>
-            <li class="px-2">
-                <div (click)="sidebarMenu(1)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-primary before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/admin-dashboard'}">
-                    <div class="relative z-10">
-                        <span *ngIf="isSidebarOpen || isHovered">
-                            <i class="fa-solid fa-house text-sm me-2"></i>
-                            Dashboard
+                <!-- Applications Dropdown -->
+                <li class="relative group">
+                    <button 
+                        (click)="toggleApplicationsDropdown()" 
+                        class="w-full flex justify-between items-center p-3 rounded relative overflow-hidden transition-colors group"
+                    >
+                        <span class="absolute left-0 top-0 h-full w-0 bg-[#008900] transition-all duration-300 ease-out group-hover:w-full"></span>
+                        <span class="flex items-center z-10 relative">
+                            <i class="fas fa-file-alt w-5"></i>
+                            <span class="ml-3">Applications</span>
                         </span>
-                        <span *ngIf="!isSidebarOpen && !isHovered">
-                            <i class="fa-solid fa-house text-sm"></i>
-                        </span>
-                    </div>
-                </div>
-            </li>
+                        <svg class="w-4 h-4 transform z-10 relative" [ngClass]="{'rotate-180': isApplicationsOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
 
-            <!-- Manage Divider -->
-            <div class="px-5 py-3 text-sm bg-[#0E141C] text-white flex items-center gap-2">
-                <i class="fas fa-briefcase"></i>
-                <span *ngIf="isSidebarOpen || isHovered">Manage</span>
-            </div>
-            <li class="" [ngClass]="{ 'bg-gray-900 font-bold': isDropdownOpen || sideMenu === 2 || sideMenu === 3 || sideMenu === 4 }">
-                <div class="px-2">
-                    <div (click)="toggleDropdown()"
-                        class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-primary before:transition-all before:duration-200 hover:before:w-full"
-                        >
-                        <div class="relative z-10 flex justify-between items-center">
-                        <span *ngIf="isSidebarOpen || isHovered">
-                            <i class="fa-solid fa-file text-sm me-2"></i>
-                            Applications
-                        </span>
-                        <span *ngIf="!isSidebarOpen && !isHovered">
-                            <i class="fa-solid fa-file text-sm"></i>
-                        </span>
-                        <div *ngIf="isSidebarOpen || isHovered">
-                            <i [class]="isDropdownOpen ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"
-                            class="ml-2 text-xs transition-transform duration-300"></i>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-            
-                <!-- Dropdown menu with transition -->
-                <ul *ngIf="isSidebarOpen || isHovered" 
-                    [ngClass]="isDropdownOpen ? 'opacity-100 scale-100 max-h-96' : 'opacity-0 scale-95 max-h-0 pointer-events-none'" 
-                    class="text-sm overflow-hidden transition-all duration-300 ease-in-out"
-                >
-                    <li class="px-5">
-                        <div (click)="sidebarMenu(2)" 
-                            class="group relative rounded-full py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-primary before:transition-all before:duration-200 hover:before:w-full" 
-                            [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/applications'}"
-                        >
-                            <div class="relative z-10 ps-[2.5rem]">New Application</div>
-                        </div>
-                    </li>
-                    <li class="px-5">
-                        <div (click)="sidebarMenu(3)" 
-                            class="group relative rounded-full py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-primary before:transition-all before:duration-200 hover:before:w-full" 
-                            [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/approved-applications'}"
-                        >
-                            <div class="relative z-10 ps-[2.5rem]">Approved Application</div>
-                        </div>
-                    </li>
-                    <li class="px-5">
-                        <div (click)="sidebarMenu(4)" 
-                            class="group relative rounded-full py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-primary before:transition-all before:duration-200 hover:before:w-full" 
-                            [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/declined-applications'}"
-                        >
-                            <div class="relative z-10 ps-[2.5rem]">Declined Application</div>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-            <li class="px-2">
-                <div (click)="sidebarMenu(5)" 
-                    class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-primary before:transition-all before:duration-200 hover:before:w-full" 
-                    [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/permit-schedule'}"
-                >
-                    <div class="relative z-10">
-                        <span *ngIf="isSidebarOpen || isHovered">
-                            <i class="fa-solid fa-calendar text-md me-2"></i>
-                            Schedule
-                        </span>
-                        <span *ngIf="!isSidebarOpen && !isHovered">
-                            <i class="fa-solid fa-gear text-md"></i>
-                        </span>
-                    </div>
-                </div>
-            </li>
+                    <ul *ngIf="isApplicationsOpen" class="mt-2 space-y-1 pl-6">
+                        <li class="relative group">
+                            <a 
+                                [routerLink]="'/applications'" 
+                                [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/applications'}" 
+                                class="flex items-center p-3 rounded relative overflow-hidden transition-colors hover:bg-primary"
+                            >
+                                <span class="ml-2 z-10 relative">Applications</span>
+                            </a>
+                        </li>
+                        <li class="relative group">
+                            <a 
+                                [routerLink]="'/approved-applications'" 
+                                [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/approved-applications'}" 
+                                class="flex items-center p-3 rounded relative overflow-hidden transition-colors hover:bg-primary"
+                            >
+                                <span class="ml-2 z-10 relative">Approved Applications</span>
+                            </a>
+                        </li>
+                        <li class="relative group">
+                            <a 
+                                [routerLink]="'/declined-applications'" 
+                                [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/declined-applications'}" 
+                                class="flex items-center p-3 rounded relative overflow-hidden transition-colors hover:bg-primary"
+                            >
+                                <span class="ml-2 z-10 relative">Declined Applications</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
-            <!-- Account Divider -->
-            <div class="px-5 py-3 text-sm bg-[#0E141C] text-white flex items-center gap-2">
-                <i class="fas fa-user"></i>
-                <span *ngIf="isSidebarOpen || isHovered">Account</span>
-            </div>
-            <li class="px-2">
-                <div (click)="sidebarMenu(6)" 
-                    class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-red-700 before:transition-all before:duration-200 hover:before:w-full" 
-                    [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/'}"
-                >
-                    <div class="relative z-10">
-                        <span *ngIf="isSidebarOpen || isHovered">
-                            <i class="fas fa-sign-out-alt text-md me-2"></i>
-                            Logout
-                        </span>
-                            <span *ngIf="!isSidebarOpen && !isHovered">
-                            <i class="fas fa-sign-out-alt text-md"></i>
-                        </span>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </nav>
+                <!-- Schedules -->
+                <li class="relative group">
+                    <a 
+                        [routerLink]="'/schedules'" 
+                        [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/schedules'}" 
+                        class="flex items-center p-3 rounded relative overflow-hidden transition-colors"
+                    >
+                        <span class="absolute left-0 top-0 h-full w-0 bg-[#008900] transition-all duration-300 ease-out group-hover:w-full"></span>
+                        <i class="fas fa-calendar-alt w-5 z-10"></i>
+                        <span class="ml-3 z-10 relative">Schedules</span>
+                    </a>
+                </li>
 
-    <div
-        [ngClass]="{
-            'hidden opacity-0 max-h-0 max-w-0 overflow-hidden duration-0': !isHovered && !isSidebarOpen,
-            'opacity-100 max-h-24 duration-1000': isHovered || isSidebarOpen
-        }"
-        class="w-full mt-auto p-3 flex flex-col items-center text-xs text-gray-400"
-    >
-        <p>&copy; 2024 Joshi Angelo Adlawan</p>
-        <p>All Rights Reserved</p>
-    </div>
-</div>
+                <!-- Logout -->
+                <li class="relative group">
+                    <a 
+                        (click)="logout()"
+                        [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/logout'}" 
+                        class="flex items-center p-3 rounded relative overflow-hidden transition-colors cursor-pointer"
+                    >
+                        <span class="absolute left-0 top-0 h-full w-0 bg-red-700 transition-all duration-300 ease-out group-hover:w-full"></span>
+                        <i class="fas fa-sign-out-alt w-5 z-10"></i>
+                        <span class="ml-3 z-10 relative">Logout</span>
+                    </a>
+                </li>
 
-<!-- Sidebar for md and below -->
-<div
-    *ngIf="isMdOrBelow"
-    id="sidebar"
-    class="bg-gray-800 text-white h-full transition-all duration-300 fixed top-0 left-0 z-50"
-    (click)="onSidebarClick($event)"
-    [ngClass]="{
-        'w-0': isSidebarOpen,
-        'w-64': !isSidebarOpen,
-    }"
->
-    <div class="flex flex-col gap-4 justify-between items-center relative">
-        <button (click)="toggleSidebar()" *ngIf="!isSidebarOpen" class="absolute top-3 right-5 text-gray-600 w-8 h-8 rounded bg-gray-200 hover:text-gray-900">
-        <i class="fa-solid fa-x text-xs cursor-pointer"></i>
-        </button>
+            </ul>
+        </nav>
 
-        <div class="mt-5">
-        <img class="w-12" src="../../../assets/images/logo/bislig lgu logo.png" alt="bislig logo">
+        <!-- Footer -->
+        <div class="px-4 py-4 border-t border-gray-800 text-xs text-center">
+            <p>&copy; 2024 Joshi Angelo Adlawan</p>
+            <p>All Rights Reserved</p>
         </div>
-
-        <div class="w-full ps-5 h-10">
-            <div *ngIf="!isSidebarOpen">
-                <h1 class="text-white text-sm font-semibold">Business Permit</h1>
-                <p class="text-xs">City of Bislig, Surigao del Sur</p>
-            </div>
-        </div>
+        
     </div>
-
-    <!-- Navigation-->
-    <nav class="mt-5">
-        <ul>
-            <!-- Main Divider -->
-            <div *ngIf="!isSidebarOpen" class="px-5 py-3 text-sm bg-[#0E141C] text-white flex items-center gap-2">
-                <i class="fas fa-layer-group"></i>
-                <span>Main</span>
-            </div>
-            <li *ngIf="!isSidebarOpen" class="px-2">
-                <div (click)="sidebarMenu(1)" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-primary before:transition-all before:duration-200 hover:before:w-full" [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/admin-dashboard'}">
-                    <div class="relative z-10">
-                        <span>
-                            <i class="fa-solid fa-house text-sm me-2"></i>
-                            Dashboard
-                        </span>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Manage Divider -->
-            <div *ngIf="!isSidebarOpen" class="px-5 py-3 text-sm bg-[#0E141C] text-white flex items-center gap-2">
-                <i class="fas fa-briefcase"></i>
-                <span>Manage</span>
-            </div>
-            <li *ngIf="!isSidebarOpen" [ngClass]="{ 'bg-gray-900 font-bold': isDropdownOpen || sideMenu === 2 || sideMenu === 3 || sideMenu === 4 }">
-                <div class="px-2">
-                    <div (click)="toggleDropdown()" class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-primary before:transition-all before:duration-200 hover:before:w-full">
-                        <div class="relative z-10 flex justify-between items-center">
-                            <span *ngIf="!isSidebarOpen">
-                                <i class="fa-solid fa-file text-sm me-2"></i>
-                                Applications
-                            </span>
-                            <div *ngIf="!isSidebarOpen">
-                                <i [class]="isDropdownOpen ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down'"
-                                class="ml-2 text-xs transition-transform duration-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            
-                <!-- Dropdown menu with transition -->
-                <ul *ngIf="!isSidebarOpen" 
-                    [ngClass]="isDropdownOpen ? 'opacity-100 scale-100 max-h-96' : 'opacity-0 scale-95 max-h-0 pointer-events-none'" 
-                    class="text-sm overflow-hidden transition-all duration-300 ease-in-out">
-                    <li class="px-5">
-                        <div (click)="sidebarMenu(2)" 
-                            class="group relative rounded-full py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-primary before:transition-all before:duration-200 hover:before:w-full" 
-                            [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/applications'}"
-                        >
-                            <div class="relative z-10 ps-[2.5rem]">New Application</div>
-                        </div>
-                    </li>
-                    <li class="px-5">
-                        <div (click)="sidebarMenu(3)" 
-                            class="group relative rounded-full py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-primary before:transition-all before:duration-200 hover:before:w-full" 
-                            [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/approved-applications'}"
-                        >
-                            <div class="relative z-10 ps-[2.5rem]">Approved Application</div>
-                        </div>
-                    </li>
-                    <li class="px-5">
-                        <div (click)="sidebarMenu(4)" 
-                            class="group relative rounded-full py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-primary before:transition-all before:duration-200 hover:before:w-full" 
-                            [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/declined-applications'}"
-                        >
-                            <div class="relative z-10 ps-[2.5rem]">Declined Application</div>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-            <li *ngIf="!isSidebarOpen" class="px-2">
-                <div (click)="sidebarMenu(3)" 
-                    class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-primary before:transition-all before:duration-200 hover:before:w-full" 
-                    [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/permit-schedule'}"
-                >
-                <div class="relative z-10">
-                    <span>
-                    <i class="fa-solid fa-calendar text-md me-2"></i>
-                    Schedule
-                    </span>
-                </div>
-                </div>
-            </li>
-
-            <!-- Account Divider -->
-            <div *ngIf="!isSidebarOpen" class="px-5 py-3 text-sm bg-[#0E141C] text-white flex items-center gap-2">
-                <i class="fas fa-user"></i>
-                <span>Account</span>
-            </div>
-            <li *ngIf="!isSidebarOpen" class="px-2">
-                <div (click)="sidebarMenu(4)" 
-                    class="group relative rounded-full px-5 py-3 text-sm cursor-pointer overflow-hidden hover:text-white before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-primary before:transition-all before:duration-200 hover:before:w-full" 
-                    [ngClass]="{'bg-gray-700 font-bold': this.currentRoute === '/'}"
-                >
-                    <div class="relative z-10">
-                        <span>
-                            <i class="fas fa-sign-out-alt text-md me-2"></i>
-                            Logout
-                        </span>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </nav>
-
-    <div *ngIf="!isSidebarOpen" class="absolute bottom-0 w-full mt-auto p-3 flex flex-col items-center text-xs text-gray-400">
-        <p>&copy; 2024 Joshi Angelo Adlawan</p>
-        <p>All Rights Reserved</p>
-    </div>
+    
 </div>
-
-<div *ngIf="!isSidebarOpen && isMdOrBelow" class="fixed inset-0 bg-black bg-opacity-50 z-40" (click)="toggleSidebar()"
-></div>

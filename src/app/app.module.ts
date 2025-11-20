@@ -31,10 +31,8 @@ import { PermitApprovedApplicationComponent } from './pages/admin/permit-approve
 import { PermitApprovedParentComponent } from './pages/admin/permit-approved/permit-approved-parent/permit-approved-parent.component';
 import { PermitDeclinedApplicationsComponent } from './pages/admin/permit-declined/permit-declined-applications/permit-declined-applications.component';
 import { PermitDeclinedParentComponent } from './pages/admin/permit-declined/permit-declined-parent/permit-declined-parent.component';
-import { ApplicantsHeaderComponent } from './partials/applicants-header/applicants-header.component';
 import { ScheduleComponent } from './pages/admin/schedule/schedule.component';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
-import { NotificationDropdownComponent } from './components/notification-dropdown/notification-dropdown.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
 import { PermitReviewComponent } from './modules/admin/pages/permit-review/permit-review.component';
 import { PermitApprovedComponent } from './modules/admin/pages/permit-approved/permit-approved.component';
@@ -63,10 +61,8 @@ import { HomeComponent } from './modules/landing/pages/home/home.component';
     PermitApprovedParentComponent,
     PermitDeclinedApplicationsComponent,
     PermitDeclinedParentComponent,
-    ApplicantsHeaderComponent,
     ScheduleComponent,
     SignaturePadComponent,
-    NotificationDropdownComponent,
     NotificationsComponent,
     PermitReviewComponent,
     PermitApprovedComponent,
