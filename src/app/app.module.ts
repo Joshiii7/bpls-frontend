@@ -33,10 +33,6 @@ import { PermitDeclinedParentComponent } from './pages/admin/permit-declined/per
 import { ScheduleComponent } from './pages/admin/schedule/schedule.component';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
-import { PermitReviewComponent } from './modules/admin/pages/permit-review/permit-review.component';
-import { PermitApprovedComponent } from './modules/admin/pages/permit-approved/permit-approved.component';
-import { PermitDeclinedComponent } from './modules/admin/pages/permit-declined/permit-declined.component';
-import { PermitRevisionComponent } from './modules/admin/pages/permit-revision/permit-revision.component';
 import { AdminParentComponent } from './modules/admin/components/admin-parent/admin-parent.component';
 import { AdminHeaderComponent } from './modules/admin/components/admin-header/admin-header.component';
 import { AdminSidebarComponent } from './modules/admin/components/admin-sidebar/admin-sidebar.component';
@@ -62,10 +58,6 @@ import { HomeComponent } from './modules/landing/pages/home/home.component';
     ScheduleComponent,
     SignaturePadComponent,
     NotificationsComponent,
-    PermitReviewComponent,
-    PermitApprovedComponent,
-    PermitDeclinedComponent,
-    PermitRevisionComponent,
     AdminParentComponent,
     AdminHeaderComponent,
     AdminSidebarComponent,

@@ -10,4 +10,8 @@ export class AdminService extends ApiService {
   getAdminReports(): Observable<any> {
     return this.http.get<any>(`${this.Root_URL}/admin-reports`, { headers: this.getHeaders() });
   }
+
+  getAdminPermits(): Observable<any> {
+    return this.http.get<any>(`${this.Root_URL}/admin-permits`, { headers: this.getHeaders() });
+  }
 }

@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService as Auth0Service } from '@auth0/auth0-angular';
+import { filter } from 'rxjs';
 import { SidebarService } from 'src/app/sidebar.service';
 
 @Component({
@@ -18,11 +19,18 @@ export class AdminSidebarComponent {
     private auth: Auth0Service,
   ) {
 
-    this.router.events.subscribe(event => {
-        if (event instanceof NavigationEnd) {
-            this.currentRoute = event.url;
-        }
-    });
+     this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        this.currentRoute = event.urlAfterRedirects;
+
+        const appRoutes = [
+          '/admin/review-permit',
+          '/admin/approved-applications',
+          '/admin/declined-applications'
+        ];
+        this.isApplicationsOpen = appRoutes.includes(this.currentRoute);
+      });
   }
 
   toggleApplicationsDropdown() {

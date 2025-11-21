@@ -51,17 +51,17 @@
                     <ul *ngIf="isApplicationsOpen" class="mt-2 space-y-1 pl-6">
                         <li class="relative group">
                             <a 
-                                [routerLink]="'/applications'" 
-                                [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/applications'}" 
+                                [routerLink]="'/admin/review-permit'" 
+                                [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/admin/review-permit'}" 
                                 class="flex items-center p-3 rounded relative overflow-hidden transition-colors hover:bg-primary"
                             >
-                                <span class="ml-2 z-10 relative">Applications</span>
+                                <span class="ml-2 z-10 relative">Review Application</span>
                             </a>
                         </li>
                         <li class="relative group">
                             <a 
-                                [routerLink]="'/approved-applications'" 
-                                [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/approved-applications'}" 
+                                [routerLink]="'/admin/approved-applications'" 
+                                [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/admin/approved-applications'}" 
                                 class="flex items-center p-3 rounded relative overflow-hidden transition-colors hover:bg-primary"
                             >
                                 <span class="ml-2 z-10 relative">Approved Applications</span>
@@ -69,8 +69,8 @@
                         </li>
                         <li class="relative group">
                             <a 
-                                [routerLink]="'/declined-applications'" 
-                                [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/declined-applications'}" 
+                                [routerLink]="'/admin/declined-applications'" 
+                                [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/admin/declined-applications'}" 
                                 class="flex items-center p-3 rounded relative overflow-hidden transition-colors hover:bg-primary"
                             >
                                 <span class="ml-2 z-10 relative">Declined Applications</span>

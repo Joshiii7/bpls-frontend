@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminParentComponent } from './components/admin-parent/admin-parent.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
+import { PermitReviewComponent } from './pages/permit-review/permit-review.component';
 
 const routes: Routes = [
   {
@@ -14,6 +15,10 @@ const routes: Routes = [
       {
         path: '',
         component: AdminDashboardComponent,
+      },
+      {
+        path: 'review-permit',
+        component: PermitReviewComponent
       }
     ]
   },
