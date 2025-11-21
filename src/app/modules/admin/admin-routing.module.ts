@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AdminParentComponent } from './components/admin-parent/admin-parent.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 import { PermitReviewComponent } from './pages/permit-review/permit-review.component';
+import { PermitReviewDetailsComponent } from './pages/permit-review-details/permit-review-details.component';
 
 const routes: Routes = [
   {
@@ -18,7 +19,11 @@ const routes: Routes = [
       },
       {
         path: 'review-permit',
-        component: PermitReviewComponent
+        component: PermitReviewComponent,
+      },
+      {
+        path: 'review-permit/:uuid',
+        component: PermitReviewDetailsComponent
       }
     ]
   },

@@ -8,6 +8,7 @@ import { PermitReviewComponent } from './pages/permit-review/permit-review.compo
 import { PermitApprovedComponent } from './pages/permit-approved/permit-approved.component';
 import { PermitDeclinedComponent } from './pages/permit-declined/permit-declined.component';
 import { ScheduleComponent } from './pages/schedule/schedule.component';
+import { PermitReviewDetailsComponent } from './pages/permit-review-details/permit-review-details.component';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { ScheduleComponent } from './pages/schedule/schedule.component';
     PermitReviewComponent,
     PermitApprovedComponent,
     PermitDeclinedComponent,
-    ScheduleComponent
+    ScheduleComponent,
+    PermitReviewDetailsComponent
   ],
   imports: [
     CommonModule,

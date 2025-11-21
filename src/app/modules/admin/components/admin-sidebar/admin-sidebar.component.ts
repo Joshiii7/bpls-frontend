@@ -29,7 +29,7 @@ export class AdminSidebarComponent {
           '/admin/approved-applications',
           '/admin/declined-applications'
         ];
-        this.isApplicationsOpen = appRoutes.includes(this.currentRoute);
+        this.isApplicationsOpen = appRoutes.some(route => this.currentRoute.startsWith(route));
       });
   }
 

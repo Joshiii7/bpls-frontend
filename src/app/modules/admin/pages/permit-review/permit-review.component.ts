@@ -115,27 +115,6 @@ searchText: string = '';
     this.filterBusinesses();
   }
 
-  searchBusinessess() {
-    if (!this.searchText) {
-      this.filteredBusinesses = [...this.allBusinesses];
-      this.recalcPagination();
-      return;
-    }
-
-    // this.api.searchBusinesses(this.searchText).subscribe({
-    //   next: (response: any) => {
-    //     this.filteredBusinesses = response.data ?? [];
-    //     this.totalPages = response.pagination?.last_page ?? Math.ceil(this.filteredBusinesses.length / this.perPage);
-    //     this.total = response.pagination?.total ?? this.filteredBusinesses.length;
-    //     this.currentPage = 1;
-    //     this.updateRange();
-    //   },
-    //   error: (error: any) => {
-    //     console.log('Error fetching searched business:', error);
-    //   }
-    // });
-  }
-
   // ---------- Pagination helpers ----------
   detectRowValue(e: Event) {
     const selectElement = e.target as HTMLSelectElement;
@@ -193,7 +172,7 @@ searchText: string = '';
   // ---------- Actions (unchanged) ----------
 
   viewButton(uuid: any) {
-    this.router.navigate(['applications/application-details', uuid]);
+    this.router.navigate(['admin/review-permit', uuid]);
   }
 
   getBadgeClass(status: string): string {

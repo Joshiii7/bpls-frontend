@@ -52,7 +52,7 @@
                         <li class="relative group">
                             <a 
                                 [routerLink]="'/admin/review-permit'" 
-                                [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/admin/review-permit'}" 
+                                [ngClass]="{'bg-gray-700 font-bold': currentRoute.includes('/admin/review-permit')}" 
                                 class="flex items-center p-3 rounded relative overflow-hidden transition-colors hover:bg-primary"
                             >
                                 <span class="ml-2 z-10 relative">Review Application</span>
@@ -61,7 +61,7 @@
                         <li class="relative group">
                             <a 
                                 [routerLink]="'/admin/approved-applications'" 
-                                [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/admin/approved-applications'}" 
+                                [ngClass]="{'bg-gray-700 font-bold': currentRoute.includes('/admin/approved-applications')}" 
                                 class="flex items-center p-3 rounded relative overflow-hidden transition-colors hover:bg-primary"
                             >
                                 <span class="ml-2 z-10 relative">Approved Applications</span>
@@ -70,7 +70,7 @@
                         <li class="relative group">
                             <a 
                                 [routerLink]="'/admin/declined-applications'" 
-                                [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/admin/declined-applications'}" 
+                                [ngClass]="{'bg-gray-700 font-bold': currentRoute.includes('/admin/declined-applications')}" 
                                 class="flex items-center p-3 rounded relative overflow-hidden transition-colors hover:bg-primary"
                             >
                                 <span class="ml-2 z-10 relative">Declined Applications</span>
