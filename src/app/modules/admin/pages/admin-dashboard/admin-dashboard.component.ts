@@ -14,9 +14,13 @@ declare var Chart: any;
 export class AdminDashboardComponent implements OnInit {
   reports: any = null;
   permitAging: any[] = [];
-  permitSearch: string = '';
-  permitSortKey: string = 'days_pending';
-  permitSortAsc: boolean = false;
+
+  permitAgingFull: any[] = [];
+  currentPage: number = 1;
+  pageSize: number = 5;
+  totalPages: number = 0;
+  visiblePages: number[] = [];
+  totalEntries: number = 0;
 
   constructor(
     private router: Router,
@@ -30,7 +34,9 @@ export class AdminDashboardComponent implements OnInit {
   initReports() {
     this.api.getAdminReports().subscribe({
       next: (response: any) => {
-        this.permitAging = response.permitAging || [];
+        this.permitAgingFull = response.permitAging || [];
+        this.permitAging = this.permitAgingFull.slice(0, this.pageSize);
+        this.updatePagination();
         
         const total = response.totalPermits || 1;
         response.totalPendingPercent  = ((response.totalPending / total) * 100).toFixed(1);
@@ -106,13 +112,9 @@ export class AdminDashboardComponent implements OnInit {
 
     const monthOrder = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const labels = monthOrder;
-    const pendingData  = monthOrder.map(m => monthlyStatus[m]?.pending  || 0);
+
     const approvedData = monthOrder.map(m => monthlyStatus[m]?.approved || 0);
     const declinedData = monthOrder.map(m => monthlyStatus[m]?.declined || 0);
-
-    const pendingGradient = ctx.getContext('2d')!.createLinearGradient(0, 0, 0, ctx.height);
-    pendingGradient.addColorStop(0, 'rgba(254, 220, 0, 1)');
-    pendingGradient.addColorStop(1, 'rgba(245,158,11,0)');
 
     const approvedGradient = ctx.getContext('2d')!.createLinearGradient(0, 0, 0, ctx.height);
     approvedGradient.addColorStop(0, 'rgba(0, 137, 0, 1)');
@@ -128,18 +130,10 @@ export class AdminDashboardComponent implements OnInit {
         labels: labels,
         datasets: [
           {
-            label: 'Pending',
-            data: pendingData,
-            borderColor: '#ffd000ff',
-            backgroundColor: pendingGradient,
-            fill: true,
-            tension: 0.3
-          },
-          {
             label: 'Approved',
             data: approvedData,
             borderColor: '#008900',
-            backgroundColor: approvedGradient,
+            backgroundColor: '#008900',
             fill: true,
             tension: 0.3
           },
@@ -147,7 +141,7 @@ export class AdminDashboardComponent implements OnInit {
             label: 'Declined',
             data: declinedData,
             borderColor: '#ff0000ff',
-            backgroundColor: declinedGradient,
+            backgroundColor: '#ff0000ff',
             fill: true,
             tension: 0.3
           }
@@ -180,40 +174,53 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   filteredPermits() {
-  let data = this.permitAging;
+    return [...this.permitAgingFull];
+  }
 
-  // Search filter
-  if (this.permitSearch.trim() !== '') {
-    const search = this.permitSearch.toLowerCase();
-    data = data.filter(p =>
-      p.business_name.toLowerCase().includes(search) ||
-      p.tracking_number.toLowerCase().includes(search) ||
-      p.owner_name.toLowerCase().includes(search)
+  getShowingRange(): string {
+    const start = (this.currentPage - 1) * this.pageSize + 1;
+    const end = Math.min(this.currentPage * this.pageSize, this.totalEntries);
+    return `${start} - ${end}`;
+  }
+
+  updatePagination() {
+    const filtered = this.filteredPermits();
+
+    this.totalEntries = filtered.length;
+    this.totalPages = Math.ceil(this.totalEntries / this.pageSize);
+
+    this.permitAging = filtered.slice(
+      (this.currentPage - 1) * this.pageSize,
+      this.currentPage * this.pageSize
     );
+
+    this.updateVisiblePages();
   }
 
-  // Sorting
-  data.sort((a, b) => {
-    const valA = a[this.permitSortKey];
-    const valB = b[this.permitSortKey];
-
-    if (valA < valB) return this.permitSortAsc ? -1 : 1;
-    if (valA > valB) return this.permitSortAsc ? 1 : -1;
-    return 0;
-  });
-
-  return data;
-}
-
-// Sort by column
-sortPermit(key: string) {
-  if (this.permitSortKey === key) {
-    this.permitSortAsc = !this.permitSortAsc; // toggle asc/desc
-  } else {
-    this.permitSortKey = key;
-    this.permitSortAsc = true;
+  updateVisiblePages() {
+    let startPage = Math.max(1, this.currentPage - 2);
+    let endPage = Math.min(this.totalPages, startPage + 4);
+    this.visiblePages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
   }
-}
+
+  goToPage(page: number) {
+    this.currentPage = page;
+    this.updatePagination();
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePagination();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePagination();
+    }
+  }
 
   navigate(num: number) {
     if (num === 1) {

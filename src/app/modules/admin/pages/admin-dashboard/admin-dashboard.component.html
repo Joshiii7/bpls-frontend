@@ -143,40 +143,93 @@
     <section class="mt-6 bg-white p-5 rounded-lg shadow-md">
         <h3 class="text-lg font-semibold mb-4">For Approval Permit Aging</h3>
 
-        <!-- Search -->
-        <div class="mb-4">
-            <input
-            type="text"
-            placeholder="Search by business name or tracking number..."
-            [(ngModel)]="permitSearch"
-            class="border rounded px-3 py-2 w-full md:w-1/2"
-            />
-        </div>
-
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+        <!-- Applications Table -->
+        <div class="overflow-scroll">
+            <table class="min-w-full">
+                <thead class="bg-gray-300">
                     <tr>
-                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-700 cursor-pointer"
-                            (click)="sortPermit('tracking_number')">Tracking #</th>
-                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-700 cursor-pointer"
-                            (click)="sortPermit('business_name')">Business Name</th>
-                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-700 cursor-pointer"
-                            (click)="sortPermit('owner_name')">Owner Name</th>
-                        <th class="px-4 py-2 text-left text-sm font-medium text-gray-700 cursor-pointer"
-                            (click)="sortPermit('days_pending')">Days Pending</th>
-                        </tr>
+                        <th class="px-4 py-3 border-b border-slate-200 bg-green-300 text-left">
+                            <p class="block font-semibold text-sm text-slate-800">
+                                Tracking #
+                            </p>
+                        </th>
+                        <th class="px-4 py-3 border-b border-slate-200 bg-green-300 text-left">
+                            <p class="block font-semibold text-sm text-slate-800">
+                                Business Name
+                            </p>
+                        </th>
+                        <th class="px-4 py-3 border-b border-slate-200 bg-green-300 text-left">
+                            <p class="block font-semibold text-sm text-slate-800">
+                                Business Owner
+                            </p>
+                        </th>
+                        <th class="px-4 py-3 border-b border-slate-200 bg-green-300 text-left">
+                            <p class="block font-semibold text-sm text-slate-800">
+                                Days Pending
+                            </p>
+                        </th>
+                    </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr *ngFor="let permit of filteredPermits()"
-                        [ngClass]="{'bg-red-100': permit.days_pending >= 30}">
-                        <td class="px-4 py-2 text-sm text-gray-800">{{ permit.tracking_number }}</td>
-                        <td class="px-4 py-2 text-sm text-gray-800">{{ permit.business_name }}</td>
-                        <td class="px-4 py-2 text-sm text-gray-800">{{ permit.owner_name }}</td>
-                        <td class="px-4 py-2 text-sm text-gray-800">{{ permit.days_pending }}</td>
+
+                <tbody>
+                    
+                    <tr *ngFor="let permit of permitAging; let i = index" class="hover:bg-slate-50 border-b border-slate-200">
+                        <td class="px-4 py-3 border-b">
+                            <p class="text-sm text-slate-900 font-semibold">{{ permit.tracking_number }}</p>
+                        </td>
+                        <td class="px-4 py-3 border-b">
+                            <p class="text-sm text-slate-500">{{ permit.business_name }}</p>
+                        </td>
+                        <td class="px-4 py-3 border-b">
+                            <p class="text-sm text-slate-500">{{ permit.owner_name }}</p>
+                        </td>
+                        <td class="px-4 py-3 border-b">
+                            <p class="text-sm text-slate-500">
+                                {{
+                                    permit.days_pending === 0
+                                        ? 'Processed today'
+                                        : permit.days_pending === 1
+                                        ? '1 Day Pending'
+                                        : permit.days_pending + ' Days Pending'
+                                }}
+                            </p>
+                        </td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+  
+        <!-- Pagination Controls -->
+        <div class="mt-4 flex flex-col md:flex-row items-center justify-between">
+            <div class="text-sm text-slate-500">
+                Showing
+                <span class="font-semibold">
+                    {{ getShowingRange() }}
+                </span>
+                of {{ totalEntries }} entries
+            </div>
+            
+            
+    
+            <div class="flex">
+                <button (click)="prevPage()" [disabled]="currentPage === 1" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded-bl-md rounded-tl-md hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed">
+                    Prev
+                </button>
+        
+                <button
+                    *ngFor="let page of visiblePages"
+                    (click)="goToPage(page)"
+                    [class]="page === currentPage 
+                            ? 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-white bg-slate-800 border border-slate-800' 
+                            : 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease'"
+                >
+                    {{ page }}
+                </button>
+        
+                <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded-br-md rounded-tr-md hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed">
+                    Next
+                </button>
+            </div>
         </div>
     </section>
 
