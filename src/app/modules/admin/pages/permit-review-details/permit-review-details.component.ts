@@ -69,6 +69,14 @@ export class PermitReviewDetailsComponent {
   lng: any;
 
   pictures: any[] = [];
+
+  departments = [
+    { name: 'Planning / Zoning Office', status: 'Pending' },
+    { name: 'Engineering / Building Office', status: 'Pending' },
+    { name: 'Bureau of Fire Protection', status: 'Pending' },
+    { name: 'Health / Sanitation Office', status: 'Pending' },
+    { name: 'Treasurer’s Office', status: 'Pending' }
+  ];
   
   constructor(
     private api: AdminService, 
@@ -80,10 +88,11 @@ export class PermitReviewDetailsComponent {
     this.route.paramMap.subscribe((params) => {
       this.uuid = params.get('uuid')!;
     });
-    this.getApplicationDetail();
+    this.initApplicationDetails();
+    this.initDepartmentApproval();
   }
 
-  getApplicationDetail() {
+  initApplicationDetails() {
     this.api.showAdminPermits(this.uuid)
     .pipe(
       finalize(() => this.isLoading = false)
@@ -213,5 +222,22 @@ export class PermitReviewDetailsComponent {
         });
       }
     });
+  }
+
+  initDepartmentApproval() {
+    this.api.showDepartmentApproval(this.uuid).subscribe({
+      next: (response: any) => {
+        console.log(response);
+      },
+      error: (err: any) => {
+        console.error("error fetching department approval: ", err);
+      }
+    });
+  }
+
+  setStatus(dept: any, status: string) {
+    dept.status = status;
+    // Later: call API to save action
+    // this.api.updateDepartmentStatus(applicationId, dept.name, status).subscribe(...)
   }
 }
