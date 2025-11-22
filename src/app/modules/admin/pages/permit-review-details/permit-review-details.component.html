@@ -4,11 +4,12 @@
     <!-- Unified form -->
     <section class="grid grid-cols-12 gap-3 my-6">
 
+        <!-- Reminder -->
         <section class="col-span-12 lg:col-span-3 lg:sticky top-[2rem] self-start grid grid-cols-12 gap-3">
             
             <div class="col-span-12 space-y-2">
                 <div class="bg-blue-50 border-l-4 border-blue-600 p-6 text-sm text-gray-800">
-                    <strong>Admin Reminder:</strong>
+                    <strong>ADMIN REMINDER:</strong>
 
                     <p class="mt-1">
                         This panel displays the complete details of the applicant’s submitted business permit application.
@@ -30,6 +31,7 @@
 
         </section>
     
+        <!-- Form Reviewal itself -->
         <section class="flex justify-center items-center col-span-12 lg:col-span-9">
             <app-unified-application-form
                 [businessName]="businessName"
@@ -122,87 +124,86 @@
         </div>
     </section>
 
+    <!-- Department Approval -->
     <section class="col-span-12 mt-6">
-  <div class="bg-white rounded-lg shadow border">
+        <div class="bg-white rounded-lg shadow border">
 
-    <!-- Header -->
-    <div class="border-b px-6 py-4">
-      <h2 class="text-lg font-semibold text-gray-700">
-        Department Actions
-      </h2>
-    </div>
+            <!-- Header -->
+            <div class="px-6 py-4">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4 border-b border-slate-200 pb-2">
+                    Department Actions
+                </h2>
+            </div>
 
-    <!-- Table -->
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
-        
-        <!-- Table Header -->
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
-              Department
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
-              Status
-            </th>
-            <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-600">
-              Actions
-            </th>
-          </tr>
-        </thead>
+            <!-- Table -->
+            <div class="overflow-x-auto px-6 pb-4">
+                <table class="min-w-full text-left">
+                    
+                    <!-- Table Header -->
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3 border-b border-slate-200 bg-blue-100">
+                                <p class="block font-semibold text-sm text-slate-800">
+                                    Department
+                                </p>
+                            </th>
+                            <th class="px-4 py-3 border-b border-slate-200 bg-blue-100">
+                                <p class="block font-semibold text-sm text-slate-800">
+                                    Status
+                                </p>
+                            </th>
+                            <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-right">
+                                <p class="block font-semibold text-sm text-slate-800">
+                                    Actions
+                                </p>
+                            </th>
+                        </tr>
+                    </thead>
 
-        <!-- Table Body -->
-        <tbody class="divide-y divide-gray-200 bg-white">
+                    <!-- Table Body -->
+                    <tbody class="divide-y divide-gray-200 bg-white">
 
-          <tr *ngFor="let dept of departments" class="hover:bg-gray-50">
+                        <tr *ngFor="let dept of departments" class="hover:bg-gray-50">
 
-            <!-- Department Name -->
-            <td class="px-6 py-4">
-              <p class="font-medium text-gray-800">{{ dept.name }}</p>
-            </td>
+                            <td class="px-4 py-2 border-b">
+                                <p class="text-sm text-gray-900 font-semibold">{{ dept.department }}</p>
+                            </td>
 
-            <!-- Status -->
-            <td class="px-6 py-4">
-              <span 
-                class="px-3 py-1 rounded-full text-xs font-semibold"
-                [ngClass]="{
-                  'bg-green-100 text-green-700': dept.status === 'Approved',
-                  'bg-red-100 text-red-700': dept.status === 'Declined',
-                  'bg-yellow-100 text-yellow-700': dept.status === 'Pending'
-                }"
-              >
-                {{ dept.status }}
-              </span>
-            </td>
+                            <td class="px-4 py-2 border-b">
+                                <span 
+                                    class="px-3 py-1 rounded-full text-xs font-semibold"
+                                    [ngClass]="{
+                                        'bg-green-100 text-green-700': dept.status === 'Approved',
+                                        'bg-red-100 text-red-700': dept.status === 'Declined',
+                                        'bg-yellow-100 text-yellow-700': dept.status === 'Pending'
+                                    }"
+                                >
+                                    {{ dept.status }}
+                                </span>
+                            </td>
 
-            <!-- Actions -->
-            <td class="px-6 py-4 text-right space-x-2">
+                            <!-- Actions -->
+                            <td class="px-4 py-2 border-b text-right space-x-2">
+                                <button
+                                    class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                    (click)="setStatus(dept, 'Approved')"
+                                    [disabled]="dept.status === 'Approved' || dept.status === 'Declined'"
+                                >
+                                    Approve
+                                </button>
 
-              <button
-                class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm"
-                (click)="setStatus(dept, 'Approved')"
-              >
-                Approve
-              </button>
-
-              <button
-                class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm"
-                (click)="setStatus(dept, 'Declined')"
-              >
-                Decline
-              </button>
-
-            </td>
-
-          </tr>
-
-        </tbody>
-      </table>
-    </div>
-
-  </div>
-</section>
-
-
-
+                                <button
+                                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                    (click)="setStatus(dept, 'Declined')"
+                                    [disabled]="dept.status === 'Approved' || dept.status === 'Declined'"
+                                >
+                                    Decline
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 </main>

@@ -70,13 +70,7 @@ export class PermitReviewDetailsComponent {
 
   pictures: any[] = [];
 
-  departments = [
-    { name: 'Planning / Zoning Office', status: 'Pending' },
-    { name: 'Engineering / Building Office', status: 'Pending' },
-    { name: 'Bureau of Fire Protection', status: 'Pending' },
-    { name: 'Health / Sanitation Office', status: 'Pending' },
-    { name: 'Treasurer’s Office', status: 'Pending' }
-  ];
+  departments: any[] = []
   
   constructor(
     private api: AdminService, 
@@ -227,7 +221,7 @@ export class PermitReviewDetailsComponent {
   initDepartmentApproval() {
     this.api.showDepartmentApproval(this.uuid).subscribe({
       next: (response: any) => {
-        console.log(response);
+        this.departments = response;
       },
       error: (err: any) => {
         console.error("error fetching department approval: ", err);
@@ -236,8 +230,66 @@ export class PermitReviewDetailsComponent {
   }
 
   setStatus(dept: any, status: string) {
+    if (status === 'Declined') {
+      Swal.fire({
+        title: 'Decline Application',
+        input: 'textarea',
+        inputLabel: 'Reason / Comments',
+        inputPlaceholder: 'Enter your comments here...',
+        inputAttributes: {
+          'aria-label': 'Enter your comments here'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Submit',
+        cancelButtonText: 'Cancel',
+        customClass: {
+          confirmButton: 'swal-confirm-button'
+        },
+        didOpen: () => {
+          const textarea = Swal.getInput() as unknown as HTMLTextAreaElement;
+          if (textarea) {
+            textarea.style.border = '2px solid #008900';
+            textarea.style.borderRadius = '4px';
+            textarea.style.padding = '6px';
+          }
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const notes = result.value;
+          this.sendPatch(dept, status, notes);
+        }
+      });
+    } else {
+      // Approve directly
+      this.sendPatch(dept, status);
+    }
+  }
+
+
+  private sendPatch(dept: any, status: string, notes: string | null = null) {
     dept.status = status;
-    // Later: call API to save action
-    // this.api.updateDepartmentStatus(applicationId, dept.name, status).subscribe(...)
+    const payload = {
+      department: dept.department,
+      status: status,
+      notes: notes
+    };
+
+    this.api.patchDepartmentApproval(this.uuid, payload).subscribe({
+      next: (response: any) => {
+        console.log('Department updated:', response);
+
+        Swal.fire({
+          icon: 'success',
+          title: `${dept.department} has been ${status}`,
+          timer: 1500,
+          showConfirmButton: false
+        });
+      },
+      error: (err: any) => {
+        console.error('Error updating department approval: ', err);
+        dept.status = dept.status === 'Approved' ? 'Pending' : dept.status;
+        Swal.fire('Error', 'Failed to update department status.', 'error');
+      }
+    });
   }
 }

@@ -22,4 +22,8 @@ export class AdminService extends ApiService {
   showDepartmentApproval(uuid: any): Observable<any> {
     return this.http.get<any>(`${this.Root_URL}/department-approval/${uuid}`, { headers: this.getHeaders() });
   }
+
+  patchDepartmentApproval(uuid: any, data: any): Observable<any> {
+    return this.http.patch<any>(`${this.Root_URL}/department-approval/${uuid}`, data, { headers: this.getHeaders() });
+  }
 }
