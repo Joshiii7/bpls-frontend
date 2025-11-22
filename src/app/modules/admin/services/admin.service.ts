@@ -14,4 +14,8 @@ export class AdminService extends ApiService {
   getAdminPermits(): Observable<any> {
     return this.http.get<any>(`${this.Root_URL}/admin-permits`, { headers: this.getHeaders() });
   }
+
+  showAdminPermits(uuid: any): Observable<any> {
+    return this.http.get<any>(`${this.Root_URL}/admin-permits/${uuid}`, { headers: this.getHeaders() });
+  }
 }

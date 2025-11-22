@@ -50,23 +50,31 @@ export class AdminHeaderComponent {
 
     const segments = this.router.url
       .split('/')
-      .filter(seg => 
-        seg &&
-        seg !== 'admin'
-      );
+      .filter(seg => seg);
 
     let url = '';
-    this.items = segments.map(segment => {
+    const breadcrumbItems: MenuItem[] = [];
+
+    segments.forEach(segment => {
       url += `/${segment}`;
 
-      const label = uuidRegex.test(segment)
-        ? 'Application Details'
-        : this.formatLabel(segment);
-      return { 
+      if (segment === 'admin') return;
+
+      let label: string;
+
+      if (uuidRegex.test(segment)) {
+        label = 'Application Details';
+      } else {
+        label = this.formatLabel(segment);
+      }
+
+      breadcrumbItems.push({
         label: label,
         routerLink: url
-      };
+      });
     });
+
+    this.items = breadcrumbItems;
   }
 
   formatLabel(text: string): string {

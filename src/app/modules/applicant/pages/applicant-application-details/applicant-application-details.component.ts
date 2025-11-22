@@ -10,8 +10,7 @@ import { finalize } from 'rxjs';
   styleUrls: ['./applicant-application-details.component.css']
 })
 export class ApplicantApplicationDetailsComponent implements OnInit {
-isLoading: boolean = true;
-  application_id = localStorage.getItem('vad');
+  isLoading: boolean = true;
   uuid!: string
 
   businessName: any;

@@ -119,12 +119,7 @@
                 </thead>
 
                 <tbody>
-                    <tr *ngIf="allBusinesses.length > 0 && filteredBusinesses.length === 0 && !isLoading" class="text-center">
-                        <td colspan="7" class="p-4 py-4 text-sm text-slate-500">
-                          No results found for your search.
-                        </td>
-                    </tr>
-                    <tr *ngIf="allBusinesses.length === 0 && !isLoading" class="text-center">
+                    <tr *ngIf="filteredBusinesses.length === 0 && !isLoading" class="text-center">
                         <td colspan="7" class="p-4 py-4 text-sm text-slate-500">
                             No new business permit applications available.
                         </td>

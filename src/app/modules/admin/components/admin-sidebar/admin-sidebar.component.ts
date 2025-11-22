@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService as Auth0Service } from '@auth0/auth0-angular';
 import { filter } from 'rxjs';
+import { AuthService } from 'src/app/modules/auth/services/auth.service';
 import { SidebarService } from 'src/app/sidebar.service';
 
 @Component({
@@ -17,6 +18,7 @@ export class AdminSidebarComponent {
   constructor(
     private router: Router,
     private auth: Auth0Service,
+    private apiService: AuthService
   ) {
 
      this.router.events
@@ -46,8 +48,13 @@ export class AdminSidebarComponent {
 
     localStorage.clear();
 
-    this.router.navigate(['/']).then(() => {
-      window.location.reload();
+    this.apiService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        console.error("Error logging out:", err);
+      }
     });
   }
 }

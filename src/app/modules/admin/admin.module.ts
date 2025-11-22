@@ -9,6 +9,7 @@ import { PermitApprovedComponent } from './pages/permit-approved/permit-approved
 import { PermitDeclinedComponent } from './pages/permit-declined/permit-declined.component';
 import { ScheduleComponent } from './pages/schedule/schedule.component';
 import { PermitReviewDetailsComponent } from './pages/permit-review-details/permit-review-details.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { PermitReviewDetailsComponent } from './pages/permit-review-details/perm
   imports: [
     CommonModule,
     FormsModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    SharedModule
   ],
   providers: [DatePipe]
 })
