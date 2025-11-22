@@ -49,7 +49,7 @@ export class LoginComponent {
             localStorage.setItem('u', userId);
             localStorage.setItem('sn', role === 2 ? '1' : role === 1 ? '5' : '');
             
-            const redirectRoute = role === 2 ? '/applications' : role === 1 ? '/admin' : '';
+            const redirectRoute = role === 2 ? '/applications' : role === 1 ? '/admin/admin-report-dashboard' : '';
             if (redirectRoute) {
               this.router.navigate([redirectRoute]);
             }

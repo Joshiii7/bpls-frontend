@@ -29,7 +29,6 @@ export class ApplicantsParentComponent {
         this.updateBreadcrumbs();
       });
 
-    // Initial load
     this.updateBreadcrumbs();
   }
 
@@ -39,22 +38,31 @@ export class ApplicantsParentComponent {
 
     const segments = this.router.url
       .split('/')
-      .filter(seg => seg);
+      .filter(seg => 
+        seg &&
+        seg !== 'admin'
+      );
 
     let url = '';
     this.items = segments.map(segment => {
       url += `/${segment}`;
 
-      let label: string;
-
-      if (uuidRegex.test(segment) || trackRegex.test(segment)) {
-        label = 'Application Details';
-      } else {
-        label = this.capitalize(segment);
-      }
-
-      return { label, routerLink: url };
+      const label = uuidRegex.test(segment)
+        ? 'Application Details'
+        : this.formatLabel(segment);
+      return { 
+        label: label,
+        routerLink: url
+      };
     });
+  }
+
+  formatLabel(text: string): string {
+    return text
+      .replace(/-/g, ' ')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   capitalize(text: string): string {

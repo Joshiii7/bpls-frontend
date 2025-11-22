@@ -14,7 +14,7 @@ const routes: Routes = [
     },
     children: [
       {
-        path: '',
+        path: 'admin-report-dashboard',
         component: AdminDashboardComponent,
       },
       {

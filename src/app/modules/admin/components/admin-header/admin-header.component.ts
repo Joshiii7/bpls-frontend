@@ -31,11 +31,9 @@ export class AdminHeaderComponent {
     this.updateTime();
     setInterval(() => this.updateTime(), 1000);
 
-    const role = localStorage.getItem('r');
-
     this.home = { 
       icon: 'fa-solid fa-house text-white', 
-      routerLink: role === '1' ? '/admin-dashboard' : '/dashboard' 
+      routerLink: '/admin/admin-report-dashboard' 
     };
 
     this.router.events
@@ -44,24 +42,39 @@ export class AdminHeaderComponent {
         this.updateBreadcrumbs();
       });
 
-    // Initial load
     this.updateBreadcrumbs();
   }
 
   updateBreadcrumbs() {
     const uuidRegex = /^[0-9a-fA-F-]{36}$/;
-    const segments = this.router.url.split('/').filter(seg => seg && !uuidRegex.test(seg));
-    
+
+    const segments = this.router.url
+      .split('/')
+      .filter(seg => 
+        seg &&
+        seg !== 'admin'
+      );
+
     let url = '';
     this.items = segments.map(segment => {
       url += `/${segment}`;
-      return { label: this.capitalize(segment), routerLink: url };
+
+      const label = uuidRegex.test(segment)
+        ? 'Application Details'
+        : this.formatLabel(segment);
+      return { 
+        label: label,
+        routerLink: url
+      };
     });
   }
-  
 
-  capitalize(text: string): string {
-    return text.charAt(0).toUpperCase() + text.slice(1);
+  formatLabel(text: string): string {
+    return text
+      .replace(/-/g, ' ')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   updateTime(): void {
