@@ -22,7 +22,9 @@ export class NotificationComponent {
   constructor(private api: ApplicantService) {}
 
   ngOnInit(): void {
-    this.loadNotifications();
+    setInterval(() => {
+      this.loadNotifications();
+    }, 5000);
   }
 
   loadNotifications(): void {
