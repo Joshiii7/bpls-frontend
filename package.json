@@ -29,6 +29,8 @@
     "firebase": "^11.1.0",
     "flatpickr": "^4.6.13",
     "jquery": "^3.7.1",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "laravel-echo": "^1.17.1",
     "maplibre-gl": "^5.0.1",
     "ngx-countup": "^13.2.0",

@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ApplicantRoutingModule } from './applicant-routing.module';
-import { ApplicantsHeaderComponent } from './components/applicants-header/applicants-header.component';
 import { ApplicantsParentComponent } from './components/applicants-parent/applicants-parent.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
@@ -14,11 +13,9 @@ import { BusinessOperationFormComponent } from './components/business-operation-
 import { BusinessDocumentsFormComponent } from './components/business-documents-form/business-documents-form.component';
 import { ApplicationReviewComponent } from './components/application-review/application-review.component';
 import { ApplicantApplicationDetailsComponent } from './pages/applicant-application-details/applicant-application-details.component';
-import { NotificationComponent } from './components/notification/notification.component';
 
 @NgModule({
   declarations: [
-    ApplicantsHeaderComponent,
     ApplicantsParentComponent,
     ApplicantProfileComponent,
     BusinessInformationFormComponent,
@@ -26,8 +23,7 @@ import { NotificationComponent } from './components/notification/notification.co
     ApplicantApplicationDetailsComponent,
     BusinessOperationFormComponent,
     BusinessDocumentsFormComponent,
-    ApplicationReviewComponent,
-    NotificationComponent
+    ApplicationReviewComponent
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,15 @@
+<div
+    class="mb-10 md:mb-14"
+    [ngClass]="align === 'center' ? 'text-center max-w-2xl mx-auto' : 'text-left max-w-2xl'"
+>
+    <span *ngIf="eyebrow" class="block text-xs font-semibold uppercase tracking-widest text-primary mb-3">
+        {{ eyebrow }}
+    </span>
+    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
+        {{ heading }}<span *ngIf="accent" class="text-primary">{{ accent }}</span>
+    </h2>
+    <div class="h-1 w-14 rounded-full bg-primary mt-4" [ngClass]="align === 'center' ? 'mx-auto' : 'ml-0'" aria-hidden="true"></div>
+    <p *ngIf="description" class="mt-4 text-gray-600 text-lg leading-relaxed">
+        {{ description }}
+    </p>
+</div>

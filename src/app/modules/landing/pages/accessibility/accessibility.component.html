@@ -1,0 +1,28 @@
+<main id="main" tabindex="-1" class="bg-gray-50">
+    <app-page-banner
+        title="Accessibility"
+        description="A look at how this site is built to work well for keyboard and screen reader users, not just a mouse."
+    ></app-page-banner>
+
+    <section class="py-16 md:py-20 lg:py-24">
+        <div class="w-[90%] max-w-[80rem] mx-auto">
+
+            <h2 class="sr-only">Accessibility Features</h2>
+            <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+                <div *ngFor="let feature of features" appReveal class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
+                    <app-icon-badge [icon]="feature.icon" variant="tinted"></app-icon-badge>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ feature.title }}</h3>
+                    <p class="text-gray-600 text-sm">{{ feature.description }}</p>
+                </div>
+            </div>
+
+            <div appReveal class="max-w-2xl mx-auto text-center mt-16">
+                <p class="text-gray-600">
+                    Accessibility was part of this system's design from the start, not something added on at the
+                    end. If you run into anything that doesn't work well with a keyboard or screen reader, feel
+                    free to mention it through the contact page.
+                </p>
+            </div>
+        </div>
+    </section>
+</main>

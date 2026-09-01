@@ -1,6 +1,7 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { MockBackendInterceptor } from './demo/mock-backend.interceptor';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,26 +19,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CountUpModule } from 'ngx-countup';
 import { AuthComponent } from './auth/auth.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { PermitOverviewApplicationsComponent } from './pages/admin/permit-approvals/permit-overview-applications/permit-overview-applications.component';
-import { PermitViewApplicationDetailsComponent } from './pages/admin/permit-approvals/permit-view-application-details/permit-view-application-details.component';
-import { ApplicationParentElementComponent } from './pages/admin/permit-approvals/application-parent-element/application-parent-element.component';
 import { AccessDeniedPageComponent } from './pages/access-denied-page/access-denied-page.component';
-import { AuthModule } from '@auth0/auth0-angular';
 import { SampleSidebarComponent } from './partials/sample-sidebar/sample-sidebar.component';
-import { ReviewMapComponent } from './components/review-map/review-map.component';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
-import { PermitApprovedApplicationComponent } from './pages/admin/permit-approved/permit-approved-application/permit-approved-application.component';
-import { PermitApprovedParentComponent } from './pages/admin/permit-approved/permit-approved-parent/permit-approved-parent.component';
-import { PermitDeclinedApplicationsComponent } from './pages/admin/permit-declined/permit-declined-applications/permit-declined-applications.component';
-import { PermitDeclinedParentComponent } from './pages/admin/permit-declined/permit-declined-parent/permit-declined-parent.component';
-import { ScheduleComponent } from './pages/admin/schedule/schedule.component';
+import { SharedModule } from './shared/shared.module';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
 import { AdminParentComponent } from './modules/admin/components/admin-parent/admin-parent.component';
 import { AdminHeaderComponent } from './modules/admin/components/admin-header/admin-header.component';
 import { AdminSidebarComponent } from './modules/admin/components/admin-sidebar/admin-sidebar.component';
 import { ApplicantDashboardComponent } from './modules/applicant/pages/applicant-dashboard/applicant-dashboard.component';
-import { HomeComponent } from './modules/landing/pages/home/home.component';
 
 @NgModule({
   declarations: [
@@ -45,24 +36,14 @@ import { HomeComponent } from './modules/landing/pages/home/home.component';
     HeaderComponent,
     SidebarComponent,
     AuthComponent,
-    PermitOverviewApplicationsComponent,
-    PermitViewApplicationDetailsComponent,
-    ApplicationParentElementComponent,
     AccessDeniedPageComponent,
     SampleSidebarComponent,
-    ReviewMapComponent,
-    PermitApprovedApplicationComponent,
-    PermitApprovedParentComponent,
-    PermitDeclinedApplicationsComponent,
-    PermitDeclinedParentComponent,
-    ScheduleComponent,
     SignaturePadComponent,
     NotificationsComponent,
     AdminParentComponent,
     AdminHeaderComponent,
     AdminSidebarComponent,
     ApplicantDashboardComponent,
-    HomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -81,16 +62,14 @@ import { HomeComponent } from './modules/landing/pages/home/home.component';
     BrowserAnimationsModule,
     ConfirmDialogModule,
     BreadcrumbModule,
-    AuthModule.forRoot({
-      domain: 'dev-i13gsn8mlryu6ru5.us.auth0.com',
-      clientId: 'jIYgngTr6txEA5XjnFnHh2K0KvZzmrHt',
-      authorizationParams: {
-        redirect_uri: window.location.origin,
-      },
-    }),
+    SharedModule,
+    // Auth0 (@auth0/auth0-angular) is not used in this demo, authentication is fully local.
+    // AuthModule.forRoot(...) was removed so the SDK never contacts Auth0's servers.
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: MockBackendInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

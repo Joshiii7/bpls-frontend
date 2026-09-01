@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, HostListener, Input } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { AuthService as Auth0Service } from '@auth0/auth0-angular';
 import { ChangeDetectorRef } from '@angular/core';
 import { SidebarService } from 'src/app/sidebar.service';
 
@@ -26,7 +25,6 @@ export class SampleSidebarComponent {
 
   constructor(
     private router: Router,
-    private auth: Auth0Service,
     private sidebarService: SidebarService,
     private cdRef: ChangeDetectorRef
   ) {
@@ -145,12 +143,8 @@ export class SampleSidebarComponent {
   }
 
   logout() {
-    this.auth.logout({
-      logoutParams: {
-        returnTo: window.location.origin,
-      },
-    });
-
+    // Auth0 is not used in this demo (no real backend/external auth), so logout only clears
+    // the local demo session instead of redirecting to Auth0's hosted logout page.
     localStorage.clear();
 
     this.router.navigate(['/']).then(() => {

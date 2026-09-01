@@ -14,7 +14,16 @@ export class AdminService extends ApiService {
   getAdminPermits(): Observable<any> {
     return this.http.get<any>(`${this.Root_URL}/admin-permits`, { headers: this.getHeaders() });
   }
-  
+
+  // Single call returning every submitted application, already split by status
+  // (businessess = pending, approvedBusiness, declinedBusiness, data = all).
+  // Backs the Applications list for every status tab so admin and applicant
+  // sides read from the same records instead of separate queries drifting out
+  // of sync.
+  getAllApplications(): Observable<any> {
+    return this.http.get<any>(`${this.Root_URL}/allBusiness`, { headers: this.getHeaders() });
+  }
+
   showAdminPermits(uuid: any): Observable<any> {
     return this.http.get<any>(`${this.Root_URL}/admin-permits/${uuid}`, { headers: this.getHeaders() });
   }

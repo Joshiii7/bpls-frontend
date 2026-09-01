@@ -1,0 +1,35 @@
+<section class="relative overflow-hidden py-16 md:py-20 lg:py-24">
+    <img
+        src="assets/images/faq/bislig-city-map-1500.webp"
+        srcset="assets/images/faq/mobile/bislig-city-map-500.webp 500w, assets/images/faq/bislig-city-map-1500.webp 1500w"
+        sizes="100vw"
+        width="1500"
+        height="1000"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        class="absolute inset-0 w-full h-full object-cover"
+    >
+    <!-- Solid (non-gradient) dark overlay: keeps the map present but muted while
+         giving the heading and accordion enough contrast. -->
+    <div class="absolute inset-0 bg-black/70" aria-hidden="true"></div>
+
+    <div class="relative w-[90%] max-w-[80rem] mx-auto">
+        <div appReveal class="mb-10 md:mb-14 text-center max-w-2xl mx-auto">
+            <span *ngIf="eyebrow" class="block text-xs font-semibold uppercase tracking-widest text-[#00ff88] mb-3">
+                {{ eyebrow }}
+            </span>
+            <h2 class="text-3xl md:text-4xl font-bold text-white leading-tight">
+                {{ heading }}<span *ngIf="accent" class="text-[#00ff88]">{{ accent }}</span>
+            </h2>
+            <div class="h-1 w-14 rounded-full bg-[#00ff88] mx-auto mt-4" aria-hidden="true"></div>
+            <p *ngIf="description" class="mt-4 text-gray-200 text-lg leading-relaxed">
+                {{ description }}
+            </p>
+        </div>
+
+        <div appReveal>
+            <app-faq-accordion [items]="items"></app-faq-accordion>
+        </div>
+    </div>
+</section>

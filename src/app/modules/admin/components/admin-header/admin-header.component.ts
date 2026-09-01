@@ -31,9 +31,9 @@ export class AdminHeaderComponent {
     this.updateTime();
     setInterval(() => this.updateTime(), 1000);
 
-    this.home = { 
-      icon: 'fa-solid fa-house text-white', 
-      routerLink: '/admin/admin-report-dashboard' 
+    this.home = {
+      icon: 'ti ti-home text-white',
+      routerLink: '/admin/dashboard'
     };
 
     this.router.events

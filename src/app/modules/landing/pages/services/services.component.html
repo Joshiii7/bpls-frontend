@@ -1,58 +1,40 @@
-<main class="bg-gray-50 py-10">
-    <section class="w-[90%] max-w-[80rem] mx-auto text-center">
-        <h2 class="text-3xl font-bold text-gray-800 mb-6">Our Services</h2>
-        <p class="text-gray-600 mb-12 text-lg">
-            The Business Permit and Licensing System (BPLS) provides fast, reliable, and transparent services
-            for business owners. Explore what you can do with our system below.
-        </p>
+<main id="main" tabindex="-1" class="bg-gray-50">
+    <app-page-banner
+        title="Our Services"
+        description="Whatever you need for your business permit, from applying to renewing, you can probably do it here. Here's what's available."
+    ></app-page-banner>
 
-        <!-- Service Cards -->
-        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    <section class="py-16 md:py-20 lg:py-24">
+        <div class="w-[90%] max-w-[80rem] mx-auto">
 
-            <!-- Service 1 -->
-            <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-8 text-left">
-                <div class="flex items-center justify-center bg-[#009800] w-16 h-16 rounded-full mb-5 mx-auto">
-                    <img src="https://cdn-icons-png.flaticon.com/512/9411/9411849.png" alt="New Application" class="w-8">
+            <!-- Service Cards -->
+            <h2 class="sr-only">Our Services</h2>
+            <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                <div *ngFor="let service of services" appReveal class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-primary/30 hover:-translate-y-1 transition p-8 text-center">
+                    <app-icon-badge [icon]="service.icon" variant="solid"></app-icon-badge>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">{{ service.title }}</h3>
+                    <p class="text-gray-600">{{ service.description }}</p>
                 </div>
-                <h3 class="text-xl font-semibold text-gray-800 mb-3 text-center">New Business Permit Application</h3>
-                <p class="text-gray-600 text-center">
-                    Register your new business easily through our online application portal. Submit the required details and documents without visiting the office.
-                </p>
             </div>
+        </div>
+    </section>
 
-            <!-- Service 2 -->
-            <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-8 text-left">
-                <div class="flex items-center justify-center bg-[#009800] w-16 h-16 rounded-full mb-5 mx-auto">
-                    <img src="https://cdn-icons-png.flaticon.com/512/6945/6945644.png" alt="Renewal" class="w-8">
-                </div>
-                <h3 class="text-xl font-semibold text-gray-800 mb-3 text-center">Renewal of Business Permit</h3>
-                <p class="text-gray-600 text-center">
-                    Renew your business permit online and avoid long lines. Keep your business operating legally and conveniently.
-                </p>
-            </div>
+    <!-- FAQ -->
+    <app-faq-section
+        eyebrow="Questions"
+        heading="Services "
+        accent="FAQ"
+        [items]="faqs"
+    ></app-faq-section>
 
-            <!-- Service 3 -->
-            <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-8 text-left">
-                <div class="flex items-center justify-center bg-[#009800] w-16 h-16 rounded-full mb-5 mx-auto">
-                    <img src="https://cdn-icons-png.flaticon.com/512/4201/4201973.png" alt="Guidelines" class="w-8">
-                </div>
-                <h3 class="text-xl font-semibold text-gray-800 mb-3 text-center">Business Registration Guidelines</h3>
-                <p class="text-gray-600 text-center">
-                    Learn the step-by-step process and requirements for registering or renewing a business in your municipality.
-                </p>
-            </div>
-
-            <!-- Service 4 -->
-            <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-8 text-left">
-                <div class="flex items-center justify-center bg-[#009800] w-16 h-16 rounded-full mb-5 mx-auto">
-                    <img src="https://cdn-icons-png.flaticon.com/512/992/992651.png" alt="Document Printing" class="w-8">
-                </div>
-                <h3 class="text-xl font-semibold text-gray-800 mb-3 text-center">Document Printing & Downloads</h3>
-                <p class="text-gray-600 text-center">
-                    Print or download your approved business permits, receipts, and application forms anytime, anywhere.
-                </p>
-            </div>
-
+    <section class="bg-gray-50 py-12">
+        <div class="w-[90%] max-w-[80rem] mx-auto text-center">
+            <a
+                routerLink="/auth/register"
+                class="inline-flex items-center justify-center min-h-[44px] bg-primary text-white px-8 py-3 rounded-lg shadow hover:bg-green-700 transition font-medium"
+            >
+                Apply Now
+            </a>
         </div>
     </section>
 </main>

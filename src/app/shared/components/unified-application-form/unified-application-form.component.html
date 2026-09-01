@@ -1,500 +1,370 @@
-<main class="bg-white p-5 border">
-    <div class="border border-2 border-gray-900">
+<article class="uaf w-full max-w-5xl mx-auto">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 print:shadow-none print:border-black print:rounded-none overflow-hidden">
 
-        <!-- Header Section -->
-        <div class="border border-gray-900 pt-10">
-            <section class="relative text-center">
-                <h6 class="lg:text-sm text-xs">Republic of the Philippines</h6>
-                <h6 class="lg:text-sm text-xs absolute top-0 right-0">with postpaid? Yes ______ No ______</h6>
-                <h6 class="lg:text-sm text-xs">City/Municipality <span class="font-semibold underline uppercase">Bislig City</span></h6>
-                <h6 class="lg:lg:text-sm text-xs text-xs font-semibold uppercase">Unified Application Form for Business Permit</h6>
-            </section>
+    <!-- ============ Header ============ -->
+    <header class="border-b border-gray-200 print:border-black px-5 sm:px-8 py-6">
+      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div class="text-center sm:text-left">
+          <p class="text-xs text-gray-500">Republic of the Philippines</p>
+          <p class="text-xs text-gray-500">
+            City/Municipality
+            <span class="font-semibold underline uppercase text-gray-800">Bislig City</span>
+          </p>
+          <h1 class="mt-1 text-base sm:text-lg font-bold uppercase tracking-tight text-gray-900">
+            Unified Application Form for Business Permit
+          </h1>
+        </div>
 
-            <!-- Payment & Date Section -->
-            <section class="flex justify-between">
-            <table class="table-auto -translate-x-[.1rem] translate-y-[.1rem] w-[27%] border-collapse border border-gray-900 lg:text-sm text-xs">
-                <tbody>
-                <tr>
-                    <td colspan="2" class="border border-gray-900 py-1 px-4"></td>
-                    <td colspan="2" class="border border-gray-900 py-1 px-4 text-center">Payment</td>
-                </tr>
-                <tr>
-                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="isNew == 1"><i class="fa-solid fa-check"></i></span></td>
-                    <td class="border border-gray-900 py-1 px-1">New</td>
-                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="paymentType == 1"><i class="fa-solid fa-check"></i></span></td>
-                    <td class="border border-gray-900 py-1 px-1">Annually</td>
-                </tr>
-                <tr>
-                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="isNew == 2"><i class="fa-solid fa-check"></i></span></td>
-                    <td class="border border-gray-900 py-1 px-1">Renewal</td>
-                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="paymentType == 2"><i class="fa-solid fa-check"></i></span></td>
-                    <td class="border border-gray-900 py-1 px-1">Bi-annually</td>
-                </tr>
-                <tr>
-                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="isNew == 3"><i class="fa-solid fa-check"></i></span></td>
-                    <td class="border border-gray-900 py-1 px-1">Additional</td>
-                    <td class="border border-gray-900 py-1 w-[1.5rem]"><span class="text-green-600 ps-1" *ngIf="paymentType == 3"><i class="fa-solid fa-check"></i></span></td>
-                    <td class="border border-gray-900 py-1 px-1">Quarterly</td>
-                </tr>
-                </tbody>
-            </table>
+        <p class="text-xs text-gray-500 text-center sm:text-right whitespace-nowrap">
+          with postpaid? Yes ______ No ______
+        </p>
+      </div>
 
-            <div class="flex flex-col justify-end relative">
-                <h6 class="text-end lg:text-sm text-xs">Date of Receipt ______________________________</h6>
-                <h6 class="absolute left-[50%] -translate-y-[2.6rem] font-semibold lg:text-sm text-xs">{{ date_of_receipt | date: 'MMMM d, y' : 'en-US' }}</h6>
-                <h6 class="text-end lg:text-sm text-xs">Tracking Number ______________________________</h6>
-                <h6 class="absolute left-[45%] -translate-y-[1.5rem] font-semibold text-xs">{{ tracking_number }}</h6>
-                <h6 class="text-end lg:text-sm text-xs">Business ID Number ______________________________</h6>
-                <h6 class="absolute left-[45%] -translate-y-[.2rem] font-semibold text-xs">{{ business_id_number }}</h6>
+      <!-- Application type / payment schedule / tracking meta -->
+      <div class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+        <div class="flex flex-col gap-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="uaf-label !mb-0">Application Type:</span>
+            <span
+              *ngFor="let opt of applicationTypeOptions"
+              class="uaf-badge"
+              [class.uaf-badge--on]="isNew == opt.id"
+            >
+              <i class="ti ti-check text-[10px]" *ngIf="isNew == opt.id"></i>
+              {{ opt.label }}
+            </span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="uaf-label !mb-0">Payment:</span>
+            <span
+              *ngFor="let opt of paymentScheduleOptions"
+              class="uaf-badge"
+              [class.uaf-badge--on]="paymentType == opt.id"
+            >
+              <i class="ti ti-check text-[10px]" *ngIf="paymentType == opt.id"></i>
+              {{ opt.label }}
+            </span>
+          </div>
+        </div>
+
+        <dl class="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:justify-items-end lg:text-right">
+          <div class="uaf-field">
+            <dt class="uaf-label">Date of Receipt</dt>
+            <dd class="uaf-value">{{ date_of_receipt | date: 'MMMM d, y' : 'en-US' }}</dd>
+          </div>
+          <div class="uaf-field">
+            <dt class="uaf-label">Tracking Number</dt>
+            <dd class="uaf-value break-words">{{ tracking_number }}</dd>
+          </div>
+          <div class="uaf-field">
+            <dt class="uaf-label">Business ID Number</dt>
+            <dd class="uaf-value break-words">{{ business_id_number }}</dd>
+          </div>
+        </dl>
+      </div>
+    </header>
+
+    <!-- ============ A. Business Information and Registration ============ -->
+    <section class="uaf-section">
+      <h2 class="uaf-heading">A. Business Information and Registration</h2>
+
+      <!-- Business type -->
+      <div class="mb-5">
+        <p class="uaf-label !mb-2">Please choose one:</p>
+        <div class="flex flex-col gap-3">
+          <div *ngFor="let opt of businessTypeOptions" class="flex flex-wrap items-center gap-3">
+            <span class="uaf-badge" [class.uaf-badge--on]="businessType == opt.id">
+              <i class="ti ti-check text-[10px]" *ngIf="businessType == opt.id"></i>
+              {{ opt.label }}
+            </span>
+
+            <div *ngIf="opt.showGender" class="flex items-center gap-2 pl-1">
+              <span class="uaf-badge uaf-badge--sub" [class.uaf-badge--on]="businessType == opt.id && gender == 1">
+                <i class="ti ti-check text-[10px]" *ngIf="businessType == opt.id && gender == 1"></i>
+                Male
+              </span>
+              <span class="uaf-badge uaf-badge--sub" [class.uaf-badge--on]="businessType == opt.id && gender == 2">
+                <i class="ti ti-check text-[10px]" *ngIf="businessType == opt.id && gender == 2"></i>
+                Female
+              </span>
             </div>
-            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registration numbers -->
+      <div class="uaf-grid uaf-grid--3 mb-5">
+        <div class="uaf-field">
+          <dt class="uaf-label">DTI/SEC/CDA Registration Number:</dt>
+          <dd class="uaf-value">{{ dtiNumber }}</dd>
+        </div>
+        <div class="uaf-field">
+          <dt class="uaf-label">DTI/SEC/CDA Registration Issued:</dt>
+          <dd class="uaf-value">{{ registrationDate | date: 'MMMM d, y' : 'en-US' }}</dd>
+        </div>
+        <div class="uaf-field">
+          <dt class="uaf-label">Tax Identification Number (TIN):</dt>
+          <dd class="uaf-value">{{ tinNumber }}</dd>
+        </div>
+      </div>
+
+      <!-- Business / trade name -->
+      <div class="uaf-grid uaf-grid--2 mb-5">
+        <div class="uaf-field">
+          <dt class="uaf-label">Business Name:</dt>
+          <dd class="uaf-value">{{ businessName }}</dd>
+        </div>
+        <div class="uaf-field">
+          <dt class="uaf-label">Trade Name/Franchise (If applicable):</dt>
+          <dd class="uaf-value">{{ franchiseName }}</dd>
+        </div>
+      </div>
+
+      <!-- Main office address -->
+      <div class="mb-5">
+        <p class="uaf-label !mb-2">Main Office Address:</p>
+        <div class="uaf-grid uaf-grid--5">
+          <div class="uaf-field"><dt class="uaf-label">House/Bldg.#</dt><dd class="uaf-value">{{ house_no }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Name of Building</dt><dd class="uaf-value">{{ name_building }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Lot No.</dt><dd class="uaf-value">{{ lot_no }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Block No.</dt><dd class="uaf-value">{{ block_no }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Street</dt><dd class="uaf-value">{{ street }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Barangay</dt><dd class="uaf-value">{{ barangay }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Subdivision</dt><dd class="uaf-value">{{ subdivision }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">City/Municipality</dt><dd class="uaf-value">{{ city }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Province</dt><dd class="uaf-value">{{ province }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Zip Code</dt><dd class="uaf-value">{{ zipCode }}</dd></div>
+        </div>
+      </div>
+
+      <!-- Contact info -->
+      <div class="uaf-grid uaf-grid--3 mb-5">
+        <div class="uaf-field">
+          <dt class="uaf-label">Telephone No.:</dt>
+          <dd class="uaf-value"></dd>
+        </div>
+        <div class="uaf-field">
+          <dt class="uaf-label">Mobile No.:</dt>
+          <dd class="uaf-value">{{ number }}</dd>
+        </div>
+        <div class="uaf-field">
+          <dt class="uaf-label">Email Address:</dt>
+          <dd class="uaf-value break-words">{{ email }}</dd>
+        </div>
+      </div>
+
+      <!-- Ownership: sole proprietorship -->
+      <div class="uaf-panel mb-3">
+        <p class="text-xs text-gray-500 mb-0.5">(For Sole Proprietorship):</p>
+        <p class="uaf-label !mb-2">Name of Owner</p>
+        <div class="uaf-grid uaf-grid--4">
+          <div class="uaf-field"><dt class="uaf-label">Surname</dt><dd class="uaf-value" *ngIf="businessType == 1">{{ surname }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Given Name</dt><dd class="uaf-value" *ngIf="businessType == 1">{{ givenname }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Middle Name</dt><dd class="uaf-value" *ngIf="businessType == 1">{{ middlename }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Suffix</dt><dd class="uaf-value" *ngIf="businessType == 1">{{ suffix }}</dd></div>
+        </div>
+      </div>
+
+      <!-- Ownership: corporation/cooperative/partnership -->
+      <div class="uaf-panel mb-5">
+        <p class="text-xs text-gray-500 mb-0.5">(For Corporations/Cooperative/Partnerships):</p>
+        <p class="uaf-label !mb-2">Name of President/Office in Charge</p>
+        <div class="uaf-grid uaf-grid--4">
+          <div class="uaf-field"><dt class="uaf-label">Surname</dt><dd class="uaf-value" *ngIf="businessType != 1">{{ surname }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Given Name</dt><dd class="uaf-value" *ngIf="businessType != 1">{{ givenname }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Middle Name</dt><dd class="uaf-value" *ngIf="businessType != 1">{{ middlename }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Suffix</dt><dd class="uaf-value" *ngIf="businessType != 1">{{ suffix }}</dd></div>
+        </div>
+      </div>
+
+      <!-- For corporation nationality -->
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="uaf-label !mb-0">For Corporation:</span>
+        <span class="uaf-badge">Filipino</span>
+        <span class="uaf-badge">Foreign</span>
+      </div>
+    </section>
+
+    <!-- ============ B. Business Operation ============ -->
+    <section class="uaf-section">
+      <h2 class="uaf-heading">B. Business Operation</h2>
+
+      <!-- Operation figures -->
+      <div class="uaf-grid uaf-grid--4 mb-5 items-start">
+        <div class="flex flex-col gap-3">
+          <div class="uaf-field">
+            <dt class="uaf-label">Business Area (in sq.m.)</dt>
+            <dd class="uaf-value">{{ businessArea }}</dd>
+          </div>
+          <div class="uaf-field">
+            <dt class="uaf-label">Total Floor Area (in sq.m.)</dt>
+            <dd class="uaf-value">{{ businessFloorArea }}</dd>
+          </div>
         </div>
 
-        <!-- Business Information -->
-        <div>
-            <!-- Types of Business -->
-            <section class="p-2 flex flex-col border border-gray-900">
-                <h2 class="text-md font-semibold uppercase">A. Business Information and Registration</h2>
-                <div class="flex justify-between lg:text-sm text-xs">
-                    <h6 class="">Please choose one:</h6>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="col-span-1">
-                            <div class="flex gap-1 mb-1">
-                                <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 1"><i class="fa-solid fa-check"></i></span></span>
-                                <h6>Sole Proprietorship</h6>
-                            </div>
-                            <div class="flex justify-between">
-                                <div class="flex gap-1">
-                                    <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 1 && gender == 1"><i class="fa-solid fa-check"></i></span></span>
-                                    <h6>Male</h6>
-                                </div>
-                                <div class="flex gap-1">
-                                    <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 1 && gender == 2"><i class="fa-solid fa-check"></i></span></span>
-                                    <h6>Female</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-span-1 text-end ">
-                            <div class="flex gap-1 mb-1">
-                                <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 2"><i class="fa-solid fa-check"></i></span></span>
-                                <h6>One Person Corporation</h6>
-                            </div>
-                            <div class="flex justify-between">
-                                <div class="flex gap-1">
-                                    <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 2 && gender == 1"><i class="fa-solid fa-check"></i></span></span>
-                                    <h6>Male</h6>
-                                </div>
-                                <div class="flex gap-1">
-                                    <span class="w-[1.1rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 2 && gender == 2"><i class="fa-solid fa-check"></i></span></span>
-                                    <h6>Female</h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-3 gap-2">
-                        <div class="col-span-1 text-end flex gap-1">
-                            <span class="w-[1.1rem] h-[1.3rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 3"><i class="fa-solid fa-check"></i></span></span>
-                            <h6>Partnership</h6>
-                        </div>
-                        <div class="col-span-1 text-end flex gap-1">
-                            <span class="w-[1.1rem] h-[1.3rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType == 4"><i class="fa-solid fa-check"></i></span></span>
-                            <h6>Corporation</h6>
-                        </div>
-                        <div class="col-span-1 text-end flex gap-1">
-                            <span class="w-[1.1rem] h-[1.3rem] border border-gray-900"><span class="text-green-600" *ngIf="businessType === 5"><i class="fa-solid fa-check"></i></span></span>
-                            <h6>Cooperative</h6>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- DTI, TIN, ETC. -->
-            <section class="flex justify-between lg:text-sm text-xs">
-                <div class="border border-gray-900 w-full px-1 h-[3rem]">
-                    <h6 class="">DTI/SEC/CDA Registration Number:</h6>
-                    <span class="font-semibold">{{ dtiNumber }}</span>
-                </div>
-                <div class="border border-gray-900 w-full px-1 h-[3rem]">
-                    <h6 class="">DTI/SEC/CDA Registration Issued:</h6>
-                    <span class="font-semibold">{{ registrationDate | date: 'MMMM d, y' : 'en-US' }}</span>
-                </div>
-                <div class="border border-gray-900 w-full px-1 h-[3rem]">
-                    <h6 class="">Tax Identification Number (TIN):</h6>
-                    <span class="font-semibold">{{ tinNumber }}</span>
-                </div>
-            </section>
-
-            <!-- Business Name -->
-            <section class="flex flex-col justify-center p-1 border border-gray-900 h-[3rem] lg:text-sm text-xs">
-                <h6>Business Name:</h6>
-                <h6 class="font-semibold">{{ businessName }}</h6>
-            </section>
-
-            <!-- Franchise Name -->
-            <section class="flex flex-col justify-center p-1 border border-gray-900 h-[3rem] lg:text-sm text-xs">
-                <h6>Trade Name/Franchise (If applicable):</h6>
-                <h6 class="font-semibold">{{ franchiseName }}</h6>
-            </section>
-
-            <!-- Address -->
-            <section class="flex flex-col justify-center items-between p-1 border border-gray-900 h-[5rem] lg:text-sm text-xs">
-                <div class="flex justify-between w-full relative">
-                    <h6 class="w-[20%]">Main Office Address:</h6>
-                    <div class="flex w-full">
-                        <h6 class="me-1">House/Bldg.# ____________</h6>
-                        <h6 class="absolute left-[27.5%] -translate-y-1 font-semibold">{{ house_no }}</h6>
-                        <h6 class="me-1">Name of Building _________________</h6>
-                        <h6 class="absolute left-[49.5%] -translate-y-1 font-semibold">{{ name_building }}</h6>
-                        <h6 class="me-1">Lot No. _______________</h6>
-                        <h6 class="absolute left-[67.5%] -translate-y-1 font-semibold">{{ lot_no }}</h6>
-                        <h6 class="me-1">Block No. ________________</h6>
-                        <h6 class="absolute left-[87.5%] -translate-y-1 font-semibold">{{ block_no }}</h6>
-                    </div>
-                </div>
-                <div class="flex justify-between w-full relative">
-                    <h6 class="me-1">Street __________________________________</h6>
-                    <h6 class="absolute left-[5.5%] -translate-y-1 font-semibold">{{ street }}</h6>
-                    <h6 class="me-1">Barangay __________________________________</h6>
-                    <h6 class="absolute left-[40.5%] -translate-y-1 font-semibold">{{ barangay }}</h6>
-                    <h6 class="me-1">Subdivision __________________________________</h6>
-                    <h6 class="absolute left-[76.5%] -translate-y-1 font-semibold">{{ subdivision }}</h6>
-                </div>
-                <div class="flex justify-between w-full relative">
-                    <h6 class="me-1">City/Municipality ___________________________</h6>
-                    <h6 class="absolute left-[13%] -translate-y-1 font-semibold">{{ city }}</h6>
-                    <h6 class="me-1">Province ______________________________________________</h6>
-                    <h6 class="absolute left-[42%] -translate-y-1 font-semibold">{{ province }}</h6>
-                    <h6 class="me-1">Zip Code ______________________</h6>
-                    <h6 class="absolute left-[84.5%] -translate-y-1 font-semibold">{{ zipCode }}</h6>
-                </div>
-            </section>
-
-            <!-- Contact Info -->
-            <section class="flex justify-between h-[1.7rem] text-sm">
-                <div class="flex items-center gap-2 px-1 border border-gray-900 w-[65%]">
-                    <h6>Telephone No.:</h6>
-                    <h6 class="font-semibold"></h6>
-                </div>
-                <div class="flex items-center gap-2 px-1 border border-gray-900 w-[65%]">
-                    <h6>Mobile No.:</h6>
-                    <h6 class="font-semibold">{{ number }}</h6>
-                </div>
-                <div class="flex items-center gap-2 px-1 border border-gray-900 w-full">
-                    <h6>Email Address:</h6>
-                    <h6 class="font-semibold">{{ email }}</h6>
-                </div>
-            </section>
-
-            <!-- Ownership Proprietorship -->
-            <section class="flex justify-between h-[3rem] text-sm">
-                <div class="border w-full border-gray-900 px-1">
-                    <h6>(For Sole Proprietorship):</h6>
-                    <h6 class="font-semibold">Name of Owner</h6>
-                </div>
-                <div class="flex flex-col border w-full border-gray-900 px-1">
-                    <h6>Surname</h6>
-                    <span class="font-semibold" *ngIf="businessType == 1">{{ surname }}</span>
-                </div>
-                <div class="flex flex-col border w-full border-gray-900 px-1">
-                    <h6>Given Name</h6>
-                    <span class="font-semibold" *ngIf="businessType == 1">{{ givenname }}</span>
-                </div>
-                <div class="flex flex-col border w-full border-gray-900 px-1">
-                    <h6>Middle Name</h6>
-                    <span class="font-semibold" *ngIf="businessType == 1">{{ middlename }}</span>
-                </div>
-                <div class="flex flex-col border w-[50%] border-gray-900 px-1">
-                    <h6>Suffix</h6>
-                    <span class="font-semibold" *ngIf="businessType == 1">{{ suffix }}</span>
-                </div>
-            </section>
-
-            <!-- Ownership the rest -->
-            <section class="flex justify-between h-[3rem] text-sm">
-                <div class="flex flex-col justify-center border w-full border-gray-900 px-1">
-                    <h6 class="text-[.5rem]">(For Corporations/Cooperative/Partnerships):</h6>
-                    <h6 class="text-[.5rem] font-semibold">Name of President/Office in Charge</h6>
-                </div>
-                <div class="flex flex-col border w-full border-gray-900 px-1">
-                    <h6>Surname</h6>
-                    <span class="font-semibold" *ngIf="businessType != 1">{{ surname }}</span>
-                </div>
-                <div class="flex flex-col border w-full border-gray-900 px-1">
-                    <h6>Given Name</h6>
-                    <span class="font-semibold" *ngIf="businessType != 1">{{ givenname }}</span>
-                </div>
-                <div class="flex flex-col border w-full border-gray-900 px-1">
-                    <h6>Middle Name</h6>
-                    <span class="font-semibold" *ngIf="businessType != 1">{{ middlename }}</span>
-                </div>
-                <div class="flex flex-col border w-[50%] border-gray-900 px-1">
-                    <h6>Suffix</h6>
-                    <span class="font-semibold" *ngIf="businessType != 1">{{ suffix }}</span>
-                </div>
-            </section>
-
-            <!-- For Corporation -->
-            <section class="flex items-center gap-3 border border-gray-900 h-[2.3rem] text-sm px-1">
-                <h6>For Corporation: </h6>
-                <div class="flex gap-1">
-                    <span class="px-2 border border-gray-900"></span>
-                    <h6>Filipino</h6>
-                </div>
-                <div class="flex gap-1">
-                    <span class="px-2 border border-gray-900"></span>
-                    <h6>Foreign</h6>
-                </div>
-            </section>
+        <div class="uaf-field">
+          <dt class="uaf-label">Total No. of Employees in Establishment</dt>
+          <dd class="uaf-value flex flex-wrap gap-x-4 gap-y-1">
+            <span>{{ totalMale }} Male</span>
+            <span>{{ totalFemale }} Female</span>
+          </dd>
         </div>
 
-        <!-- Business Operation -->
-        <div>
-            <!-- Header Area -->
-            <section class="border border-gray-900 border-1 px-1">
-                <h2 class="text-md font-semibold uppercase">B. Business Operation</h2>
-            </section>
-
-            <!-- Business Area -->
-            <section class="grid grid-cols-4 border border-gray-900 h-[3rem] text-[.7rem] px-1">
-                <div class="flex flex-col justify-around col-span-1 relative">
-                    <h6>Business Area (in sq.m.) ______</h6>
-                    <h6 class="absolute top-0 left-[60%] font-semibold">{{ businessArea }}</h6>
-                    <h6>Total Floor Area (in sq.m.) ______</h6>
-                    <h6 class="absolute top-[50%] left-[65%] font-semibold">{{ businessFloorArea }}</h6>
-                </div>
-                <div class="flex flex-col justify-around col-span-1">
-                    <h6>Total No. of Employees in Establishment</h6>
-                    <div class="flex relative">
-                        <h6>__________ Male</h6>
-                        <h6 class="absolute -translate-y-1 left-[7%] font-semibold">{{ totalMale }}</h6>
-                        <h6>__________ Female</h6>
-                        <h6 class="absolute -translate-y-1 left-[45%] font-semibold">{{ totalFemale }}</h6>
-                    </div>
-                </div>
-                <div class="flex flex-col justify-around col-span-1 ps-9 relative">
-                    <h6>No of Employees</h6>
-                    <h6>Residing within ______</h6>
-                    <h6 class="absolute bottom-2 left-[56%] font-semibold">{{ totalEmployee }}</h6>
-                </div>
-                <div class="flex flex-col justify-around col-span-1 items-end">
-                    <h6># Delivery Vehicles (if applicable)</h6>
-                    <div class="flex relative">
-                        <h6>__________ Van/Truck</h6>
-                        <h6 class="absolute -translate-y-1 left-[10%] font-semibold">{{ no_van }}</h6>
-                        <h6>__________ Motorcycle</h6>
-                        <h6 class="absolute -translate-y-1 left-[55%] font-semibold">{{ no_motor }}</h6>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Business Address -->
-            <section class="flex flex-col justify-between items-between p-1 border border-gray-900 h-[6.6rem] text-sm">
-                <div class="flex justify-between">
-                    <div class="flex items-center gap-1 w-[40%]">
-                        <div class="border border-gray-900 p-2"></div>
-                        <h6>Same as Main Office Address</h6>
-                    </div>
-                    <div class="flex border border-1 border-gray-900 h-[1.7rem] w-full -translate-y-1 translate-x-1.5 text-[.7rem]">
-                        <h6 class="border border-gray-900 px-1 w-[50%]">If business area is not owned</h6>
-                        <div class="border border-gray-900 p-2"></div>
-                        <h6 class="border border-gray-900 px-1 w-[20%]">Not Rented</h6>
-                        <div class="border border-gray-900 p-2"></div>
-                        <div class="flex gap-4 border border-gray-900 ps-1 w-full">
-                            <h6>Rented</h6>
-                            <h6>if rented, monthly rental</h6>
-                        </div>
-                    </div>
-                </div>
-                    <div class="flex justify-between w-full relative">
-                    <h6 class="w-[20%] text-[.7rem]">Business Office Address:</h6>
-                        <div class="flex w-full">
-                            <h6 class="me-1">House/Bldg.# ____________</h6>
-                            <h6 class="absolute left-[27.5%] -translate-y-1 font-semibold">{{ operational_house_no }}</h6>
-                            <h6 class="me-1">Name of Building _________________</h6>
-                            <h6 class="absolute left-[49.5%] -translate-y-1 font-semibold">{{ operational_name_building }}</h6>
-                            <h6 class="me-1">Lot No. _______________</h6>
-                            <h6 class="absolute left-[67.5%] -translate-y-1 font-semibold">{{ operational_lot_no }}</h6>
-                            <h6 class="me-1">Block No. ________________</h6>
-                            <h6 class="absolute left-[87.5%] -translate-y-1 font-semibold">{{ operational_block_no }}</h6>
-                        </div>
-                    </div>
-                    <div class="flex justify-between w-full relative">
-                        <h6 class="me-1">Street __________________________________</h6>
-                        <h6 class="absolute left-[5.5%] -translate-y-1 font-semibold">{{ operationalStreet }}</h6>
-                        <h6 class="me-1">Barangay __________________________________</h6>
-                        <h6 class="absolute left-[40.5%] -translate-y-1 font-semibold">{{ operationalBarangay }}</h6>
-                        <h6 class="me-1">Subdivision __________________________________</h6>
-                        <h6 class="absolute left-[76.5%] -translate-y-1 font-semibold">{{ operational_subdivision }}</h6>
-                    </div>
-                    <div class="flex justify-between w-full relative">
-                        <h6 class="me-1">City/Municipality ___________________________</h6>
-                        <h6 class="absolute left-[13%] -translate-y-1 font-semibold">{{ operationalCity }}</h6>
-                        <h6 class="me-1">Province ______________________________________________</h6>
-                        <h6 class="absolute left-[42%] -translate-y-1 font-semibold">{{ operationalProvince }}</h6>
-                        <h6 class="me-1">Zip Code ______________________</h6>
-                        <h6 class="absolute left-[84.5%] -translate-y-1 font-semibold">{{ operationalZipCode }}</h6>
-                    </div>
-            </section>
-
-            <!-- Owned? -->
-            <section class="flex items-center gap-2 border border-gray-900 h-[2rem] text-sm ps-1">
-                <h6>Owned?</h6>
-                <div class="border border-gray-900 p-2"></div>
-                <h6>Yes</h6>
-                <div class="border border-gray-900 p-2"></div>
-                <h6>No</h6>
-                <h6 class="text-[.7rem]">If Yes, Tax Declaration No. _________________________________________________</h6>
-                <h6 class="text-[.7rem]">or Properly Identification No. _______________________________</h6>
-            </section>
-
-            <!-- Incentives? -->
-            <section class="flex justify-between items-center gap-2 border border-gray-900 h-[2rem] text-[.8rem] ps-1">
-                <p class="w-full text-[.7rem]">Do you have tax incentives from any Government Entity?</p>
-                <div class="flex gap-2 w-full">
-                    <div class="border border-gray-900 p-2"></div>
-                    <p>Yes (Please attach a copy of your certificate)</p>
-                </div>
-                <div class="flex gap-2 w-[60%]">
-                    <div class="border border-gray-900 p-2"></div>
-                    <p>No</p>
-                    <div class="border border-gray-900 p-2 w-full translate-x-[.1rem]"></div>
-                </div>
-            </section>
-
-            <!-- Business Activity -->
-            <section class="flex justify-between items-center border border-gray-900 h-[2rem] text-sm px-1">
-                <div class="w-[50%]">
-                    <h6>Business Activity (Please check one):</h6>
-                </div>
-                <div class="flex justify-between gap-2 w-full">
-                    <div class="flex gap-2">
-                        <div class="border border-gray-900 w-[1.1rem]">
-                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 1"><i class="fa-solid fa-check"></i></span>
-                        </div>
-                        <h6>Main Office</h6>
-                    </div>
-                    <div class="flex gap-2">
-                        <div class="border border-gray-900 w-[1.1rem]">
-                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 2"><i class="fa-solid fa-check"></i></span>
-                        </div>
-                        <h6>Branch Office</h6>
-                    </div>
-                    <div class="flex gap-2">
-                        <div class="border border-gray-900 w-[1.1rem]">
-                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 3"><i class="fa-solid fa-check"></i></span>
-                        </div>
-                        <h6>Admin Office Only</h6>
-                    </div>
-                    <div class="flex gap-2">
-                        <div class="border border-gray-900 w-[1.1rem]">
-                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 4"><i class="fa-solid fa-check"></i></span>
-                        </div>
-                        <h6>Warehouse</h6>
-                    </div>
-                    <div class="flex gap-2">
-                        <div class="border border-gray-900 w-[1.1rem]">
-                            <span class="text-green-600 ps-1" *ngIf="businessActivity == 5"><i class="fa-solid fa-check"></i></span>
-                        </div>
-                        <h6>Others</h6>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Line of Business -->
-            <section class="flex justify-between items-center text-[.7rem]">
-                <table>
-                    <thead>
-                        <tr>
-                            <td class="border border-gray-900 text-center w-[30%]">Line of Business</td>
-                            <td class="border border-gray-900 text-center w-[12%]">PSIC Code (if Available)</td>
-                            <td class="border border-gray-900 text-center w-[20%]">Capital (if new, for monitoring purposes only)</td>
-                            <td class="border border-gray-900 text-center w-[20%]">Last year's Essential Gross Sales/Receipts (if renewal)</td>
-                            <td class="border border-gray-900 text-center w-[20%]">Last year's Non-Essential Gross Sales/Receipts (if renewal)</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="border border-gray-900 text-center w-[30%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[12%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                        </tr>
-                        <tr>
-                            <td class="border border-gray-900 text-center w-[30%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[12%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                        </tr>
-                        <tr>
-                            <td class="border border-gray-900 text-center w-[30%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[12%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                        </tr>
-                        <tr>
-                            <td class="border border-gray-900 text-center w-[30%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[12%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                        </tr>
-                        <tr>
-                            <td class="border border-gray-900 text-center w-[30%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[12%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                            <td class="border border-gray-900 text-center w-[20%] h-[1.5rem]"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
+        <div class="uaf-field">
+          <dt class="uaf-label">No of Employees<br>Residing within</dt>
+          <dd class="uaf-value">{{ totalEmployee }}</dd>
         </div>
 
-        <!-- Footer area -->
-        <footer class="flex flex-col border border-gray-900 text-[.8rem]">
-            <p class="w-[87%] ps-1">
-                I DECLARE UNDER PENALTY OF PERJURY that all information in this application are true and correct based on my personal knowledge and authentic
-                records submitted to the Business Permit & Licensing Office Any false or misleading information supplied, or production of fake/falsified
-                documents shall be grounds for appropriate legal action against me and automatically revokes the permit. I hereby agree that all personal data (as
-                defined under the Data Privacy Law of 2012 and its Implementing Rules and Regulations) and account transaction information or records with the
-                City/Municipality Government may be processed, profiled or shared to requesting parties or for the purpose of any court, legal process, examination,
-                inquiry and audit or investigation on any authority.
+        <div class="uaf-field">
+          <dt class="uaf-label"># Delivery Vehicles (if applicable)</dt>
+          <dd class="uaf-value flex flex-wrap gap-x-4 gap-y-1">
+            <span>{{ no_van }} Van/Truck</span>
+            <span>{{ no_motor }} Motorcycle</span>
+          </dd>
+        </div>
+      </div>
+
+      <!-- Business office address -->
+      <div class="uaf-panel mb-5">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+          <span class="uaf-badge">Same as Main Office Address</span>
+
+          <div class="flex flex-wrap items-center gap-2 text-xs text-gray-600">
+            <span class="uaf-label !mb-0">If business area is not owned</span>
+            <span class="uaf-badge uaf-badge--sub">Not Rented</span>
+            <span class="uaf-badge uaf-badge--sub">Rented</span>
+            <span class="text-gray-500">if rented, monthly rental</span>
+          </div>
+        </div>
+
+        <p class="uaf-label !mb-2">Business Office Address:</p>
+        <div class="uaf-grid uaf-grid--5">
+          <div class="uaf-field"><dt class="uaf-label">House/Bldg.#</dt><dd class="uaf-value">{{ operational_house_no }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Name of Building</dt><dd class="uaf-value">{{ operational_name_building }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Lot No.</dt><dd class="uaf-value">{{ operational_lot_no }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Block No.</dt><dd class="uaf-value">{{ operational_block_no }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Street</dt><dd class="uaf-value">{{ operationalStreet }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Barangay</dt><dd class="uaf-value">{{ operationalBarangay }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Subdivision</dt><dd class="uaf-value">{{ operational_subdivision }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">City/Municipality</dt><dd class="uaf-value">{{ operationalCity }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Province</dt><dd class="uaf-value">{{ operationalProvince }}</dd></div>
+          <div class="uaf-field"><dt class="uaf-label">Zip Code</dt><dd class="uaf-value">{{ operationalZipCode }}</dd></div>
+        </div>
+      </div>
+
+      <!-- Owned? -->
+      <div class="flex flex-wrap items-center gap-3 mb-4 text-sm">
+        <span class="uaf-label !mb-0">Owned?</span>
+        <span class="uaf-badge uaf-badge--sub">Yes</span>
+        <span class="uaf-badge uaf-badge--sub">No</span>
+        <span class="text-xs text-gray-500">If Yes, Tax Declaration No. ______________________</span>
+        <span class="text-xs text-gray-500">or Properly Identification No. ______________________</span>
+      </div>
+
+      <!-- Tax incentives -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-5 text-sm">
+        <p class="text-xs text-gray-600">Do you have tax incentives from any Government Entity?</p>
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="uaf-badge uaf-badge--sub">Yes (Please attach a copy of your certificate)</span>
+          <span class="uaf-badge uaf-badge--sub">No</span>
+        </div>
+      </div>
+
+      <!-- Business activity -->
+      <div class="mb-6">
+        <p class="uaf-label !mb-2">Business Activity (Please check one):</p>
+        <div class="flex flex-wrap gap-2">
+          <span
+            *ngFor="let opt of businessActivityOptions"
+            class="uaf-badge"
+            [class.uaf-badge--on]="businessActivity == opt.id"
+          >
+            <i class="ti ti-check text-[10px]" *ngIf="businessActivity == opt.id"></i>
+            {{ opt.label }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Line of business -->
+      <div>
+        <p class="uaf-label !mb-2">Line of Business</p>
+        <div class="uaf-table-scroll">
+          <table class="uaf-table">
+            <thead>
+              <tr>
+                <th *ngFor="let col of lineOfBusinessColumns">{{ col }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of lineOfBusinessRows">
+                <td *ngFor="let col of lineOfBusinessColumns"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Declaration & signatures ============ -->
+    <footer class="uaf-section uaf-section--footer">
+      <p class="text-xs sm:text-[13px] leading-relaxed text-gray-700 text-justify">
+        I DECLARE UNDER PENALTY OF PERJURY that all information in this application are true and correct based on my personal knowledge and authentic
+        records submitted to the Business Permit & Licensing Office Any false or misleading information supplied, or production of fake/falsified
+        documents shall be grounds for appropriate legal action against me and automatically revokes the permit. I hereby agree that all personal data (as
+        defined under the Data Privacy Law of 2012 and its Implementing Rules and Regulations) and account transaction information or records with the
+        City/Municipality Government may be processed, profiled or shared to requesting parties or for the purpose of any court, legal process, examination,
+        inquiry and audit or investigation on any authority.
+      </p>
+
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Signature -->
+        <div class="flex flex-col items-center text-center">
+          <div class="relative w-full max-w-xs">
+            <img
+              *ngIf="image"
+              [src]="image"
+              alt="Signature Preview"
+              class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 w-40 sm:w-48 h-auto select-none"
+              draggable="false"
+            />
+            <p class="font-semibold uppercase text-sm text-gray-900">
+              {{ givenname }} {{ middlename }} {{ surname }}
             </p>
-            <div class="flex justify-between text-[.8rem]">
-                <div class="flex flex-col justify-center items-center w-[60%]">
-                    <div class="flex flex-col justify-center items-center relative w-full">
-                        <img
-                            *ngIf="image"
-                            [src]="image"
-                            alt="Signature Preview"
-                            class="absolute -top-12 w-[20rem] h-auto select-none"
-                            draggable="false"
-                        />
-                        <h6 class="translate-y-3 font-semibold uppercase">
-                            {{ givenname }} {{ middlename }} {{ surname }}
-                        </h6>
-                        <h6>______________________________________________________________</h6>
-                    </div>
-                    <h6 class="uppercase">Signature of applicant/owner over printed name</h6>
-                    <div class="relative">
-                        <h6>______________________________________________________________</h6>
-                        <h6 class="absolute top-0 -translate-y-1 left-[43%] font-semibold">Owner</h6>
-                    </div>
-                    <h6 class="uppercase">Designation/position/title</h6>
-                </div>
+            <div class="border-t border-gray-400 mt-2"></div>
+          </div>
+          <p class="uppercase text-[11px] tracking-wide text-gray-500 mt-1">Signature of applicant/owner over printed name</p>
 
-                    <div class="border border-2 translate-x-[.1rem] translate-y-[.1rem] border-gray-900 w-[40%] ps-1">
-                        <h6 class="font-semibold">For BPLO Use Only</h6>
-                        <h6>Date Approved</h6>
-                        <h6>Permit No.</h6>
-                        <h6>Approving Officer</h6>
-                        <h6>Date Released</h6>
-                        <h6>Releasing Officer</h6>
-                    </div>
-            </div>
-        </footer>
-    </div>
-</main>
+          <div class="relative w-full max-w-xs mt-4">
+            <div class="border-t border-gray-400"></div>
+            <p class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-white px-2 text-xs font-semibold text-gray-800">Owner</p>
+          </div>
+          <p class="uppercase text-[11px] tracking-wide text-gray-500 mt-1">Designation/position/title</p>
+        </div>
+
+        <!-- BPLO use only -->
+        <div class="uaf-panel">
+          <p class="font-semibold text-sm text-gray-900 mb-2">For BPLO Use Only</p>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-center justify-between gap-3 border-b border-dashed border-gray-300 pb-1">
+              <span>Date Approved</span>
+            </li>
+            <li class="flex items-center justify-between gap-3 border-b border-dashed border-gray-300 pb-1">
+              <span>Permit No.</span>
+            </li>
+            <li class="flex items-center justify-between gap-3 border-b border-dashed border-gray-300 pb-1">
+              <span>Approving Officer</span>
+            </li>
+            <li class="flex items-center justify-between gap-3 border-b border-dashed border-gray-300 pb-1">
+              <span>Date Released</span>
+            </li>
+            <li class="flex items-center justify-between gap-3">
+              <span>Releasing Officer</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </div>
+</article>

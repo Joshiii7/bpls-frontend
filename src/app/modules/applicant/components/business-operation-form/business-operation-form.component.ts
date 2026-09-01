@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 export class BusinessOperationFormComponent implements OnInit {
   @Output() formValueChange = new EventEmitter<{ formType: string; form: FormGroup }>();
   @Input() mainAddressForm!: FormGroup;
+  @Input() initialValue: any = null;
 
   @ViewChild('barangayList') barangayListRef!: ElementRef;
   @ViewChild('buinessActivity') buinessActivityRef!: ElementRef;
@@ -80,6 +81,11 @@ export class BusinessOperationFormComponent implements OnInit {
     });
 
     this.initBarangays();
+
+    if (this.initialValue) {
+      this.businessOperationForm.patchValue(this.initialValue, { emitEvent: false });
+      this.formValueChange.emit({ formType: 'businessOperation', form: this.businessOperationForm });
+    }
   }
 
   initBarangays() {

@@ -1,3 +1,41 @@
+<div class="mb-5">
+    <h2 class="text-xl font-bold text-gray-800">Review Your Application</h2>
+    <p class="text-sm text-gray-600 mt-1">
+        Please check everything below carefully. You can go back to fix anything before submitting; once submitted, this application can no longer be edited.
+    </p>
+</div>
+
+<!-- Requirements summary -->
+<div class="mb-6 bg-white border rounded-lg p-5">
+    <div class="flex items-center justify-between mb-3">
+        <h3 class="font-semibold text-gray-800">Requirements</h3>
+        <button type="button" (click)="editStep.emit('documentsLocation')" class="text-sm text-primary font-medium hover:underline">
+            Edit
+        </button>
+    </div>
+    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <li *ngFor="let doc of documentSummary" class="flex items-center gap-2 text-sm">
+            <i
+                [ngClass]="doc.previewUrl ? 'ti ti-circle-check text-green-600' : 'ti ti-exclamation-circle text-red-600'"
+                aria-hidden="true"
+            ></i>
+            <span [ngClass]="doc.previewUrl ? 'text-gray-700' : 'text-red-700'">{{ doc.title }}</span>
+        </li>
+    </ul>
+</div>
+
+<div class="mb-3 flex items-center justify-between">
+    <h3 class="font-semibold text-gray-800">Application Form</h3>
+    <div class="flex gap-3">
+        <button type="button" (click)="editStep.emit('businessInfo')" class="text-sm text-primary font-medium hover:underline">
+            Edit Business & Applicant Details
+        </button>
+        <button type="button" (click)="editStep.emit('businessOperation')" class="text-sm text-primary font-medium hover:underline">
+            Edit Business Operation
+        </button>
+    </div>
+</div>
+
 <app-unified-application-form
     [isNew]="is_new"
     [paymentType]="payment_type"

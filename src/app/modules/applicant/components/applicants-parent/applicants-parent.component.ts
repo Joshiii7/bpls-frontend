@@ -19,7 +19,7 @@ export class ApplicantsParentComponent {
     private router: Router
   ) {
     this.home = { 
-      icon: 'fa-solid fa-house text-md', 
+      icon: 'ti ti-home text-md', 
       routerLink: '/applications' 
     };
 

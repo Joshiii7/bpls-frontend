@@ -1,0 +1,94 @@
+<div class="relative inline-block">
+    <!-- Bell Button -->
+    <button
+        type="button"
+        (click)="toggleDropdown()"
+        class="relative focus:outline-none"
+        aria-label="Notifications"
+        title="Notifications"
+        aria-haspopup="true"
+        [attr.aria-expanded]="isOpen"
+    >
+        <!-- Unread Badge -->
+        <span 
+            *ngIf="hasUnread" 
+            class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5"
+        >
+            {{ unreadCount }}
+        </span>
+
+        <!-- Circular Bell Icon -->
+        <div 
+            class="w-9 h-9 bg-white/20 rounded-full flex justify-center items-center border border-white/30 hover:bg-white/30 transition"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+            >
+                <path 
+                    stroke-linecap="round" 
+                    stroke-linejoin="round" 
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3c0 .386-.146.735-.395 1.005L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" 
+                />
+            </svg>
+        </div>
+    </button>
+
+    <!-- Overlay and Dropdown -->
+    <div *ngIf="isOpen">
+        <!-- Transparent overlay for outside click -->
+        <div 
+            class="fixed inset-0 z-[9998]" 
+            (click)="isOpen = false"
+        ></div>
+
+        <!-- Dropdown panel (keeps position relative to bell) -->
+        <div 
+            (click)="$event.stopPropagation()"
+            class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 z-[9999] animate-fadeIn"
+        >
+            <div class="px-4 py-3 border-b flex justify-between items-center">
+                <h3 class="font-semibold text-slate-700">Notifications</h3>
+                <button 
+                    (click)="markAllAsRead()" 
+                    class="text-sm text-blue-600 hover:underline"
+                >
+                    Mark all as read
+                </button>
+            </div>
+
+            <ul class="max-h-64 overflow-y-auto">
+                <li *ngIf="isLoading" class="px-4 py-3 text-center text-sm text-slate-500">
+                    Loading notifications...
+                </li>
+                <li *ngIf="!isLoading && (!notifications || notifications.length === 0)" class="px-4 py-3 text-center text-sm text-slate-800 font-medium">
+                    No notifications yet
+                </li>
+                <li
+                    *ngFor="let notif of notifications"
+                    class="px-4 py-3 hover:bg-slate-100 cursor-pointer border-b last:border-b-0"
+                    [ngClass]="{'bg-slate-50': !notif.is_read}"
+                >
+                    <p class="text-sm text-slate-800 font-medium">{{ notif.title }}</p>
+                    <p class="text-xs text-slate-600">{{ notif.message }}</p>
+                    <p class="text-xs text-slate-400 mt-1">{{ notif.time }}</p>
+                </li>
+            </ul>
+
+            <div class="text-center py-2 border-t">
+                <a
+                    routerLink="/applications/notifications"
+                    (click)="isOpen = false"
+                    class="text-sm text-blue-600 hover:underline font-medium"
+                >
+                    View All Notifications
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

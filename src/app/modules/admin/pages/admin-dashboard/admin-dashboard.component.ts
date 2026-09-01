@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdminService } from '../../services/admin.service';
 
@@ -12,8 +12,16 @@ declare var Chart: any;
   providers: [DatePipe],
 })
 export class AdminDashboardComponent implements OnInit {
+  isLoading = true;
   reports: any = null;
+  hasApplicationData = false;
   permitAging: any[] = [];
+
+  // Kept so a repeat load (e.g. a future refresh action) destroys the previous
+  // Chart.js instance before drawing a new one, reusing a canvas without
+  // destroying its prior chart throws "Canvas is already in use".
+  private doughnutChart: any = null;
+  private lineChart: any = null;
 
   permitAgingFull: any[] = [];
   currentPage: number = 1;
@@ -24,34 +32,58 @@ export class AdminDashboardComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private api: AdminService
-  ) {}
+    private api: AdminService,
+    private cdr: ChangeDetectorRef,
+  ) {
+    document.title = 'BPLS Admin | Dashboard';
+  }
 
   ngOnInit(): void {
     this.initReports();
   }
 
   initReports() {
+    this.isLoading = true;
     this.api.getAdminReports().subscribe({
       next: (response: any) => {
+        this.isLoading = false;
         this.permitAgingFull = response.permitAging || [];
         this.permitAging = this.permitAgingFull.slice(0, this.pageSize);
         this.updatePagination();
-        
+
         const total = response.totalPermits || 1;
-        response.totalPendingPercent  = ((response.totalPending / total) * 100).toFixed(1);
+        response.totalPendingPercent = ((response.totalPending / total) * 100).toFixed(1);
         response.totalApprovedPercent = ((response.totalApproved / total) * 100).toFixed(1);
         response.totalDeclinedPercent = ((response.totalDeclined / total) * 100).toFixed(1);
 
-        this.reports = response;
-        
-        const labels = Object.keys(response.businessTypes);
-        const data = Object.values(response.businessTypes).map(v => Number(v));
+        const newCount = response.applicationTypeCounts?.New || 0;
+        const renewalCount = response.applicationTypeCounts?.Renewal || 0;
+        const typeTotal = newCount + renewalCount || 1;
+        response.newPercent = Math.round((newCount / typeTotal) * 100);
+        response.renewalPercent = 100 - response.newPercent;
+        response.newCount = newCount;
+        response.renewalCount = renewalCount;
 
-        this.createDoughnutChart(labels, data);
-        this.createMonthlyLineChart(response.monthlyStatus);
+        this.reports = response;
+        this.hasApplicationData = (response.totalPermits || 0) > 0;
+
+        // The chart <canvas> elements sit behind *ngIf="hasApplicationData", so
+        // they don't exist in the DOM yet at this point in the callback, force
+        // Angular to render that view right now instead of waiting for the next
+        // change-detection cycle, otherwise document.getElementById() below
+        // returns null and Chart.js silently has nothing to draw into.
+        this.cdr.detectChanges();
+
+        if (this.hasApplicationData) {
+          const labels = Object.keys(response.businessTypes);
+          const data = Object.values(response.businessTypes).map(v => Number(v));
+
+          this.createDoughnutChart(labels, data);
+          this.createMonthlyLineChart(response.monthlyStatus);
+        }
       },
       error: (err: any) => {
+        this.isLoading = false;
         console.error("Error initializing reports:", err);
       }
     });
@@ -59,6 +91,9 @@ export class AdminDashboardComponent implements OnInit {
 
   createDoughnutChart(labels: string[], data: number[]) {
     const ctx = document.getElementById('businessDoughnutChart') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    this.doughnutChart?.destroy();
 
     const greenShades = [
       '#008900',
@@ -69,7 +104,7 @@ export class AdminDashboardComponent implements OnInit {
       '#00FF33'
     ];
 
-    new Chart(ctx, {
+    this.doughnutChart = new Chart(ctx, {
       type: 'doughnut',
       data: {
         labels: labels,
@@ -81,6 +116,7 @@ export class AdminDashboardComponent implements OnInit {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             position: 'right',
@@ -88,7 +124,8 @@ export class AdminDashboardComponent implements OnInit {
               usePointStyle: true,
               pointStyle: 'circle',
               boxWidth: 20,
-              padding: 15
+              padding: 15,
+              font: { family: 'Inter' }
             }
           },
           tooltip: {
@@ -97,7 +134,7 @@ export class AdminDashboardComponent implements OnInit {
                 const label = context.label || '';
                 const value = context.parsed || 0;
                 const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
-                const percent = ((value / total) * 100).toFixed(1);
+                const percent = total ? ((value / total) * 100).toFixed(1) : '0';
                 return `${label}: ${value} (${percent}%)`;
               }
             }
@@ -109,60 +146,66 @@ export class AdminDashboardComponent implements OnInit {
 
   createMonthlyLineChart(monthlyStatus: any) {
     const ctx = document.getElementById('monthlyLineChart') as HTMLCanvasElement;
+    if (!ctx) return;
 
-    const monthOrder = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    this.lineChart?.destroy();
+
+    const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const labels = monthOrder;
 
+    const submittedData = monthOrder.map(m => monthlyStatus[m]?.submitted || 0);
     const approvedData = monthOrder.map(m => monthlyStatus[m]?.approved || 0);
     const declinedData = monthOrder.map(m => monthlyStatus[m]?.declined || 0);
 
-    const approvedGradient = ctx.getContext('2d')!.createLinearGradient(0, 0, 0, ctx.height);
-    approvedGradient.addColorStop(0, 'rgba(0, 137, 0, 1)');
-    approvedGradient.addColorStop(1, 'rgba(16,185,129,0)');
-
-    const declinedGradient = ctx.getContext('2d')!.createLinearGradient(0, 0, 0, ctx.height);
-    declinedGradient.addColorStop(0, 'rgba(255, 0, 0, 1)');
-    declinedGradient.addColorStop(1, 'rgba(239,68,68,0)');
-
-    new Chart(ctx, {
+    this.lineChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: labels,
         datasets: [
           {
+            label: 'Submitted',
+            data: submittedData,
+            borderColor: '#1d4ed8',
+            backgroundColor: '#1d4ed8',
+            fill: false,
+            tension: 0.3
+          },
+          {
             label: 'Approved',
             data: approvedData,
             borderColor: '#008900',
             backgroundColor: '#008900',
-            fill: true,
+            fill: false,
             tension: 0.3
           },
           {
             label: 'Declined',
             data: declinedData,
-            borderColor: '#ff0000ff',
-            backgroundColor: '#ff0000ff',
-            fill: true,
+            borderColor: '#dc2626',
+            backgroundColor: '#dc2626',
+            fill: false,
             tension: 0.3
           }
         ]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             position: 'bottom',
             labels: {
               usePointStyle: true,
               pointStyle: 'circle',
-              padding: 15
+              padding: 15,
+              font: { family: 'Inter' }
             }
           }
         },
         scales: {
-          y: { 
+          y: {
             beginAtZero: true,
-            stepSize: 1,
+            ticks: { precision: 0 },
             grid: { drawTicks: false, drawBorder: false }
           },
           x: {
@@ -178,6 +221,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   getShowingRange(): string {
+    if (this.totalEntries === 0) return '0';
     const start = (this.currentPage - 1) * this.pageSize + 1;
     const end = Math.min(this.currentPage * this.pageSize, this.totalEntries);
     return `${start} - ${end}`;
@@ -187,7 +231,7 @@ export class AdminDashboardComponent implements OnInit {
     const filtered = this.filteredPermits();
 
     this.totalEntries = filtered.length;
-    this.totalPages = Math.ceil(this.totalEntries / this.pageSize);
+    this.totalPages = Math.ceil(this.totalEntries / this.pageSize) || 1;
 
     this.permitAging = filtered.slice(
       (this.currentPage - 1) * this.pageSize,
@@ -198,9 +242,9 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   updateVisiblePages() {
-    let startPage = Math.max(1, this.currentPage - 2);
-    let endPage = Math.min(this.totalPages, startPage + 4);
-    this.visiblePages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+    const startPage = Math.max(1, this.currentPage - 2);
+    const endPage = Math.min(this.totalPages, startPage + 4);
+    this.visiblePages = Array.from({ length: Math.max(endPage - startPage + 1, 0) }, (_, i) => startPage + i);
   }
 
   goToPage(page: number) {
@@ -222,13 +266,8 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  navigate(num: number) {
-    if (num === 1) {
-      this.router.navigate(['/applications']);
-    } else if (num === 2) {
-      this.router.navigate(['/approved-applications']);
-    } else if (num === 3) {
-      this.router.navigate(['/declined-applications']);
-    }
+  goToApplications(status: 'Pending' | 'Approved' | 'Declined' | 'All') {
+    const path = status === 'All' ? '/admin/applications' : `/admin/applications/${status.toLowerCase()}`;
+    this.router.navigate([path]);
   }
 }

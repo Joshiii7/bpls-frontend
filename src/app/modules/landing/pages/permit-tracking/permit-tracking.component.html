@@ -1,0 +1,142 @@
+<main id="main" tabindex="-1" class="bg-gray-50">
+    <app-page-banner
+        title="Track Your Permit"
+        description="Enter your permit or application number to see where it stands, no account needed."
+    ></app-page-banner>
+
+    <section class="py-16 md:py-20 lg:py-24">
+        <div class="w-[90%] max-w-3xl mx-auto">
+
+            <!-- Search card -->
+            <div appReveal class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
+                <h2 class="text-lg font-semibold text-gray-800 mb-1">Look Up an Application</h2>
+                <p class="text-gray-500 text-sm mb-6">
+                    You'll find this number on your application confirmation.
+                </p>
+
+                <form [formGroup]="form" (ngSubmit)="search()" novalidate>
+                    <label for="trackingNumberInput" class="block mb-1 text-sm font-medium" [class.text-red-600]="trackingNumber?.invalid && trackingNumber?.touched">
+                        Permit / Application Number
+                    </label>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input
+                            id="trackingNumberInput"
+                            type="text"
+                            formControlName="trackingNumber"
+                            placeholder="e.g. BPLS-2026-001000"
+                            autocomplete="off"
+                            class="flex-1 min-w-0 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                            [class.border-red-500]="trackingNumber?.invalid && trackingNumber?.touched"
+                            [attr.aria-invalid]="trackingNumber?.invalid && trackingNumber?.touched"
+                            aria-describedby="trackingNumberError"
+                        >
+                        <button
+                            type="submit"
+                            class="min-h-[44px] bg-primary hover:bg-primary/90 text-white font-medium px-6 rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-70"
+                            [disabled]="state === 'loading'"
+                        >
+                            <i *ngIf="state === 'loading'" class="ti ti-loader ti-spin" aria-hidden="true"></i>
+                            <i *ngIf="state !== 'loading'" class="ti ti-search" aria-hidden="true"></i>
+                            {{ state === 'loading' ? 'Searching...' : 'Search' }}
+                        </button>
+                    </div>
+                    <p *ngIf="trackingNumber?.invalid && trackingNumber?.touched" id="trackingNumberError" class="text-red-600 text-sm mt-1" role="alert">
+                        Please enter your permit or application number.
+                    </p>
+                </form>
+            </div>
+
+            <!-- Dynamic result area -->
+            <div aria-live="polite" class="mt-8">
+
+                <!-- Not found -->
+                <div *ngIf="state === 'not-found'" #resultRegion tabindex="-1" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center outline-none">
+                    <app-icon-badge icon="ti ti-search" variant="muted"></app-icon-badge>
+                    <h2 class="text-lg font-semibold text-gray-700 mb-1">No Matching Application</h2>
+                    <p class="text-gray-500 text-sm max-w-sm mx-auto">
+                        We couldn't find an application with that number. Double-check it and try again, or reach
+                        out through the contact page if you're not sure.
+                    </p>
+                    <button type="button" (click)="searchAgain()" class="mt-5 text-primary font-semibold hover:underline text-sm">
+                        Search again
+                    </button>
+                </div>
+
+                <!-- Error -->
+                <div *ngIf="state === 'error'" #resultRegion tabindex="-1" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center outline-none">
+                    <app-icon-badge icon="ti ti-alert-triangle" variant="muted"></app-icon-badge>
+                    <h2 class="text-lg font-semibold text-gray-700 mb-1">Something Went Wrong</h2>
+                    <p class="text-gray-500 text-sm">Please try your search again in a moment.</p>
+                </div>
+
+                <!-- Result -->
+                <div *ngIf="state === 'result' && result" #resultRegion tabindex="-1" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 outline-none">
+                    <div class="flex flex-wrap items-start justify-between gap-4 pb-6 border-b border-gray-100">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Tracking Number</p>
+                            <h2 class="text-xl font-bold text-gray-800">{{ result.trackingNumber }}</h2>
+                        </div>
+                        <span class="text-sm font-semibold px-3 py-1.5 rounded-full" [ngClass]="statusBadgeClass(result.status)">
+                            {{ result.status }}
+                        </span>
+                    </div>
+
+                    <dl class="grid gap-6 sm:grid-cols-2 py-6 border-b border-gray-100">
+                        <div>
+                            <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Business Name</dt>
+                            <dd class="text-gray-800 font-medium">{{ result.businessName }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Applicant</dt>
+                            <dd class="text-gray-800 font-medium">{{ result.ownerName }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Permit Type</dt>
+                            <dd class="text-gray-800 font-medium">{{ result.applicationType }} Application &middot; {{ result.businessType }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Date Submitted</dt>
+                            <dd class="text-gray-800 font-medium">{{ result.dateSubmitted }}</dd>
+                        </div>
+                    </dl>
+
+                    <div class="py-6 border-b border-gray-100">
+                        <p class="text-sm text-gray-700">
+                            <i class="ti ti-info-circle text-primary mr-1" aria-hidden="true"></i>
+                            {{ result.nextStepMessage }}
+                        </p>
+                    </div>
+
+                    <div class="pt-6">
+                        <h3 class="text-sm font-semibold text-gray-800 mb-4">Review Progress</h3>
+                        <div>
+                            <div *ngFor="let step of result.steps; let last = last" class="flex items-start gap-4">
+                                <div class="flex flex-col items-center flex-shrink-0">
+                                    <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm" [ngClass]="statusBadgeClass(step.status)">
+                                        <i class="{{ stepIcon(step.status) }}" aria-hidden="true"></i>
+                                    </div>
+                                    <div *ngIf="!last" class="w-px flex-1 bg-gray-200 my-1"></div>
+                                </div>
+                                <div [class.pb-6]="!last">
+                                    <div class="flex items-center gap-2 flex-wrap pt-1">
+                                        <p class="font-medium text-gray-800 text-sm">{{ step.department }}</p>
+                                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full" [ngClass]="statusBadgeClass(step.status)">
+                                            {{ step.status }}
+                                        </span>
+                                    </div>
+                                    <p *ngIf="step.notes" class="text-gray-500 text-sm mt-1">{{ step.notes }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-2">
+                        <button type="button" (click)="searchAgain()" class="text-primary font-semibold hover:underline text-sm">
+                            Search another application
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

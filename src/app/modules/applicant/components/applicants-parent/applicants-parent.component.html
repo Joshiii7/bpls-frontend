@@ -1,6 +1,6 @@
-<app-applicants-header></app-applicants-header>
+<app-header></app-header>
 <div class="w-[90%] max-w-[80rem] mx-auto">
-    <div class="py-6 sticky top-[5.9rem] bg-white z-50">
+    <div class="py-6 sticky top-[4rem] bg-white z-50">
         <p-breadcrumb [model]="items" [home]="home"></p-breadcrumb>
     </div>
     <router-outlet></router-outlet>
@@ -8,11 +8,14 @@
 <app-footer></app-footer>
 <button
     type="button"
-    class="fixed bottom-20 right-0 p-3 rounded-tl-md rounded-bl-md shadow-lg bg-gray-600 text-white hover:bg-gray-700 transition-all duration-300"
+    class="fixed bottom-6 right-4 sm:right-6 z-40 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full shadow-lg bg-gray-700 text-white hover:bg-gray-800 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary transition-all duration-300"
     (click)="scrollToTop()"
     [class.opacity-0]="!showScrollTop"
+    [class.pointer-events-none]="!showScrollTop"
+    [attr.aria-hidden]="!showScrollTop"
+    [attr.tabindex]="showScrollTop ? 0 : -1"
+    aria-label="Back to top"
+    title="Back to top"
 >
-    <div class="bg-white rounded-full w-7 h-7 flex justify-center items-center">
-        <i class="fa-solid fa-arrow-up text-gray-600"></i>
-    </div>
+    <i class="ti ti-arrow-up" aria-hidden="true"></i>
 </button>

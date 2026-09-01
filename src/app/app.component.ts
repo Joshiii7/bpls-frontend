@@ -1,6 +1,8 @@
 import { Component, Input, ChangeDetectorRef } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import Swal from 'sweetalert2';
+import { DemoDbService } from './demo/demo-db.service';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +15,7 @@ export class AppComponent {
   showHeader: boolean = true;
   showSidebar: boolean = true;
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef) {  }
+  constructor(private router: Router, private cdr: ChangeDetectorRef, private demoDb: DemoDbService) {  }
 
   ngOnInit(): void {
     this.router.events
@@ -35,5 +37,23 @@ export class AppComponent {
 
   close() {
     this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  resetDemoData() {
+    Swal.fire({
+      title: 'Reset demo data?',
+      text: 'This restores all applications, schedules, and notifications to their original demo state and signs you out.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#009800',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, reset it',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.demoDb.resetToSeed();
+        window.location.href = '/';
+      }
+    });
   }
 }

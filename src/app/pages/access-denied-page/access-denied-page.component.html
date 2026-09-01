@@ -1,12 +1,12 @@
-<div class="flex justify-center items-center h-screen bg-white">
-    <div class="p-8 w-[50%]">
+<div class="flex justify-center items-center min-h-screen bg-white px-4">
+    <div class="p-8 w-full max-w-lg">
         <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-5">Oops! Access Blocked</h1>
         <hr class="border-t-2 border-gray-300 mb-6">
         <p class="text-center text-gray-900 mb-6 text-lg">It seems you don't have permission to view this page. But don't worry, help is just a click away!</p>
         <p class="text-center text-gray-900 mb-6 text-lg">If you believe this is an error, please reach out to the administrator.</p>
         <div class="text-center">
-            <a 
-                [routerLink]="userRole === 'admin' ? '/admin-dashboard' : '/dashboard'" 
+            <a
+                [routerLink]="userRole === 'admin' ? '/admin/dashboard' : '/applications'"
                 class="text-blue-600 hover:text-blue-800 font-semibold">
                 Go back to the main dashboard
             </a>

@@ -1,37 +1,229 @@
 <!-- Landing Page for BPLS -->
-<main class="h-screen relative flex items-center justify-center text-center">
+<app-header></app-header>
 
-    <!-- Moving Background -->
-    <div class="absolute inset-0 bg-hero-section bg-no-repeat bg-cover animate-bg-scroll z-0"></div>
+<main id="main" tabindex="-1">
 
-    <!-- Glass Effect Overlay -->
-    <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-0"></div>
+    <!-- Hero / Introduction -->
+    <section class="relative overflow-hidden">
 
-    <!-- Header -->
-    <header class="bg-transparent text-white fixed top-0 z-[100] w-screen">
-        <div class="w-[90%] max-w-[80rem] mx-auto py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold tracking-wide">{{ title }}</h1>
-            <nav class="space-x-6">
-                <a routerLink="/" class="hover:text-gray-200">Home</a>
-                <a routerLink="/requirements" class="hover:text-gray-200">Requirements</a>
-                <a routerLink="/services" class="hover:text-gray-200">Services</a>
-                <a routerLink="/auth/login" class="bg-white text-primary px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition">Login</a>
-            </nav>
-        </div>
-    </header>
+        <!-- Moving Background -->
+        <img
+            src="assets/images/banner/cedo-background-1500.webp"
+            srcset="assets/images/banner/mobile/cedo-background-500.webp 500w, assets/images/banner/cedo-background-1500.webp 1500w"
+            sizes="100vw"
+            width="1500"
+            height="942"
+            alt=""
+            aria-hidden="true"
+            fetchpriority="high"
+            class="absolute inset-0 w-full h-full object-cover animate-obj-scroll z-0"
+        >
 
-    <!-- Hero Section -->
-    <section class="relative z-10 text-white w-[90%] max-w-[80rem] mx-auto space-y-6">
-        <h2 class="text-4xl md:text-5xl font-bold leading-snug">
-            Fast and Reliable <span class="text-[#00ff88]">Permit Processing</span>
-        </h2>
-        <p class="text-gray-200 text-lg md:text-xl">
-            Simplify your business permit applications and renewals with our online system designed for convenience and transparency.
-        </p>
-        <div>
-            <a routerLink="/auth/register" class="bg-primary text-white px-8 py-3 rounded-lg shadow hover:bg-green-700 transition font-medium">
-                Apply Now
-            </a>
+        <!-- Glass Effect Overlay -->
+        <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-0"></div>
+
+        <div class="relative z-10 w-[90%] max-w-[80rem] mx-auto py-16 md:py-20 lg:py-24">
+            <div class="grid gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16 items-center">
+
+                <!-- Intro copy & primary actions -->
+                <div class="text-white text-center lg:text-left space-y-6">
+                    <span class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1 text-sm font-medium text-gray-100">
+                        <i class="ti ti-circle-check text-[#00ff88]" aria-hidden="true"></i>
+                        Online Business Permits &amp; Licensing
+                    </span>
+
+                    <h1 class="text-4xl md:text-5xl font-bold leading-snug">
+                        Fast and Reliable <span class="text-[#00ff88]">Permit Processing</span>
+                    </h1>
+                    <p class="text-gray-200 text-lg md:text-xl max-w-2xl mx-auto lg:mx-0">
+                        Apply for a new business permit, renew one you already have, or check on an application
+                        you've already submitted. Built for business owners and the local permitting office alike.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                        <a
+                            routerLink="/auth/register"
+                            class="w-full sm:w-auto min-h-[44px] flex items-center justify-center bg-primary text-white px-8 py-3 rounded-lg shadow hover:bg-green-700 transition font-medium"
+                        >
+                            Apply Now
+                        </a>
+                        <a
+                            href="#login"
+                            class="w-full sm:w-auto min-h-[44px] flex items-center justify-center bg-white/10 border border-white/30 text-white px-8 py-3 rounded-lg hover:bg-white/20 transition font-medium"
+                        >
+                            Sign In
+                        </a>
+                    </div>
+
+                    <p class="text-sm text-gray-300">
+                        Just checking on an existing application?
+                        <a routerLink="/permit-tracking" class="text-white font-medium underline hover:text-[#00ff88] transition">Track a permit</a>
+                        without signing in.
+                    </p>
+
+                    <!-- Quick highlights -->
+                    <ul class="flex flex-wrap items-center justify-center lg:justify-start gap-x-8 gap-y-3 pt-4 text-sm text-gray-200">
+                        <li *ngFor="let item of heroHighlights" class="flex items-center gap-2">
+                            <i class="{{ item.icon }} text-[#00ff88]" aria-hidden="true"></i>
+                            <span>{{ item.label }}</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Compact login card -->
+                <div id="login" class="scroll-mt-28 w-full max-w-md mx-auto lg:mx-0">
+                    <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+                        <app-login-form></app-login-form>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
+
+    <!-- Key Services -->
+    <section class="bg-gray-50 py-16 md:py-20 lg:py-24">
+        <div class="w-[90%] max-w-[80rem] mx-auto">
+            <div appReveal>
+                <app-section-heading
+                    eyebrow="Our Services"
+                    heading="What You Can "
+                    accent="Do Here"
+                    description="BPLS lets business owners apply for permits and renewals online, and gives the local permitting office a place to review them. Here's what you can do."
+                ></app-section-heading>
+            </div>
+
+            <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+                <div *ngFor="let service of services" appReveal class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-primary/30 hover:-translate-y-1 transition p-8 text-center">
+                    <app-icon-badge [icon]="service.icon" variant="solid"></app-icon-badge>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">{{ service.title }}</h3>
+                    <p class="text-gray-600 text-sm">{{ service.description }}</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a routerLink="/services" class="inline-flex items-center gap-2 text-primary font-semibold hover:underline">
+                    View all services
+                    <i class="ti ti-arrow-right" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="relative overflow-hidden py-16 md:py-20 lg:py-24">
+        <img
+            src="assets/images/sections/tinuy-an-falls-1500.webp"
+            srcset="assets/images/sections/mobile/tinuy-an-falls-500.webp 500w, assets/images/sections/tinuy-an-falls-1500.webp 1500w"
+            sizes="100vw"
+            width="1500"
+            height="1125"
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            class="absolute inset-0 w-full h-full object-cover"
+        >
+        <!-- Solid (non-gradient) dark overlay: keeps the photo present but muted so
+             the light step text on top of it stays readable. -->
+        <div class="absolute inset-0 bg-black/70" aria-hidden="true"></div>
+
+        <div class="relative w-[90%] max-w-[80rem] mx-auto">
+            <div appReveal class="mb-10 md:mb-14 text-center max-w-2xl mx-auto">
+                <span class="block text-xs font-semibold uppercase tracking-widest text-[#00ff88] mb-3">
+                    Getting Started
+                </span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white leading-tight">
+                    How It <span class="text-[#00ff88]">Works</span>
+                </h2>
+                <div class="h-1 w-14 rounded-full bg-[#00ff88] mx-auto mt-4" aria-hidden="true"></div>
+                <p class="mt-4 text-gray-200 text-lg leading-relaxed">
+                    Getting a permit online takes just a few steps.
+                </p>
+            </div>
+
+            <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+                <div *ngFor="let step of steps; let i = index" appReveal class="text-center">
+                    <app-icon-badge [icon]="step.icon" variant="white"></app-icon-badge>
+                    <h3 class="font-semibold text-white mb-2">
+                        <span class="text-[#00ff88]">{{ i + 1 }}.</span> {{ step.title }}
+                    </h3>
+                    <p class="text-gray-300 text-sm">{{ step.description }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Requirements teaser -->
+    <section class="bg-gray-50 bg-brand-dots py-16 md:py-20 lg:py-24">
+        <div class="w-[90%] max-w-[80rem] mx-auto">
+            <div appReveal>
+                <app-section-heading
+                    eyebrow="Before You Apply"
+                    heading="What You'll "
+                    accent="Need"
+                    description="A quick look at what you'll usually need. Full details are on the requirements page."
+                ></app-section-heading>
+            </div>
+
+            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                <div *ngFor="let item of requirementHighlights" appReveal class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary/30 transition p-6 text-center">
+                    <app-icon-badge [icon]="item.icon" variant="tinted"></app-icon-badge>
+                    <p class="text-gray-700 text-sm font-medium">{{ item.label }}</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a routerLink="/requirements" class="inline-flex items-center gap-2 text-primary font-semibold hover:underline">
+                    View full requirements &amp; guidelines
+                    <i class="ti ti-arrow-right" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <app-faq-section
+        eyebrow="Questions"
+        heading="A Few Things People "
+        accent="Ask"
+        [items]="faqs"
+    ></app-faq-section>
+
+    <!-- Contact / Get Help -->
+    <section class="relative overflow-hidden bg-gray-50 py-16 md:py-20 lg:py-24">
+        <div class="pointer-events-none absolute -top-24 right-0 w-96 h-96 rounded-full bg-primary/5 blur-3xl" aria-hidden="true"></div>
+        <div class="relative w-[90%] max-w-[80rem] mx-auto">
+            <div appReveal>
+                <app-section-heading
+                    eyebrow="Contact"
+                    heading="Get in "
+                    accent="Touch"
+                    description="Need help with a permit or application? Reach out through any of the channels below."
+                ></app-section-heading>
+            </div>
+
+            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                <div *ngFor="let channel of contactChannels" appReveal class="bg-gray-50 rounded-2xl border border-gray-100 p-6 text-center hover:shadow-md hover:border-primary/30 transition">
+                    <app-icon-badge [icon]="channel.icon" variant="solid"></app-icon-badge>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">{{ channel.label }}</p>
+                    <ng-container *ngIf="channel.href; else plainValue">
+                        <a [href]="channel.href" class="text-gray-800 font-medium hover:text-primary transition break-words">{{ channel.value }}</a>
+                    </ng-container>
+                    <ng-template #plainValue>
+                        <p class="text-gray-800 font-medium break-words">{{ channel.value }}</p>
+                    </ng-template>
+                </div>
+            </div>
+
+            <div class="text-center mt-6">
+                <a routerLink="/contact" class="inline-flex items-center gap-2 text-primary font-semibold hover:underline">
+                    Visit the contact page
+                    <i class="ti ti-arrow-right" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
 </main>
+
+<app-footer></app-footer>
+<app-back-to-top></app-back-to-top>

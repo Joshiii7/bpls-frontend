@@ -1,156 +1,192 @@
-<main class="pb-7">
+<main id="main" tabindex="-1" class="pb-7">
     <section
-        *ngIf="showProfileWarning" 
+        *ngIf="showProfileWarning"
         class="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-400 text-yellow-800"
+        role="status"
     >
         <p>
-            Please pre-fill your profile information first before applying for a permit. This ensures your application is faster and more accurate.
+            Please fill in your profile information first before applying for a permit. This ensures your application is faster and more accurate.
         </p>
     </section>
 
-    <section class="flex justify-between items-center mb-6">
-        <h2 class="font-bold text-xl">Business Permit Applications</h2>
-        <button 
-            (click)="newApplication()" 
-            type="button" 
-            class="bg-primary text-white p-2 rounded-md hover:bg-primary/90 transition-all duration-300"
-            [disabled]="showProfileWarning"
-        >
-            + New Application
-        </button>
+    <section class="flex flex-wrap justify-between items-center gap-3 mb-6">
+        <div>
+            <h1 class="font-bold text-xl text-gray-800">My Applications</h1>
+            <p class="text-sm text-gray-500 mt-0.5">Track, continue, and review your business permit applications.</p>
+        </div>
+    </section>
+
+    <!-- Summary -->
+    <section *ngIf="!isLoading && stats.total > 0" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+        <div class="bg-white border rounded-lg p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Total</p>
+            <p class="text-2xl font-bold text-gray-800 mt-1">{{ stats.total }}</p>
+        </div>
+        <div class="bg-white border rounded-lg p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Drafts</p>
+            <p class="text-2xl font-bold text-gray-700 mt-1">{{ stats.drafts }}</p>
+        </div>
+        <div class="bg-white border rounded-lg p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Under Review</p>
+            <p class="text-2xl font-bold text-blue-700 mt-1">{{ stats.pending }}</p>
+        </div>
+        <div class="bg-white border rounded-lg p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Approved</p>
+            <p class="text-2xl font-bold text-green-700 mt-1">{{ stats.approved }}</p>
+        </div>
     </section>
 
     <section class="bg-white rounded-lg border px-5 py-7 mt-4">
-  
-        <!-- Applications Table -->
-        <div class="overflow-scroll">
-            <table class="min-w-full">
-                <thead class="bg-gray-300">
-                    <tr>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Tracking #
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Business Name
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Business Type
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Transaction Status
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Application Status
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Date Filed
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100 text-left">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Action
-                            </p>
-                        </th>
-                    </tr>
-                </thead>
 
-                <tbody>
-                    <tr *ngIf="isLoading">
-                        <td colspan="7" class="px-4 py-2 border-b">
-                            <p class="text-sm text-slate-900 font-semibold text-center">
-                                Loading applications...
-                            </p>
-                        </td>
-                    </tr>
+        <!-- Loading -->
+        <div *ngIf="isLoading" class="text-center py-10 text-sm text-slate-600" role="status">
+            Loading your applications...
+        </div>
 
-                    <tr *ngIf="!isLoading && paginatedApplications.length === 0">
-                        <td colspan="7" class="px-4 py-2 border-b">
-                            <p class="text-sm text-slate-900 font-semibold text-center">
-                                No applications found.
-                            </p>
-                        </td>
-                    </tr>
-                    
-                    <tr *ngFor="let application of paginatedApplications; let i = index" class="hover:bg-slate-50 border-b border-slate-200">
-                        <td class="px-4 py-2 border-b">
-                            <p class="text-sm text-slate-900 font-semibold">{{ application.tracking_number }}</p>
-                        </td>
-                        <td class="px-4 py-2 border-b">
-                            <p class="text-sm text-slate-500">{{ application.business_name }}</p>
-                        </td>
-                        <td class="px-4 py-2 border-b">
-                            <p class="text-sm text-slate-500">{{ application.business_type }}</p>
-                        </td>
-                        <td class="px-4 py-2 border-b">
-                            <span [ngClass]="getBadgeClass(application.status)" class="px-2 py-1 text-sm font-semibold rounded">
-                                {{ application.status }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-2 border-b">
-                            <span [ngClass]="getBadgeClass(application.application_status)" class="px-2 py-1 text-sm font-semibold rounded">
-                                {{ application.application_status }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-2 border-b">
-                            <p class="text-sm text-slate-500">{{ application.created_at }}</p>
-                        </td>
-                        <td class="px-4 py-2 border-b">
-                            <div class="relative group">
+        <!-- No applications at all -->
+        <div *ngIf="!isLoading && applications.length === 0" class="text-center py-12">
+            <i class="ti ti-file-plus text-4xl text-gray-300 mb-3" aria-hidden="true"></i>
+            <h2 class="text-lg font-semibold text-gray-800">No applications yet</h2>
+            <p class="text-sm text-gray-500 mt-1 max-w-sm mx-auto">
+                When you start a permit application, it will show up here, including any drafts you haven't finished yet.
+            </p>
+            <button
+                (click)="newApplication()"
+                type="button"
+                class="mt-5 min-h-[44px] bg-primary text-white px-5 py-2 rounded-md hover:bg-primary/90 transition disabled:opacity-60"
+                [disabled]="showProfileWarning"
+            >
+                Start New Application
+            </button>
+        </div>
+
+        <ng-container *ngIf="!isLoading && applications.length > 0">
+            <!-- Search -->
+            <div class="mb-4 max-w-sm">
+                <label for="applicationSearch" class="sr-only">Search your applications</label>
+                <div class="relative">
+                    <i class="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true"></i>
+                    <input
+                        id="applicationSearch"
+                        type="search"
+                        [(ngModel)]="searchQuery"
+                        (ngModelChange)="filterApplications()"
+                        placeholder="Search by business name or tracking number"
+                        class="w-full pl-9 pr-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    >
+                </div>
+            </div>
+
+            <!-- Applications Table -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <caption class="sr-only">Your business permit applications</caption>
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th scope="col" class="px-4 py-3 border-b border-slate-200 text-left">
+                                <p class="block font-semibold text-sm text-slate-800">Tracking #</p>
+                            </th>
+                            <th scope="col" class="px-4 py-3 border-b border-slate-200 text-left">
+                                <p class="block font-semibold text-sm text-slate-800">Business Name</p>
+                            </th>
+                            <th scope="col" class="px-4 py-3 border-b border-slate-200 text-left">
+                                <p class="block font-semibold text-sm text-slate-800">Business Type</p>
+                            </th>
+                            <th scope="col" class="px-4 py-3 border-b border-slate-200 text-left">
+                                <p class="block font-semibold text-sm text-slate-800">Status</p>
+                            </th>
+                            <th scope="col" class="px-4 py-3 border-b border-slate-200 text-left">
+                                <p class="block font-semibold text-sm text-slate-800">Date Filed</p>
+                            </th>
+                            <th scope="col" class="px-4 py-3 border-b border-slate-200 text-left">
+                                <p class="block font-semibold text-sm text-slate-800">Action</p>
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr *ngIf="paginatedApplications.length === 0">
+                            <td colspan="6" class="px-4 py-6 border-b">
+                                <p class="text-sm text-slate-600 text-center">
+                                    No applications match "{{ searchQuery }}".
+                                </p>
+                            </td>
+                        </tr>
+
+                        <tr *ngFor="let application of paginatedApplications" class="hover:bg-slate-50 border-b border-slate-200">
+                            <td class="px-4 py-3 border-b">
+                                <p class="text-sm text-slate-900 font-semibold">
+                                    {{ application.is_draft ? 'Not yet submitted' : application.tracking_number }}
+                                </p>
+                            </td>
+                            <td class="px-4 py-3 border-b">
+                                <p class="text-sm text-slate-600">{{ application.business_name }}</p>
+                            </td>
+                            <td class="px-4 py-3 border-b">
+                                <p class="text-sm text-slate-600">{{ application.business_type }}</p>
+                            </td>
+                            <td class="px-4 py-3 border-b">
+                                <span [ngClass]="getBadgeClass(application.status)" class="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-semibold rounded">
+                                    <i [ngClass]="getStatusIcon(application.status)" aria-hidden="true"></i>
+                                    {{ application.status }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 border-b">
+                                <p class="text-sm text-slate-600">{{ application.created_at }}</p>
+                            </td>
+                            <td class="px-4 py-3 border-b">
                                 <button
-                                    (click)="viewDetails(application.uuid)"
-                                    class="bg-blue-600 hover:bg-blue-900 text-white p-1 rounded-md w-10">
-                                    <i class="fas fa-eye"></i>
+                                    *ngIf="application.is_draft; else viewAction"
+                                    (click)="continueDraft(application.uuid)"
+                                    class="min-h-[36px] bg-primary hover:bg-primary/90 text-white text-sm px-3 py-1.5 rounded-md"
+                                >
+                                    Continue
                                 </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-  
-        <!-- Pagination Controls -->
-        <div class="mt-4 flex flex-col md:flex-row items-center justify-between">
-            <div class="text-sm text-slate-500">
-                Showing
-                <span class="font-semibold">
-                    {{ getShowingRange() }}
-                </span>
-                of {{ totalEntries }} entries
+                                <ng-template #viewAction>
+                                    <button
+                                        (click)="viewDetails(application.uuid)"
+                                        class="min-h-[36px] bg-blue-600 hover:bg-blue-800 text-white text-sm px-3 py-1.5 rounded-md"
+                                        aria-label="View application details"
+                                    >
+                                        View
+                                    </button>
+                                </ng-template>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            
-            
-    
-            <div class="flex">
-                <button (click)="prevPage()" [disabled]="currentPage === 1" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded-bl-md rounded-tl-md hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed">
-                    Prev
-                </button>
-        
-                <button
-                    *ngFor="let page of visiblePages"
-                    (click)="goToPage(page)"
-                    [class]="page === currentPage 
-                            ? 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-white bg-slate-800 border border-slate-800' 
-                            : 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease'"
-                >
-                    {{ page }}
-                </button>
-        
-                <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded-br-md rounded-tr-md hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed">
-                    Next
-                </button>
+
+            <!-- Pagination Controls -->
+            <div class="mt-4 flex flex-col md:flex-row items-center justify-between gap-3" *ngIf="totalEntries > 0">
+                <div class="text-sm text-slate-500">
+                    Showing
+                    <span class="font-semibold">{{ getShowingRange() }}</span>
+                    of {{ totalEntries }} entries
+                </div>
+
+                <nav class="flex" aria-label="Applications pagination">
+                    <button (click)="prevPage()" [disabled]="currentPage === 1" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded-bl-md rounded-tl-md hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed">
+                        Prev
+                    </button>
+
+                    <button
+                        *ngFor="let page of visiblePages"
+                        (click)="goToPage(page)"
+                        [attr.aria-current]="page === currentPage ? 'page' : null"
+                        [class]="page === currentPage
+                                ? 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-white bg-slate-800 border border-slate-800'
+                                : 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease'"
+                    >
+                        {{ page }}
+                    </button>
+
+                    <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded-br-md rounded-tr-md hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next
+                    </button>
+                </nav>
             </div>
-        </div>
+        </ng-container>
     </section>
 
 </main>

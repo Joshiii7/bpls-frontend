@@ -1,163 +1,266 @@
-<main class="p-7 bg-white rounded-xl border">
-    <h2 class="text-2xl font-semibold mb-6 text-gray-800">Profile</h2>
+<main id="main" tabindex="-1" class="max-w-5xl mx-auto pb-10">
 
-    <section class="grid grid-cols-12 gap-6">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">My Profile</h1>
+        <p class="text-sm text-gray-500 mt-1">Manage the personal and contact information used on your permit applications.</p>
+    </div>
 
-        <!-- Left Column: Signature -->
-        <div class="col-span-12 lg:col-span-5 flex flex-col items-center">
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="text-center py-16 text-sm text-slate-600" role="status">
+        Loading your profile...
+    </div>
 
-            <!-- Signature toggle -->
-            <div class="flex gap-2 mb-4 w-full">
-                <button type="button" (click)="onSignatureModeChange('upload')"
-                        [ngClass]="signatureMode === 'upload' ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'"
-                        class="flex-1 px-4 py-2 rounded-lg focus:outline-none">
-                    Upload
-                </button>
-                <button type="button" (click)="onSignatureModeChange('draw')"
-                        [ngClass]="signatureMode === 'draw' ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'"
-                        class="flex-1 px-4 py-2 rounded-lg focus:outline-none">
-                    Draw
-                </button>
+    <ng-container *ngIf="!isLoading">
+
+        <!-- Account summary -->
+        <section class="bg-white border rounded-xl p-5 sm:p-6 mb-6 flex flex-col sm:flex-row sm:items-center gap-5 justify-between">
+            <div class="flex items-center gap-4 min-w-0">
+                <div class="w-14 h-14 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xl font-bold flex-shrink-0" aria-hidden="true">
+                    {{ initials }}
+                </div>
+                <div class="min-w-0">
+                    <p class="font-semibold text-gray-900 truncate">{{ displayName }}</p>
+                    <p class="text-sm text-gray-500 truncate">{{ profileForm.value.email || 'No email on file yet' }}</p>
+                    <span class="inline-flex items-center gap-1.5 mt-1.5 text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                        <i class="ti ti-id-badge" aria-hidden="true"></i>
+                        {{ accountTypeLabel }}
+                    </span>
+                </div>
             </div>
 
-            <!-- Upload area -->
-            <div *ngIf="signatureMode === 'upload'"
-                class="mb-4 w-full bg-white border text-sm rounded-md relative h-40 md:h-60 flex justify-center items-center cursor-pointer"
-                (drop)="onDrop($event)"
-                (dragover)="onDragOver($event)">
-                <input type="file" accept="image/*" (change)="onFileSelect($event)"
-                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                <span class="text-gray-400 text-center pointer-events-none">
-                    Drag & drop or click to select a signature image
-                </span>
+            <div class="sm:text-right sm:min-w-[11rem]">
+                <p class="text-sm font-medium text-gray-700">Profile completeness</p>
+                <div class="flex items-center gap-2 mt-1.5 sm:justify-end" role="img" [attr.aria-label]="'Profile ' + completionPercent + ' percent complete'">
+                    <div class="w-32 h-2 rounded-full bg-gray-200 overflow-hidden">
+                        <div class="h-full bg-primary transition-all duration-300" [style.width.%]="completionPercent"></div>
+                    </div>
+                    <span class="text-xs font-medium text-gray-600">{{ completionPercent }}%</span>
+                </div>
+                <p *ngIf="missingFieldLabels.length" class="text-xs text-gray-500 mt-1.5">
+                    Missing: {{ missingFieldLabels.join(', ') }}
+                </p>
+                <p *ngIf="!missingFieldLabels.length" class="text-xs text-green-700 mt-1.5">
+                    <i class="ti ti-circle-check" aria-hidden="true"></i>
+                    Your profile is complete
+                </p>
             </div>
+        </section>
 
-            <!-- Canvas drawing area -->
-            <div *ngIf="signatureMode === 'draw'" class="mb-4 w-full h-40 md:h-60">
-                <label for="signature-canvas" class="block font-medium mb-1">Draw Signature</label>
-                <canvas #canvas id="signature-canvas"
-                        class="w-full h-full bg-white border text-sm rounded-md bg-white"
-                        (mousedown)="startDrawing($event)"
-                        (mousemove)="draw($event)"
-                        (mouseup)="stopDrawing()"
-                        (mouseleave)="stopDrawing()"
-                        (touchstart)="startDrawing($event)"
-                        (touchmove)="draw($event)"
-                        (touchend)="stopDrawing()">
-                </canvas>
-            </div>
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmitProfile()" class="grid grid-cols-12 gap-6">
 
-            <!-- Buttons: Clear + Save -->
-            <div class="flex gap-2 w-full mt-2">
-                <button type="button" (click)="clearCanvas()"
-                        class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-medium transition">
-                    Clear
-                </button>
-                <button type="button" (click)="onSubmitSignature()"
-                        class="flex-1 bg-primary hover:bg-primary-dark text-white py-2 rounded-lg font-medium transition">
-                    Save Signature
-                </button>
-            </div>
+            <!-- Personal & contact information -->
+            <section class="col-span-12 lg:col-span-7 bg-white border rounded-xl p-5 sm:p-6">
 
-        </div>
+                <h2 class="font-semibold text-gray-800">Personal Information</h2>
+                <p class="text-sm text-gray-500 mb-4">Used to identify you as the applicant on any permit you file.</p>
 
-        <!-- Right Column: Profile Fields -->
-        <div class="col-span-12 lg:col-span-7 flex flex-col gap-4">
-            <form [formGroup]="profileForm" (ngSubmit)="onSubmitProfile()">
-
-                <!-- Name fields -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label 
+                        <label
                             for="first_name"
                             [ngClass]="{'text-red-500': profileForm.get('first_name')?.invalid && profileForm.get('first_name')?.touched}"
                             class="block font-medium mb-1"
                         >
-                            First Name
+                            First Name <span class="text-red-600">*</span>
                         </label>
                         <input id="first_name" formControlName="first_name" placeholder="First Name"
                                class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
                                [ngClass]="{'border-red-500': profileForm.get('first_name')?.invalid && profileForm.get('first_name')?.touched}" />
                         <p *ngIf="profileForm.get('first_name')?.invalid && profileForm.get('first_name')?.touched"
                            class="text-red-500 text-sm mt-1">
-                            First name is required and must be letters only.
+                            <span *ngIf="profileForm.get('first_name')?.errors?.['required']">First name is required.</span>
+                            <span *ngIf="profileForm.get('first_name')?.errors?.['pattern']">Letters only, please.</span>
                         </p>
                     </div>
 
                     <div>
-                        <label for="middle_name" class="block font-medium mb-1">Middle Name</label>
+                        <label for="middle_name" class="block font-medium mb-1">Middle Name <span class="text-gray-400 font-normal text-sm">(optional)</span></label>
                         <input id="middle_name" formControlName="middle_name" placeholder="Middle Name"
                                class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400" />
                     </div>
 
                     <div>
-                        <label 
+                        <label
                             for="last_name"
                             [ngClass]="{'text-red-500': profileForm.get('last_name')?.invalid && profileForm.get('last_name')?.touched}"
                             class="block font-medium mb-1"
                         >
-                            Last Name
+                            Last Name <span class="text-red-600">*</span>
                         </label>
                         <input id="last_name" formControlName="last_name" placeholder="Last Name"
                                class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
                                [ngClass]="{'border-red-500': profileForm.get('last_name')?.invalid && profileForm.get('last_name')?.touched}" />
+                        <p *ngIf="profileForm.get('last_name')?.invalid && profileForm.get('last_name')?.touched"
+                           class="text-red-500 text-sm mt-1">
+                            <span *ngIf="profileForm.get('last_name')?.errors?.['required']">Last name is required.</span>
+                            <span *ngIf="profileForm.get('last_name')?.errors?.['pattern']">Letters only, please.</span>
+                        </p>
                     </div>
 
                     <div>
-                        <label for="suffix" class="block font-medium mb-1">Suffix</label>
-                        <input id="suffix" formControlName="suffix" placeholder="Suffix"
+                        <label for="suffix" class="block font-medium mb-1">Suffix <span class="text-gray-400 font-normal text-sm">(optional)</span></label>
+                        <input id="suffix" formControlName="suffix" placeholder="Jr., Sr., III, etc."
                                class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400" />
                     </div>
                 </div>
 
-                <!-- Contact fields -->
-                <div>
-                    <label 
-                        for="number"
-                        [ngClass]="{'text-red-500': profileForm.get('number')?.invalid && profileForm.get('number')?.touched}"
-                        class="block font-medium mb-1"
-                    >
-                        Phone Number
-                    </label>
-                    <input 
-                        id="number" 
-                        formControlName="number" 
-                        (blur)="checkUniqueNumber()"
-                        (input)="onNumberInput($event)"
-                        maxlength="16"
-                        placeholder="+63 9## ### ####"
-                        class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
-                        [ngClass]="{'border-red-500': profileForm.get('number')?.invalid && profileForm.get('number')?.touched}" 
-                    />
+                <hr class="my-5 border-gray-200">
 
-                    <div 
-                        *ngIf="profileForm.get('number')?.errors?.['phoneTaken']"
-                        class="text-red-500 text-xs mt-1"
-                    >
-                        This phone number is already registered.
+                <h2 class="font-semibold text-gray-800">Contact Information</h2>
+                <p class="text-sm text-gray-500 mb-4">We'll use these to reach you about your applications.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label
+                            for="number"
+                            [ngClass]="{'text-red-500': profileForm.get('number')?.invalid && profileForm.get('number')?.touched}"
+                            class="block font-medium mb-1"
+                        >
+                            Phone Number <span class="text-red-600">*</span>
+                        </label>
+                        <input
+                            id="number"
+                            formControlName="number"
+                            (blur)="checkUniqueNumber()"
+                            (input)="onNumberInput($event)"
+                            maxlength="16"
+                            placeholder="+63 9## ### ####"
+                            class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
+                            [ngClass]="{'border-red-500': profileForm.get('number')?.invalid && profileForm.get('number')?.touched}"
+                        />
+                        <p *ngIf="profileForm.get('number')?.invalid && profileForm.get('number')?.touched" class="text-red-500 text-sm mt-1">
+                            <span *ngIf="profileForm.get('number')?.errors?.['required']">Contact number is required.</span>
+                            <span *ngIf="profileForm.get('number')?.errors?.['pattern']">Use the format +63 9## ### ####.</span>
+                        </p>
+                        <div *ngIf="profileForm.get('number')?.errors?.['phoneTaken']" class="text-red-500 text-xs mt-1">
+                            This phone number is already registered.
+                        </div>
+                    </div>
+
+                    <div>
+                        <label
+                            for="email"
+                            [ngClass]="{'text-red-500': profileForm.get('email')?.invalid && profileForm.get('email')?.touched}"
+                            class="block font-medium mb-1"
+                        >
+                            Email <span class="text-red-600">*</span>
+                        </label>
+                        <input id="email" formControlName="email" placeholder="Email"
+                               class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
+                               [ngClass]="{'border-red-500': profileForm.get('email')?.invalid && profileForm.get('email')?.touched}" />
+                        <p *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" class="text-red-500 text-sm mt-1">
+                            <span *ngIf="profileForm.get('email')?.errors?.['required']">Email is required.</span>
+                            <span *ngIf="profileForm.get('email')?.errors?.['email']">Enter a valid email address.</span>
+                        </p>
                     </div>
                 </div>
 
-                <div>
-                    <label 
-                        for="email"
-                        [ngClass]="{'text-red-500': profileForm.get('email')?.invalid && profileForm.get('email')?.touched}"
-                        class="block font-medium mb-1"
-                    >
-                        Email
-                    </label>
-                    <input id="email" formControlName="email" placeholder="Email"
-                           class="bg-white border text-sm rounded-md focus:border-blue-500 block w-full p-2.5 text-gray-800 placeholder-gray-400"
-                           [ngClass]="{'border-red-500': profileForm.get('email')?.invalid && profileForm.get('email')?.touched}" />
+                <div class="bg-green-50 border-l-4 border-primary p-4 text-sm text-gray-800 mt-5">
+                    <strong>Note:</strong> All fields marked with <span class="text-red-600">*</span> are required.
                 </div>
 
-                <!-- Profile Submit -->
-                <button type="submit"
-                        class="mt-4 w-full bg-primary hover:bg-primary-dark text-white py-2 rounded-lg font-medium transition">
-                    Save Profile
-                </button>
+                <div class="flex flex-col sm:flex-row gap-3 mt-6">
+                    <button type="submit"
+                            [disabled]="isSaving"
+                            class="min-h-[44px] flex-1 sm:flex-none sm:px-8 bg-primary hover:bg-primary-dark text-white rounded-lg font-medium transition disabled:opacity-60">
+                        {{ isSaving ? 'Saving...' : 'Save Changes' }}
+                    </button>
+                    <button type="button"
+                            (click)="discardChanges()"
+                            [disabled]="isSaving || !profileForm.dirty"
+                            class="min-h-[44px] flex-1 sm:flex-none sm:px-6 border border-gray-300 text-gray-700 rounded-lg font-medium transition hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Discard Changes
+                    </button>
+                </div>
+                <p class="text-xs text-gray-500 mt-3" *ngIf="profileForm.dirty && !isSaving">
+                    You have unsaved changes.
+                </p>
+            </section>
 
-            </form>
-        </div>
-    </section>
+            <!-- Signature -->
+            <section class="col-span-12 lg:col-span-5 bg-white border rounded-xl p-5 sm:p-6 h-fit">
+                <h2 class="font-semibold text-gray-800">Signature</h2>
+                <p class="text-sm text-gray-500 mb-4">Used to sign the permit applications you submit.</p>
+
+                <!-- Preview of an existing signature -->
+                <div *ngIf="hasSignatureOnFile && !showSignatureEditor">
+                    <div class="border rounded-lg p-3 flex items-center justify-center bg-gray-50 h-40 md:h-48">
+                        <img [src]="profileForm.value.signature" alt="Your signature on file" class="max-h-full max-w-full object-contain">
+                    </div>
+                    <button type="button" (click)="editSignature()" class="mt-3 text-sm text-primary font-medium hover:underline">
+                        Update Signature
+                    </button>
+                </div>
+
+                <!-- Draw / upload editor -->
+                <ng-container *ngIf="!hasSignatureOnFile || showSignatureEditor">
+
+                    <p *ngIf="!hasSignatureOnFile" class="text-xs text-gray-500 mb-3">
+                        No signature on file yet. Draw or upload one below.
+                    </p>
+
+                    <div class="flex gap-2 mb-4 w-full">
+                        <button type="button" (click)="onSignatureModeChange('upload')"
+                                [ngClass]="signatureMode === 'upload' ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'"
+                                class="flex-1 min-h-[40px] px-4 rounded-lg focus:outline-none transition">
+                            Upload
+                        </button>
+                        <button type="button" (click)="onSignatureModeChange('draw')"
+                                [ngClass]="signatureMode === 'draw' ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'"
+                                class="flex-1 min-h-[40px] px-4 rounded-lg focus:outline-none transition">
+                            Draw
+                        </button>
+                    </div>
+
+                    <!-- Upload area -->
+                    <div *ngIf="signatureMode === 'upload'"
+                        [ngClass]="dragHover ? 'border-primary bg-primary/5' : 'border-gray-300'"
+                        class="mb-1 w-full bg-white border-2 border-dashed text-sm rounded-md relative h-40 md:h-48 flex justify-center items-center cursor-pointer select-none transition-colors"
+                        (drop)="onDrop($event)"
+                        (dragover)="onDragOver($event)"
+                        (dragleave)="dragHover = false">
+                        <input type="file" accept="image/*" (change)="onFileSelect($event)" aria-label="Upload a signature image"
+                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                        <span class="text-gray-400 text-center pointer-events-none px-4">
+                            Drag & drop or click to select a signature image
+                        </span>
+                    </div>
+
+                    <!-- Canvas drawing area -->
+                    <div *ngIf="signatureMode === 'draw'" class="mb-1 w-full">
+                        <label for="signature-canvas" class="block text-sm text-gray-500 mb-1">Draw your signature using your mouse or finger</label>
+                        <canvas #canvas id="signature-canvas"
+                                class="w-full h-40 md:h-48 bg-white border rounded-md select-none touch-none"
+                                (mousedown)="startDrawing($event)"
+                                (mousemove)="draw($event)"
+                                (mouseup)="stopDrawing()"
+                                (mouseleave)="stopDrawing()"
+                                (touchstart)="startDrawing($event)"
+                                (touchmove)="draw($event)"
+                                (touchend)="stopDrawing()">
+                        </canvas>
+                    </div>
+
+                    <div class="flex gap-2 w-full mt-3">
+                        <button type="button" (click)="clearCanvas()"
+                                class="flex-1 min-h-[40px] bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition">
+                            Clear
+                        </button>
+                        <button type="button" (click)="onSubmitSignature()"
+                                class="flex-1 min-h-[40px] bg-primary hover:bg-primary-dark text-white rounded-lg font-medium transition">
+                            Attach Signature
+                        </button>
+                    </div>
+
+                    <p class="text-xs text-gray-500 mt-3">
+                        Draw or upload above, then select <strong>Attach Signature</strong>. Your signature is only saved once you select <strong>Save Changes</strong>.
+                    </p>
+
+                    <button *ngIf="hasSignatureOnFile" type="button" (click)="cancelSignatureEdit()" class="text-sm text-gray-500 hover:underline mt-2">
+                        Cancel
+                    </button>
+                </ng-container>
+            </section>
+        </form>
+    </ng-container>
 </main>

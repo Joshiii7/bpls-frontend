@@ -25,9 +25,12 @@ export class ApplicantApplicationDetailsComponent implements OnInit {
   email: any;
   number: any;
   businessArea: any;
+  businessFloorArea: any;
   totalMale: any;
   totalFemale: any;
   totalEmployee: any;
+  no_van: any;
+  no_motor: any;
   gender: any;
   signature: string | null = null
  
@@ -64,11 +67,18 @@ export class ApplicantApplicationDetailsComponent implements OnInit {
 
   visible: boolean = false;
   businessID: any;
-  
+
   lat: any;
   lng: any;
 
   pictures: any[] = [];
+
+  status: string | null = null;
+  isDraft: boolean = false;
+  permitSchedule: string | null = null;
+  permitScheduleOther: string | null = null;
+  departments: { department: string; status: string; notes: string | null }[] = [];
+  history: { status: string; date: string; note: string }[] = [];
   
   constructor(
     private api: ApplicantService, 
@@ -100,6 +110,12 @@ export class ApplicantApplicationDetailsComponent implements OnInit {
           this.tracking_number = response.tracking_number;
           this.business_id_number = response.business_id_number;
           this.date_of_receipt = response.created_at;
+          this.status = response.application_status || response.status || null;
+          this.isDraft = !!response.is_draft;
+          this.permitSchedule = response.permit_schedule || null;
+          this.permitScheduleOther = response.permit_schedule_other || null;
+          this.departments = response.departments || [];
+          this.history = response.history || [];
 
           const transaction = response.transactions?.[0];
           const reg = transaction?.register_business;
@@ -131,9 +147,12 @@ export class ApplicantApplicationDetailsComponent implements OnInit {
             this.isNew = transaction.transaction_type === "new" ? 1 : 2;
 
             const baseUrl = this.api.baseUrl;
-            this.signature = reg.signature
-              ? `${baseUrl}/public/${reg.signature}`
-              : null;
+            // Demo documents/signatures are stored as data URIs, so they're used as-is;
+            // only a legacy relative path would still need the backend host prefixed.
+            const resolveAssetUrl = (path: string) =>
+              path.startsWith('data:') || path.startsWith('http') ? path : `${baseUrl}/public/${path}`;
+
+            this.signature = reg.signature ? resolveAssetUrl(reg.signature) : null;
 
             // Images
             this.pictures = [];
@@ -141,7 +160,7 @@ export class ApplicantApplicationDetailsComponent implements OnInit {
               reg.business_images.forEach((img: any) => {
                 this.pictures.push({
                   type: img.type,
-                  file_path: `${baseUrl}/public/${img.file_path}`
+                  file_path: resolveAssetUrl(img.file_path)
                 });
               });
             }
@@ -159,9 +178,12 @@ export class ApplicantApplicationDetailsComponent implements OnInit {
             };
 
             this.businessArea = op.business_area;
+            this.businessFloorArea = op.total_floor_area;
             this.totalMale = op.total_male;
             this.totalFemale = op.total_female;
             this.totalEmployee = op.no_employee;
+            this.no_van = op.no_van;
+            this.no_motor = op.no_motor;
             this.businessActivity = activityMap[op.business_activity.toLowerCase()] ?? 0;
 
             this.lat = op.latitude;
@@ -214,5 +236,22 @@ export class ApplicantApplicationDetailsComponent implements OnInit {
         });
       }
     });
+  }
+
+  getBadgeClass(status: string | null): string {
+    switch (status) {
+      case 'Approved':
+        return 'bg-green-100 text-green-800 border-green-300';
+      case 'Declined':
+        return 'bg-red-100 text-red-800 border-red-300';
+      case 'Draft':
+        return 'bg-gray-100 text-gray-700 border-gray-300';
+      default:
+        return 'bg-blue-100 text-blue-800 border-blue-300';
+    }
+  }
+
+  get declinedDepartments() {
+    return this.departments.filter(d => d.status === 'Declined');
   }
 }

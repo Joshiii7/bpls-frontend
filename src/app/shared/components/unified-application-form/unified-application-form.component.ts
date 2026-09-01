@@ -6,7 +6,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./unified-application-form.component.css']
 })
 export class UnifiedApplicationFormComponent {
-@Input('businessName') businessName: string = '';
+  @Input('businessName') businessName: string = '';
   @Input('franchiseName') franchiseName: string = '';
   @Input('dtiNumber') dtiNumber: string = '';
   @Input('registrationDate') registrationDate: string = '';
@@ -28,7 +28,7 @@ export class UnifiedApplicationFormComponent {
   @Input('date_of_receipt') date_of_receipt: string = '';
   @Input('tracking_number') tracking_number: string = '';
   @Input('business_id_number') business_id_number: string = '';
-  
+
   @Input('province') province: string = '';
   @Input('city') city: string = '';
   @Input('barangay') barangay: string = '';
@@ -50,7 +50,7 @@ export class UnifiedApplicationFormComponent {
   @Input('operational_lot_no') operational_lot_no: string = '';
   @Input('operational_block_no') operational_block_no: string = '';
   @Input('operational_subdivision') operational_subdivision: string = '';
-  
+
   @Input('businessActivity') businessActivity: number = 0;
   @Input('businessType') businessType: number = 0;
   @Input('gender') gender: number = 0;
@@ -58,5 +58,48 @@ export class UnifiedApplicationFormComponent {
   @Input('isNew') isNew: number = 0;
 
   @Input() image: string | null = null;
-  constructor() {  }
+
+  // Static option lists driving the template's *ngFor choice-badge groups below.
+  // These are purely presentational (the same fixed set of checkboxes the original
+  // markup hardcoded one-by-one), no data model or @Input changed by introducing them.
+  readonly businessTypeOptions: { id: number; label: string; showGender?: boolean }[] = [
+    { id: 1, label: 'Sole Proprietorship', showGender: true },
+    { id: 2, label: 'One Person Corporation', showGender: true },
+    { id: 3, label: 'Partnership' },
+    { id: 4, label: 'Corporation' },
+    { id: 5, label: 'Cooperative' },
+  ];
+
+  readonly applicationTypeOptions = [
+    { id: 1, label: 'New' },
+    { id: 2, label: 'Renewal' },
+    { id: 3, label: 'Additional' },
+  ];
+
+  readonly paymentScheduleOptions = [
+    { id: 1, label: 'Annually' },
+    { id: 2, label: 'Bi-annually' },
+    { id: 3, label: 'Quarterly' },
+  ];
+
+  readonly businessActivityOptions = [
+    { id: 1, label: 'Main Office' },
+    { id: 2, label: 'Branch Office' },
+    { id: 3, label: 'Admin Office Only' },
+    { id: 4, label: 'Warehouse' },
+    { id: 5, label: 'Others' },
+  ];
+
+  readonly lineOfBusinessColumns = [
+    'Line of Business',
+    'PSIC Code (if Available)',
+    'Capital (if new, for monitoring purposes only)',
+    "Last year's Essential Gross Sales/Receipts (if renewal)",
+    "Last year's Non-Essential Gross Sales/Receipts (if renewal)",
+  ];
+
+  // Five blank rows, matching the original table exactly (no data was ever bound here).
+  readonly lineOfBusinessRows = [0, 1, 2, 3, 4];
+
+  constructor() { }
 }

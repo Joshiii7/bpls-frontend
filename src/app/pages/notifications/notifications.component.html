@@ -1,1 +1,51 @@
-<p>notifications works!</p>
+<main id="main" tabindex="-1" class="py-6 md:px-8 px-3 bg-gray-50 min-h-screen">
+  <div class="max-w-3xl mx-auto">
+
+    <section class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="font-bold text-xl">Notifications</h2>
+            <p class="text-sm text-slate-500" *ngIf="!isLoading">
+                {{ unreadCount > 0 ? (unreadCount + ' unread') : 'All caught up' }}
+            </p>
+        </div>
+        <button
+            (click)="markAllAsRead()"
+            [disabled]="isLoading || notifications.length === 0"
+            type="button"
+            class="text-sm text-primary font-medium hover:underline disabled:opacity-40 disabled:hover:no-underline"
+        >
+            Mark all as read
+        </button>
+    </section>
+
+    <section class="bg-white rounded-lg border divide-y divide-slate-100">
+
+        <div *ngIf="isLoading" class="p-6 text-center text-sm text-slate-500">
+            Loading notifications...
+        </div>
+
+        <div *ngIf="!isLoading && notifications.length === 0" class="p-10 text-center text-sm text-slate-500">
+            <i class="ti ti-bell-off text-2xl text-slate-300 mb-2 block"></i>
+            No notifications yet.
+        </div>
+
+        <div
+            *ngFor="let notif of notifications"
+            class="p-4 flex gap-3"
+            [ngClass]="{'bg-green-50/40': !notif.is_read}"
+        >
+            <span
+                class="mt-1.5 w-2 h-2 rounded-full flex-shrink-0"
+                [ngClass]="notif.is_read ? 'bg-transparent' : 'bg-primary'"
+            ></span>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-slate-800">{{ notif.title }}</p>
+                <p class="text-sm text-slate-600 mt-0.5">{{ notif.message }}</p>
+                <p class="text-xs text-slate-400 mt-1">{{ notif.created_at | date:'medium' }}</p>
+            </div>
+        </div>
+
+    </section>
+
+  </div>
+</main>

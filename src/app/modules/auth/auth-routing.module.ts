@@ -1,18 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LoginComponent } from './pages/login/login.component';
 import { PublicParentComponent } from '../landing/components/public-parent/public-parent.component';
 import { RegisterComponent } from './pages/register/register.component';
 
+// Login now lives in the homepage hero (see LoginFormComponent in the landing
+// module) instead of its own page, so there's no '/auth/login' route anymore.
 const routes: Routes = [
   {
     path: '',
     component: PublicParentComponent,
     children: [
-      {
-        path: 'login',
-        component: LoginComponent
-      },
       {
         path: 'register',
         component: RegisterComponent

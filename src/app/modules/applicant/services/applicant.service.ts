@@ -11,14 +11,6 @@ export class ApplicantService extends ApiService {
     return this.http.get<any>(`${this.Root_URL}/applicants-application`, { headers: this.getHeaders() });
   }
 
-  getUserProfile(): Observable<any> {
-    return this.http.get<any>(`${this.Root_URL}/applicants-profile`, { headers: this.getHeaders() });
-  }
-
-  patchUserProfile(data: any, id: any): Observable<any> {
-    return this.http.patch<any>(`${this.Root_URL}/applicants-profile/${id}`, data, { headers: this.getHeaders() });
-  }
-
   getApplicantApplicationDetails(uuid: any): Observable<any> {
     return this.http.get<any>(`${this.Root_URL}/applicants-application/${uuid}`, { headers: this.getHeaders() });
   }
@@ -27,8 +19,16 @@ export class ApplicantService extends ApiService {
     return this.http.post<any>(`${this.Root_URL}/applicants-application`, payload, { headers: this.getHeaders() });
   }
 
+  updateApplicantApplication(uuid: string, payload: any): Observable<any> {
+    return this.http.patch<any>(`${this.Root_URL}/applicants-application/${uuid}`, payload, { headers: this.getHeaders() });
+  }
+
   getSystemNotification(): Observable<any> {
     return this.http.get<any>(`${this.Root_URL}/system-notifications`, { headers: this.getHeaders() });
+  }
+
+  markAllNotificationsRead(): Observable<any> {
+    return this.http.patch<any>(`${this.Root_URL}/system-notifications/read-all`, {}, { headers: this.getHeaders() });
   }
   
   checkPhoneNumber(number: string): Observable<any> {
