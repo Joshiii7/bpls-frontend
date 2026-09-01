@@ -1,0 +1,122 @@
+/* Reusable field/section/badge patterns for the application document view.
+   Centralizing these here keeps the template free of ~40 repeated utility strings. */
+
+:host {
+  display: block;
+}
+
+.uaf-section {
+  @apply px-5 sm:px-8 py-6 border-b border-gray-200;
+}
+
+.uaf-section--footer {
+  @apply border-b-0;
+}
+
+.uaf-heading {
+  @apply text-sm sm:text-base font-bold uppercase tracking-wide text-primary mb-4 pb-2 border-b-2 border-primary/30 inline-block;
+}
+
+.uaf-grid {
+  @apply grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-4;
+}
+
+.uaf-grid--2 {
+  @apply grid-cols-1 sm:grid-cols-2;
+}
+
+.uaf-grid--3 {
+  @apply grid-cols-1 sm:grid-cols-3;
+}
+
+.uaf-grid--4 {
+  @apply grid-cols-2 sm:grid-cols-4;
+}
+
+.uaf-grid--5 {
+  @apply grid-cols-2 sm:grid-cols-3 lg:grid-cols-5;
+}
+
+.uaf-field {
+  @apply flex flex-col gap-0.5 min-w-0;
+}
+
+.uaf-label {
+  @apply block text-[11px] font-semibold uppercase tracking-wide text-gray-500 mb-1;
+}
+
+.uaf-value {
+  @apply text-sm font-semibold text-gray-900 break-words min-h-[1.25rem];
+}
+
+.uaf-panel {
+  @apply bg-gray-50 border border-gray-200 rounded-lg p-4;
+}
+
+.uaf-badge {
+  @apply inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-gray-500 whitespace-nowrap;
+}
+
+.uaf-badge--sub {
+  @apply px-2.5 py-0.5;
+}
+
+.uaf-badge--on {
+  @apply bg-primary border-primary text-white font-semibold;
+}
+
+.uaf-table-scroll {
+  @apply w-full overflow-x-auto rounded-lg border border-gray-200;
+}
+
+.uaf-table {
+  @apply w-full min-w-[720px] border-collapse text-xs text-gray-700;
+}
+
+.uaf-table th {
+  @apply bg-gray-100 text-gray-600 font-semibold text-left px-3 py-2 border-b border-gray-200 align-bottom;
+}
+
+.uaf-table td {
+  @apply px-3 py-3 border-b border-gray-100;
+}
+
+.uaf-table tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+/* ============ Print ============ */
+@page {
+  size: A4;
+  margin: 14mm;
+}
+
+@media print {
+  :host {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .uaf {
+    max-width: none;
+  }
+
+  /* Protect individual fields/panels/table from splitting across a page break,
+     without pinning entire (tall) sections together and creating blank gaps. */
+  .uaf-field,
+  .uaf-panel,
+  .uaf-table-scroll,
+  .uaf-heading {
+    break-inside: avoid;
+  }
+
+  .uaf-badge--on {
+    background-color: #009800 !important;
+    color: #fff !important;
+    border-color: #009800 !important;
+  }
+
+  .uaf-table {
+    min-width: 0;
+  }
+}

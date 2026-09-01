@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-application-review',
@@ -7,11 +7,13 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 })
 export class ApplicationReviewComponent implements OnChanges {
   @Input() applicationData: any;
+  @Output() editStep = new EventEmitter<string>();
 
   is_new: number = 0;
   payment_type: number = 0;
 
   unifiedData: any = {};
+  documentSummary: { title: string; previewUrl: string | null }[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['applicationData']) {
@@ -116,6 +118,11 @@ export class ApplicationReviewComponent implements OnChanges {
         image: businessOperation.signatureImage || ''
       };
 
+      const documents = this.applicationData.documents || {};
+      this.documentSummary = Object.values(documents).map((doc: any) => ({
+        title: doc.title,
+        previewUrl: doc.previewUrl || null,
+      }));
     }
   }
 }

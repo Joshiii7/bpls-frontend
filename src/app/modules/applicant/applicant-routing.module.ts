@@ -6,6 +6,7 @@ import { ApplicantDashboardComponent } from './pages/applicant-dashboard/applica
 import { ApplyPermitComponent } from './pages/apply-permit/apply-permit.component';
 import { ApplicantProfileComponent } from './pages/applicant-profile/applicant-profile.component';
 import { ApplicantApplicationDetailsComponent } from './pages/applicant-application-details/applicant-application-details.component';
+import { NotificationsComponent } from 'src/app/pages/notifications/notifications.component';
 
 const routes: Routes = [
   {
@@ -13,7 +14,9 @@ const routes: Routes = [
     component: ApplicantsParentComponent,
     canActivate: [AuthGuard],
     data: {
-      allowedRoles: ['business_owner'],
+      // Includes 'admin' so the single demo login (admin/admin) can walk through both the
+      // LGU staff and business-owner experiences without a second demo account.
+      allowedRoles: ['business_owner', 'admin'],
     },
     children: [
       {
@@ -27,6 +30,10 @@ const routes: Routes = [
       {
         path: 'profile',
         component: ApplicantProfileComponent
+      },
+      {
+        path: 'notifications',
+        component: NotificationsComponent
       },
       {
         path: ':uuid',

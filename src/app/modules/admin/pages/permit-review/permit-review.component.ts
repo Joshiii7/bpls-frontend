@@ -1,190 +1,165 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../services/admin.service';
-import { Router } from '@angular/router';
-import { DatePipe } from '@angular/common';
 
+type StatusFilter = 'All' | 'Pending' | 'Approved' | 'Declined';
+
+// Backs every "Applications" list in the admin area, All, Pending, Approved,
+// and Declined are the same table and the same component, filtered by the
+// route's `data.status` (see admin-routing.module.ts). Every status reads from
+// one call to AdminService.getAllApplications(), which is itself just the
+// shared localStorage-backed application records split by status, the same
+// records the applicant side and the demo "database" work from, so a status
+// change made from the detail page shows up here on the next load.
 @Component({
   selector: 'app-permit-review',
   templateUrl: './permit-review.component.html',
   styleUrls: ['./permit-review.component.css']
 })
 export class PermitReviewComponent {
-searchText: string = '';
-  isLoading: boolean = true; 
+  status: StatusFilter = 'All';
+  pageTitle = 'All Applications';
+  pageDescription = 'Every business permit application submitted through the system.';
 
-  confirmationMessage: string | null = null;
-  actionToConfirm: string | null = null;
-  businessIdToActOn: number | null = null;
+  isLoading = true;
+  searchText = '';
+  selectedApplicationType = '';
+  selectedSchedule = '';
 
-  businesses: any[] = [];
-  allBusinesses: any[] = [];
-  filteredBusinesses: any[] = [];
+  allApplications: any[] = [];
+  filteredApplications: any[] = [];
+  paginatedApplications: any[] = [];
 
-  currentPage: number = 1;
-  perPage: number = 5;
-  total: number = 0;
-  totalPages: number = 0;
+  currentPage = 1;
+  perPage = 10;
+  totalEntries = 0;
+  totalPages = 0;
+  visiblePages: number[] = [];
 
-  start: number = 1;
-  end: number = 5;
-
-  selectedBusinessType: string = '';
-
-  currentTab: number = 1;
-  Math = Math;
-
-  businessTypes = [
-    { id: 1, business_name: "Sole Proprietorship" },
-    { id: 2, business_name: "One Person Corporation" },
-    { id: 3, business_name: "Partnership" },
-    { id: 4, business_name: "Corporation" },
-    { id: 5, business_name: "Cooperative" }
-  ];
+  private readonly descriptions: Record<StatusFilter, string> = {
+    All: 'Every business permit application submitted through the system.',
+    Pending: 'Applications currently awaiting department review.',
+    Approved: 'Applications approved by every reviewing department.',
+    Declined: 'Applications declined by at least one reviewing department.',
+  };
 
   constructor(
     private api: AdminService,
     private router: Router,
-    private datePipe: DatePipe,
-  ) {  }
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit(): void {
-    this.initAllBusiness();
+    this.status = (this.route.snapshot.data['status'] as StatusFilter) || 'All';
+    this.pageTitle = this.route.snapshot.data['breadcrumb'] || 'Applications';
+    this.pageDescription = this.descriptions[this.status];
+    document.title = `BPLS Admin | ${this.pageTitle}`;
+    this.loadApplications();
   }
 
-  initAllBusiness() {
+  loadApplications(): void {
     this.isLoading = true;
-    this.api.getAdminPermits().subscribe({
+    this.api.getAllApplications().subscribe({
       next: (response: any) => {
         this.isLoading = false;
-        this.allBusinesses = response.businessess ?? response.data ?? [];
-        this.filteredBusinesses = [...this.allBusinesses];
-        this.recalcPagination();
+        const byStatus: Record<StatusFilter, any[]> = {
+          All: response.data,
+          Pending: response.businessess,
+          Approved: response.approvedBusiness,
+          Declined: response.declinedBusiness,
+        };
+        this.allApplications = byStatus[this.status] || [];
+        this.filterApplications();
       },
-      error: (error: any) => {
-        console.log('error fetching data:', error);
+      error: (err) => {
         this.isLoading = false;
-        this.allBusinesses = [];
-        this.filteredBusinesses = [];
-        this.recalcPagination();
+        console.error('Error fetching applications:', err);
+        this.allApplications = [];
+        this.filterApplications();
       }
     });
   }
 
-  filterBusinesses(event?: Event | null): void {
-    if (event) {
-      const input = event.target as HTMLInputElement;
-      this.searchText = input?.value ?? '';
-    }
-
-    const searchValue = this.searchText?.toLowerCase().trim() ?? '';
-
-    this.filteredBusinesses = this.allBusinesses.filter(business => {
-      const name = (business.business_name ?? '').toString().toLowerCase();
-      const owner = (business.owner ?? '').toString().toLowerCase();
-      const tracking = (business.tracking_number ?? business.tracking_no ?? '').toString().toLowerCase();
-
-      const matchesSearch = !searchValue || name.includes(searchValue) || owner.includes(searchValue) || tracking.includes(searchValue);
-
-      let matchesTab = true;
-      if (this.currentTab === 2) {
-        matchesTab = business.application_type === 'New';
-      } else if (this.currentTab === 3) {
-        matchesTab = business.application_type === 'Renewal';
-      }
-
-      let matchesBusinessType = true;
-      if (this.selectedBusinessType && this.selectedBusinessType !== '') {
-        matchesBusinessType = (business.business_type_id ?? business.businessTypeId ?? '').toString() === this.selectedBusinessType.toString();
-      }
-
-      return matchesSearch && matchesTab && matchesBusinessType;
+  filterApplications(): void {
+    const query = this.searchText.toLowerCase().trim();
+    this.filteredApplications = this.allApplications.filter(app => {
+      const matchesSearch = !query
+        || app.business_name?.toLowerCase().includes(query)
+        || app.owner?.toLowerCase().includes(query)
+        || app.tracking_number?.toLowerCase().includes(query);
+      const matchesType = !this.selectedApplicationType || app.application_type === this.selectedApplicationType;
+      const matchesSchedule = !this.selectedSchedule || app.permit_schedule === this.selectedSchedule;
+      return matchesSearch && matchesType && matchesSchedule;
     });
-
     this.currentPage = 1;
-    this.recalcPagination();
+    this.updatePagination();
   }
 
-  tabIndex(index: number) {
-    this.currentTab = index;
-    this.filterBusinesses();
+  updatePagination(): void {
+    this.totalEntries = this.filteredApplications.length;
+    this.totalPages = Math.ceil(this.totalEntries / this.perPage) || 1;
+    this.paginatedApplications = this.filteredApplications.slice(
+      (this.currentPage - 1) * this.perPage,
+      this.currentPage * this.perPage
+    );
+    this.updateVisiblePages();
   }
 
-  onInputChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.searchText = input.value;
-    this.filterBusinesses();
+  updateVisiblePages(): void {
+    const startPage = Math.max(1, this.currentPage - 2);
+    const endPage = Math.min(this.totalPages, startPage + 4);
+    this.visiblePages = Array.from({ length: Math.max(endPage - startPage + 1, 0) }, (_, i) => startPage + i);
   }
 
-  // ---------- Pagination helpers ----------
-  detectRowValue(e: Event) {
-    const selectElement = e.target as HTMLSelectElement;
-    const selectedValue = +selectElement.value;
-    this.perPage = selectedValue || 5;
-    this.currentPage = 1;
-    this.recalcPagination();
+  getShowingRange(): string {
+    if (this.totalEntries === 0) return '0';
+    const start = (this.currentPage - 1) * this.perPage + 1;
+    const end = Math.min(this.currentPage * this.perPage, this.totalEntries);
+    return `${start}-${end}`;
   }
 
-  changePage(page: number): void {
-    const pages = Math.ceil(this.total / this.perPage) || 1;
-    if (page < 1 || page > pages) return;
+  goToPage(page: number): void {
     this.currentPage = page;
-    this.updateRange();
+    this.updatePagination();
   }
 
-  recalcPagination(): void {
-    this.total = this.filteredBusinesses.length;
-    this.totalPages = Math.ceil(this.total / this.perPage) || 1;
-    
-    if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
-    if (this.currentPage < 1) this.currentPage = 1;
-    this.updateRange();
-  }
-
-  updateRange(): void {
-    if (this.total === 0) {
-      this.start = 0;
-      this.end = 0;
-      return;
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePagination();
     }
-    this.start = (this.currentPage - 1) * this.perPage + 1;
-    this.end = Math.min(this.start + this.perPage - 1, this.total);
   }
 
-  getVisiblePages(): number[] {
-    const pages: number[] = [];
-    const maxPagesToShow = 5;
-    const totalPages = Math.ceil(this.total / this.perPage) || 1;
-
-    let startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-
-    if (endPage - startPage + 1 < maxPagesToShow) {
-      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePagination();
     }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-
-    return pages;
   }
 
-  // ---------- Actions (unchanged) ----------
-
-  viewButton(uuid: any) {
-    this.router.navigate(['admin/review-permit', uuid]);
+  viewApplication(uuid: string): void {
+    this.router.navigate(['/admin/applications', uuid]);
   }
 
-  getBadgeClass(status: string): string {
+  getStatusBadgeClass(status: string): string {
     switch (status) {
-      case 'New':
-        return 'bg-green-200 text-green-800';
-      case 'Renewal':
-        return 'bg-blue-200 text-blue-800';
-      case 'Additional':
-        return 'bg-yellow-200 text-yellow-800';
-      default:
-        return 'bg-gray-200 text-gray-800';
+      case 'Approved': return 'bg-green-100 text-green-800';
+      case 'Declined': return 'bg-red-100 text-red-800';
+      case 'Pending': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-700';
     }
+  }
+
+  getStatusIcon(status: string): string {
+    switch (status) {
+      case 'Approved': return 'ti ti-circle-check';
+      case 'Declined': return 'ti ti-circle-x';
+      case 'Pending': return 'ti ti-hourglass';
+      default: return 'ti ti-circle';
+    }
+  }
+
+  getTypeBadgeClass(type: string): string {
+    return type === 'Renewal' ? 'bg-purple-100 text-purple-800' : 'bg-teal-100 text-teal-800';
   }
 }

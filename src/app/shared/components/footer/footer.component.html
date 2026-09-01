@@ -1,34 +1,86 @@
 <footer class="bg-gray-900 text-gray-300 mt-10">
-    <div class="container w-[90%] max-w-[80rem] mx-auto py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
-        
+    <!-- Brand accent bar -->
+    <div class="h-1 bg-primary"></div>
+
+    <div class="w-[90%] max-w-[80rem] mx-auto py-12 md:py-14 grid grid-cols-1 md:grid-cols-3 gap-10">
+
         <div>
-            <h3 class="font-bold text-white text-lg mb-3">Business Permit & Licensing System</h3>
-            <p class="text-sm">
-                Managing business permits made easier. Empowering local businesses through efficient digital services.
+            <h3 class="font-bold text-white text-lg mb-3">Business Permit &amp; Licensing System</h3>
+            <p class="text-sm text-gray-400">
+                Apply for and manage your business permits online, all in one place.
             </p>
+
+            <div class="mt-5">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-3">Follow Us</p>
+                <div class="flex items-center gap-3">
+                    <a
+                        href="#"
+                        class="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center text-gray-300 hover:bg-primary hover:border-primary hover:text-white transition"
+                        aria-label="Facebook"
+                    >
+                        <i class="ti ti-brand-facebook" aria-hidden="true"></i>
+                    </a>
+                    <a
+                        href="#"
+                        class="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center text-gray-300 hover:bg-primary hover:border-primary hover:text-white transition"
+                        aria-label="Instagram"
+                    >
+                        <i class="ti ti-brand-instagram" aria-hidden="true"></i>
+                    </a>
+                    <a
+                        href="#"
+                        class="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center text-gray-300 hover:bg-primary hover:border-primary hover:text-white transition"
+                        aria-label="YouTube"
+                    >
+                        <i class="ti ti-brand-youtube" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
         </div>
 
         <div>
             <h3 class="font-semibold text-white mb-3">Quick Links</h3>
             <ul class="space-y-2 text-sm">
-                <li><a routerLink="/home" class="hover:text-white transition">Home</a></li>
-                <li><a routerLink="/about" class="hover:text-white transition">About</a></li>
-                <li><a routerLink="/apply" class="hover:text-white transition">Apply for Permit</a></li>
+                <li><a routerLink="/" class="hover:text-white transition">Home</a></li>
+                <li><a routerLink="/services" class="hover:text-white transition">Services</a></li>
+                <li><a routerLink="/requirements" class="hover:text-white transition">Requirements</a></li>
+                <li><a routerLink="/schedules" class="hover:text-white transition">Schedules</a></li>
+                <li><a routerLink="/permit-tracking" class="hover:text-white transition">Track a Permit</a></li>
                 <li><a routerLink="/contact" class="hover:text-white transition">Contact</a></li>
+                <li><a routerLink="/auth/register" class="hover:text-white transition">Apply for Permit</a></li>
             </ul>
         </div>
 
         <div>
             <h3 class="font-semibold text-white mb-3">Contact Information</h3>
-            <p class="text-sm"><strong>LGU Business Permits Office</strong></p>
-            <p class="text-sm">Phone: (123) 456-7890</p>
-            <p class="text-sm">Email: bpls@lgu.gov.ph</p>
-            <p class="text-sm">Mon-Fri, 8:00 AM to 5:00 PM</p>
+            <ul class="space-y-2 text-sm">
+                <li class="flex items-center gap-2">
+                    <i class="ti ti-phone text-primary text-xs" aria-hidden="true"></i>
+                    <a href="tel:+11234567890" class="hover:text-white transition">(123) 456-7890</a>
+                </li>
+                <li class="flex items-center gap-2">
+                    <i class="ti ti-mail text-primary text-xs" aria-hidden="true"></i>
+                    <a href="mailto:bpls@lgu.gov.ph" class="hover:text-white transition">bpls&#64;lgu.gov.ph</a>
+                </li>
+                <li class="flex items-center gap-2">
+                    <i class="ti ti-clock text-primary text-xs" aria-hidden="true"></i>
+                    <span>Mon&ndash;Fri, 8:00 AM to 5:00 PM</span>
+                </li>
+            </ul>
         </div>
 
     </div>
 
-    <div class="bg-gray-800 text-center py-3 text-xs text-gray-400 border-t border-gray-700">
-        &copy; {{ currentYear }} City Government. All Rights Reserved.
+    <div class="border-t border-white/10">
+        <div class="w-[90%] max-w-[80rem] mx-auto py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
+            <p>&copy; {{ currentYear }} City Government. All Rights Reserved.</p>
+            <nav aria-label="Legal" class="flex items-center gap-4">
+                <a routerLink="/accessibility" class="hover:text-white transition">Accessibility</a>
+                <span class="text-gray-700" aria-hidden="true">|</span>
+                <a routerLink="/privacy-policy" class="hover:text-white transition">Privacy Policy</a>
+                <span class="text-gray-700" aria-hidden="true">|</span>
+                <a routerLink="/admin/login" class="hover:text-white transition">Admin Login</a>
+            </nav>
+        </div>
     </div>
 </footer>

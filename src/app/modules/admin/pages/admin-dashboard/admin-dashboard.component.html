@@ -1,236 +1,227 @@
-<main class="py-6 md:px-8 px-3 bg-gray-50 min-h-screen">
+<main class="py-6 md:px-8 px-4 bg-gray-50 min-h-screen">
+  <div class="max-w-screen-2xl mx-auto">
 
-    <h2 class="text-2xl font-bold uppercase">Admin Report Dashboard</h2>
+    <div class="mb-5">
+      <h1 class="text-xl font-bold text-gray-800">Dashboard</h1>
+      <p class="text-sm text-gray-500 mt-0.5">An overview of business permit applications.</p>
+    </div>
 
-    <!-- Information Cards -->
-    <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 my-6">
-        
-        <!-- For Approval Permits -->
-        <div
-            (click)="navigate(1)"
-            class="flex flex-col bg-white shadow-md hover:shadow-lg rounded-lg p-5 cursor-pointer transition-transform duration-300 hover:scale-[1.03]"
+    <div *ngIf="isLoading" class="text-center py-16 text-sm text-slate-600" role="status">
+      Loading dashboard...
+    </div>
+
+    <!-- Empty state: no applications exist yet anywhere in the system -->
+    <div *ngIf="!isLoading && reports && !hasApplicationData" class="text-center py-16 bg-white border rounded-lg">
+      <i class="ti ti-chart-bar text-4xl text-gray-300 mb-3" aria-hidden="true"></i>
+      <h2 class="text-lg font-semibold text-gray-800">No application data available yet</h2>
+      <p class="text-sm text-gray-500 mt-1 max-w-sm mx-auto">
+        Numbers and charts will show up here once applications start coming in.
+      </p>
+    </div>
+
+    <ng-container *ngIf="!isLoading && reports && hasApplicationData">
+
+      <!-- KPI Cards -->
+      <section class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+
+        <button
+            type="button"
+            (click)="goToApplications('All')"
+            class="text-left flex flex-col bg-white border rounded-lg p-5 hover:shadow-md transition-shadow"
         >
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-sm font-semibold text-gray-900">
-                        For Approval Permits
-                    </p>
-                    <h4 class="text-xl font-bold text-gray-800">
-                        {{ reports?.totalPending }}
-                        <span
-                            [ngClass]="{
-                                'text-red-500': reports?.totalPendingPercent >= 50,
-                                'text-lime-500': reports?.totalPendingPercent < 50
-                            }"
-                            class="ml-2 text-sm font-semibold"
-                        >
-                            {{ reports?.totalPendingPercent }}%
-                        </span>
-                    </h4>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Total Applications</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1">{{ reports.totalPermits }}</p>
                 </div>
-                <div
-                    class="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-400 text-white"
-                >
-                    <i class="fa-solid fa-file text-lg"></i>
+                <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+                    <i class="ti ti-briefcase" aria-hidden="true"></i>
+                </div>
+            </div>
+        </button>
+
+        <button
+            type="button"
+            (click)="goToApplications('Pending')"
+            class="text-left flex flex-col bg-white border rounded-lg p-5 hover:shadow-md transition-shadow"
+        >
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Pending Review</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1">
+                        {{ reports.totalPending }}
+                        <span class="ml-1 text-xs font-semibold text-blue-600">{{ reports.totalPendingPercent }}%</span>
+                    </p>
+                </div>
+                <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-100 text-blue-700">
+                    <i class="ti ti-hourglass" aria-hidden="true"></i>
+                </div>
+            </div>
+        </button>
+
+        <button
+            type="button"
+            (click)="goToApplications('Approved')"
+            class="text-left flex flex-col bg-white border rounded-lg p-5 hover:shadow-md transition-shadow"
+        >
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Approved</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1">
+                        {{ reports.totalApproved }}
+                        <span class="ml-1 text-xs font-semibold text-primary">{{ reports.totalApprovedPercent }}%</span>
+                    </p>
+                </div>
+                <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <i class="ti ti-circle-check" aria-hidden="true"></i>
+                </div>
+            </div>
+        </button>
+
+        <button
+            type="button"
+            (click)="goToApplications('Declined')"
+            class="text-left flex flex-col bg-white border rounded-lg p-5 hover:shadow-md transition-shadow"
+        >
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Declined</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1">
+                        {{ reports.totalDeclined }}
+                        <span class="ml-1 text-xs font-semibold text-red-600">{{ reports.totalDeclinedPercent }}%</span>
+                    </p>
+                </div>
+                <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-red-100 text-red-600">
+                    <i class="ti ti-circle-x" aria-hidden="true"></i>
+                </div>
+            </div>
+        </button>
+
+        <div class="flex flex-col bg-white border rounded-lg p-5 col-span-2 lg:col-span-1">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Submitted This Week</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1">{{ reports.submittedThisWeek }}</p>
+                </div>
+                <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-amber-100 text-amber-600">
+                    <i class="ti ti-trending-up" aria-hidden="true"></i>
                 </div>
             </div>
         </div>
+      </section>
 
-        <!-- Approved Permits -->
-        <div
-            (click)="navigate(2)"
-            class="flex flex-col bg-white shadow-md hover:shadow-lg rounded-lg p-5 cursor-pointer transition-transform duration-300 hover:scale-[1.03]"
-        >
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-sm font-semibold text-gray-900">
-                        Approved Permits
-                    </p>
-                    <h4 class="text-xl font-bold text-gray-800">
-                        {{ reports?.totalApproved }}
-                        <span
-                            [ngClass]="{
-                                'text-lime-500': reports?.totalApprovedPercent >= 50,
-                                'text-red-500': reports?.totalApprovedPercent < 50
-                            }"
-                            class="ml-2 text-sm font-semibold"
-                        >
-                            {{ reports?.totalApprovedPercent }}%
-                        </span>
-                    </h4>
-                </div>
-                <div
-                    class="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-400 text-white"
-                >
-                    <i class="fa-solid fa-check text-lg"></i>
-                </div>
+      <!-- Charts -->
+      <section class="grid grid-cols-1 xl:grid-cols-12 gap-4">
+
+        <div class="xl:col-span-7 bg-white p-5 rounded-lg border min-w-0">
+            <h2 class="font-semibold text-gray-800">Monthly Application Trend</h2>
+            <p class="text-xs text-gray-500 mb-3">Submissions vs. approvals and declines, by month.</p>
+            <div class="relative h-72">
+                <canvas id="monthlyLineChart"></canvas>
             </div>
         </div>
 
-        <!-- Declined Permits -->
-        <div
-            (click)="navigate(3)"
-            class="flex flex-col bg-white shadow-md hover:shadow-lg rounded-lg p-5 cursor-pointer transition-transform duration-300 hover:scale-[1.03]"
-        >
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-sm font-semibold text-gray-900">
-                        Declined Permits
-                    </p>
-                    <h4 class="text-xl font-bold text-gray-800">
-                        {{ reports?.totalDeclined }}
-                        <span
-                            [ngClass]="{
-                                'text-red-500': reports?.totalDeclinedPercent >= 50,
-                                'text-lime-500': reports?.totalDeclinedPercent < 50
-                            }"
-                            class="ml-2 text-sm font-semibold"
-                        >
-                            {{ reports?.totalDeclinedPercent }}%
-                        </span>
-                    </h4>
-                </div>
-                <div
-                    class="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-400 text-white"
-                >
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </div>
+        <div class="xl:col-span-5 bg-white p-5 rounded-lg border min-w-0">
+            <h2 class="font-semibold text-gray-800">Business Type Distribution</h2>
+            <p class="text-xs text-gray-500 mb-3">Applications by ownership structure.</p>
+            <div class="relative h-72">
+                <canvas id="businessDoughnutChart"></canvas>
             </div>
         </div>
+      </section>
 
-        <!-- Total Permits -->
-        <div
-            (click)="navigate(4)"
-            class="flex flex-col bg-white shadow-md hover:shadow-lg rounded-lg p-5 cursor-pointer transition-transform duration-300 hover:scale-[1.03]"
-        >
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-sm font-semibold text-gray-900">
-                        Total Permits
-                    </p>
-                    <h4 class="text-xl font-bold text-gray-800">
-                        {{ reports?.totalPermits }}
-                    </h4>
-                </div>
-                <div
-                    class="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-400 text-white"
-                >
-                    <i class="fa-solid fa-business-time text-lg"></i>
-                </div>
-            </div>
+      <!-- New vs Renewal split -->
+      <section class="mt-4 bg-white p-5 rounded-lg border">
+        <h2 class="font-semibold text-gray-800">New vs. Renewal Applications</h2>
+        <p class="text-xs text-gray-500 mb-3">Which type of application is more common right now.</p>
+
+        <div class="flex h-3 rounded-full overflow-hidden bg-gray-100" role="img" aria-label="New vs renewal application split">
+            <div class="bg-teal-500" [style.width.%]="reports.newPercent"></div>
+            <div class="bg-purple-500" [style.width.%]="reports.renewalPercent"></div>
         </div>
 
-    </section>
+        <div class="flex flex-wrap gap-x-6 gap-y-2 mt-3 text-sm">
+            <span class="flex items-center gap-2 text-gray-700">
+                <span class="w-2.5 h-2.5 rounded-full bg-teal-500" aria-hidden="true"></span>
+                New: <span class="font-semibold">{{ reports.newCount }}</span> ({{ reports.newPercent }}%)
+            </span>
+            <span class="flex items-center gap-2 text-gray-700">
+                <span class="w-2.5 h-2.5 rounded-full bg-purple-500" aria-hidden="true"></span>
+                Renewal: <span class="font-semibold">{{ reports.renewalCount }}</span> ({{ reports.renewalPercent }}%)
+            </span>
+        </div>
+      </section>
 
-    <!-- Charts -->
-    <section class="grid grid-cols-12 gap-4 mt-6">
+      <!-- Permit Aging Table -->
+      <section class="mt-4 bg-white p-5 rounded-lg border">
+        <h2 class="font-semibold text-gray-800">Pending Applications Aging</h2>
+        <p class="text-xs text-gray-500 mb-3">How long applications currently under review have been waiting.</p>
 
-        <!-- Line Chart: Monthly Permit Trends -->
-        <div class="col-span-7 bg-white p-5 rounded-lg shadow-md">
-            <h3 class="text-lg font-semibold mb-4">Monthly Permit Trends</h3>
-            <canvas id="monthlyLineChart"></canvas>
+        <div *ngIf="permitAgingFull.length === 0" class="text-center py-8 text-sm text-gray-500">
+            Nothing is currently pending review.
         </div>
 
-        <!-- Doughnut Chart -->
-        <div class="col-span-5 bg-white p-5 rounded-lg shadow-md">
-            <h3 class="text-lg font-semibold mb-4">Business Activity Distribution</h3>
-            <canvas id="businessDoughnutChart"></canvas>
-        </div>
-
-    </section>
-
-    <!-- Permit Aging Table -->
-    <section class="mt-6 bg-white p-5 rounded-lg shadow-md">
-        <h3 class="text-lg font-semibold mb-4">For Approval Permit Aging</h3>
-
-        <!-- Applications Table -->
-        <div class="overflow-scroll">
+        <div *ngIf="permitAgingFull.length > 0" class="overflow-x-auto">
             <table class="min-w-full">
-                <thead class="bg-gray-300">
+                <thead class="bg-gray-100">
                     <tr>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-green-300 text-left">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Tracking #
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-green-300 text-left">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Business Name
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-green-300 text-left">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Business Owner
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-green-300 text-left">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Days Pending
-                            </p>
-                        </th>
+                        <th class="px-4 py-3 border-b border-slate-200 text-left"><p class="font-semibold text-sm text-slate-800">Tracking #</p></th>
+                        <th class="px-4 py-3 border-b border-slate-200 text-left"><p class="font-semibold text-sm text-slate-800">Business Name</p></th>
+                        <th class="px-4 py-3 border-b border-slate-200 text-left"><p class="font-semibold text-sm text-slate-800">Business Owner</p></th>
+                        <th class="px-4 py-3 border-b border-slate-200 text-left"><p class="font-semibold text-sm text-slate-800">Days Pending</p></th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    
-                    <tr *ngFor="let permit of permitAging; let i = index" class="hover:bg-slate-50 border-b border-slate-200">
-                        <td class="px-4 py-3 border-b">
-                            <p class="text-sm text-slate-900 font-semibold">{{ permit.tracking_number }}</p>
-                        </td>
-                        <td class="px-4 py-3 border-b">
-                            <p class="text-sm text-slate-500">{{ permit.business_name }}</p>
-                        </td>
-                        <td class="px-4 py-3 border-b">
-                            <p class="text-sm text-slate-500">{{ permit.owner_name }}</p>
-                        </td>
-                        <td class="px-4 py-3 border-b">
-                            <p class="text-sm text-slate-500">
+                    <tr *ngFor="let permit of permitAging" class="hover:bg-slate-50 border-b border-slate-200">
+                        <td class="px-4 py-3"><p class="text-sm text-slate-900 font-semibold">{{ permit.tracking_number }}</p></td>
+                        <td class="px-4 py-3"><p class="text-sm text-slate-600">{{ permit.business_name }}</p></td>
+                        <td class="px-4 py-3"><p class="text-sm text-slate-600">{{ permit.owner_name }}</p></td>
+                        <td class="px-4 py-3">
+                            <span
+                                class="inline-flex px-2 py-1 text-xs font-semibold rounded"
+                                [ngClass]="permit.days_pending >= 7 ? 'bg-red-100 text-red-700' : permit.days_pending >= 3 ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'"
+                            >
                                 {{
                                     permit.days_pending === 0
-                                        ? 'Processed today'
+                                        ? 'Received today'
                                         : permit.days_pending === 1
-                                        ? '1 Day Pending'
-                                        : permit.days_pending + ' Days Pending'
+                                        ? '1 day pending'
+                                        : permit.days_pending + ' days pending'
                                 }}
-                            </p>
+                            </span>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-  
-        <!-- Pagination Controls -->
-        <div class="mt-4 flex flex-col md:flex-row items-center justify-between">
+
+        <!-- Pagination -->
+        <div class="mt-4 flex flex-col md:flex-row items-center justify-between gap-3" *ngIf="permitAgingFull.length > 0">
             <div class="text-sm text-slate-500">
-                Showing
-                <span class="font-semibold">
-                    {{ getShowingRange() }}
-                </span>
-                of {{ totalEntries }} entries
+                Showing <span class="font-semibold">{{ getShowingRange() }}</span> of {{ totalEntries }} entries
             </div>
-            
-            
-    
+
             <div class="flex">
-                <button (click)="prevPage()" [disabled]="currentPage === 1" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded-bl-md rounded-tl-md hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed">
+                <button (click)="prevPage()" [disabled]="currentPage === 1" class="px-3 py-1 min-w-9 min-h-9 text-sm text-slate-500 bg-white border border-slate-200 rounded-bl-md rounded-tl-md hover:bg-slate-50 hover:border-slate-400 transition disabled:opacity-50 disabled:cursor-not-allowed">
                     Prev
                 </button>
-        
                 <button
                     *ngFor="let page of visiblePages"
                     (click)="goToPage(page)"
-                    [class]="page === currentPage 
-                            ? 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-white bg-slate-800 border border-slate-800' 
-                            : 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease'"
+                    [class]="page === currentPage
+                            ? 'px-3 py-1 min-w-9 min-h-9 text-sm text-white bg-slate-800 border border-slate-800'
+                            : 'px-3 py-1 min-w-9 min-h-9 text-sm text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-400 transition'"
                 >
                     {{ page }}
                 </button>
-        
-                <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded-br-md rounded-tr-md hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed">
+                <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="px-3 py-1 min-w-9 min-h-9 text-sm text-slate-500 bg-white border border-slate-200 rounded-br-md rounded-tr-md hover:bg-slate-50 hover:border-slate-400 transition disabled:opacity-50 disabled:cursor-not-allowed">
                     Next
                 </button>
             </div>
         </div>
-    </section>
+      </section>
 
+    </ng-container>
+  </div>
 </main>

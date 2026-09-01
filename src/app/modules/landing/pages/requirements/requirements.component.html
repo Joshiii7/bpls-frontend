@@ -1,74 +1,63 @@
-<main class="bg-gray-50 py-10">
-    <div class="w-[90%] max-w-[80rem] mx-auto">
-        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Requirements & Guidelines</h2>
-        <p class="text-gray-600 mb-12 text-center text-lg">
-            To apply for a new business permit or renew an existing one, please prepare the following documents and follow these steps.
-        </p>
+<main id="main" tabindex="-1" class="bg-gray-50">
+    <app-page-banner
+        title="Requirements &amp; Guidelines"
+        description="Getting ready to apply or renew? Here's what to prepare and the steps to follow."
+    ></app-page-banner>
 
-        <!-- Requirements List -->
-        <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+    <section class="py-16 md:py-20 lg:py-24">
+        <div class="w-[90%] max-w-[80rem] mx-auto">
 
-            <!-- Requirement 1 -->
-            <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-6 text-left">
-                <h3 class="text-xl font-semibold text-gray-800 mb-3">Business Registration Form</h3>
-                <p class="text-gray-600 text-sm">
-                    Fully filled-out BPLS registration form with all business details.
-                </p>
+            <!-- Required Documents -->
+            <h2 class="sr-only">Required Documents</h2>
+            <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                <div *ngFor="let doc of documents" appReveal class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-primary/30 hover:-translate-y-1 transition p-8 text-center">
+                    <app-icon-badge [icon]="doc.icon" variant="tinted"></app-icon-badge>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ doc.title }}</h3>
+                    <p class="text-gray-600 text-sm">{{ doc.description }}</p>
+                </div>
             </div>
 
-            <!-- Requirement 2 -->
-            <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-6 text-left">
-                <h3 class="text-xl font-semibold text-gray-800 mb-3">Proof of Identity</h3>
-                <p class="text-gray-600 text-sm">
-                    Valid ID of the business owner or authorized representative.
-                </p>
-            </div>
+            <!-- Guidelines Section -->
+            <div class="mt-20">
+                <div appReveal>
+                    <app-section-heading
+                        eyebrow="Step by Step"
+                        heading="Application "
+                        accent="Guidelines"
+                    ></app-section-heading>
+                </div>
 
-            <!-- Requirement 3 -->
-            <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-6 text-left">
-                <h3 class="text-xl font-semibold text-gray-800 mb-3">Barangay Clearance</h3>
-                <p class="text-gray-600 text-sm">
-                    Latest barangay clearance from the business location.
-                </p>
+                <ol class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto list-none">
+                    <li *ngFor="let step of guidelineSteps; let i = index" appReveal class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-primary/30 transition p-6 text-left flex gap-4">
+                        <div class="flex-shrink-0 flex items-center justify-center bg-primary text-white w-9 h-9 rounded-full font-semibold text-sm">
+                            {{ i + 1 }}
+                        </div>
+                        <div>
+                            <i class="{{ step.icon }} text-primary text-lg mb-2" aria-hidden="true"></i>
+                            <p class="text-gray-600 text-sm">{{ step.description }}</p>
+                        </div>
+                    </li>
+                </ol>
             </div>
-
-            <!-- Requirement 4 -->
-            <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-6 text-left">
-                <h3 class="text-xl font-semibold text-gray-800 mb-3">DTI / SEC Registration</h3>
-                <p class="text-gray-600 text-sm">
-                    Certificate of business name registration or corporation registration.
-                </p>
-            </div>
-
-            <!-- Requirement 5 -->
-            <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-6 text-left">
-                <h3 class="text-xl font-semibold text-gray-800 mb-3">Occupancy / Zoning Permit</h3>
-                <p class="text-gray-600 text-sm">
-                    Proof that the business location complies with local zoning and occupancy regulations.
-                </p>
-            </div>
-
-            <!-- Requirement 6 -->
-            <div class="bg-white rounded-xl shadow hover:shadow-lg transition p-6 text-left">
-                <h3 class="text-xl font-semibold text-gray-800 mb-3">Other Supporting Documents</h3>
-                <p class="text-gray-600 text-sm">
-                    Any additional documents required depending on the type of business (e.g., health clearance, fire safety inspection).
-                </p>
-            </div>
-
         </div>
+    </section>
 
-        <!-- Guidelines Section -->
-        <div class="mt-16 text-left max-w-3xl mx-auto space-y-4">
-            <h3 class="text-2xl font-semibold text-gray-800 mb-3 text-center">Application Guidelines</h3>
-            <ol class="list-decimal list-inside text-gray-600 space-y-2 text-lg">
-                <li>Prepare all required documents listed above before starting the application.</li>
-                <li>Ensure that all personal and business information is accurate and complete.</li>
-                <li>Submit the application online through the BPLS portal or at the municipal office if needed.</li>
-                <li>Pay the corresponding fees online or at the designated office.</li>
-                <li>Wait for verification and approval notifications via email or SMS.</li>
-                <li>Download or print your business permit once approved.</li>
-            </ol>
+    <!-- FAQ -->
+    <app-faq-section
+        eyebrow="Questions"
+        heading="Requirements "
+        accent="FAQ"
+        [items]="faqs"
+    ></app-faq-section>
+
+    <section class="bg-gray-50 py-12">
+        <div class="w-[90%] max-w-[80rem] mx-auto text-center">
+            <a
+                routerLink="/auth/register"
+                class="inline-flex items-center justify-center min-h-[44px] bg-primary text-white px-8 py-3 rounded-lg shadow hover:bg-green-700 transition font-medium"
+            >
+                Start Your Application
+            </a>
         </div>
-    </div>
+    </section>
 </main>

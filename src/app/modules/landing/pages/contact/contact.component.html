@@ -1,0 +1,145 @@
+<main id="main" tabindex="-1" class="bg-gray-50">
+    <app-page-banner
+        title="Get in Touch"
+        description="Need help with a permit or application? Reach out below, or send us a message and we'll get back to you."
+    ></app-page-banner>
+
+    <section class="py-16 md:py-20 lg:py-24">
+        <div class="w-[90%] max-w-[80rem] mx-auto grid gap-8 lg:grid-cols-[1.3fr_1fr] items-start">
+
+            <!-- Contact form -->
+            <div appReveal class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
+
+                <ng-container *ngIf="!submitted; else successState">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-1">Send Us a Message</h2>
+                    <p class="text-gray-500 text-sm mb-6">Fill out the form below and we'll get back to you.</p>
+
+                    <form [formGroup]="contactForm" (ngSubmit)="submit()" class="space-y-4" novalidate>
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div class="form-group">
+                                <label for="contactName" class="block mb-1 text-sm font-medium" [class.text-red-600]="name?.invalid && name?.touched">Name</label>
+                                <input
+                                    id="contactName"
+                                    type="text"
+                                    formControlName="name"
+                                    placeholder="Juan Dela Cruz"
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    [class.border-red-500]="name?.invalid && name?.touched"
+                                    [attr.aria-invalid]="name?.invalid && name?.touched"
+                                    aria-describedby="contactNameError"
+                                >
+                                <p *ngIf="name?.invalid && name?.touched" id="contactNameError" class="text-red-600 text-sm mt-1" role="alert">
+                                    Name is required.
+                                </p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contactEmail" class="block mb-1 text-sm font-medium" [class.text-red-600]="email?.invalid && email?.touched">Email</label>
+                                <input
+                                    id="contactEmail"
+                                    type="email"
+                                    formControlName="email"
+                                    placeholder="juan@email.com"
+                                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    [class.border-red-500]="email?.invalid && email?.touched"
+                                    [attr.aria-invalid]="email?.invalid && email?.touched"
+                                    aria-describedby="contactEmailError"
+                                >
+                                <p *ngIf="email?.invalid && email?.touched" id="contactEmailError" class="text-red-600 text-sm mt-1" role="alert">
+                                    <span *ngIf="email?.errors?.['required']">Email is required.</span>
+                                    <span *ngIf="email?.errors?.['email']">Enter a valid email.</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactSubject" class="block mb-1 text-sm font-medium" [class.text-red-600]="subject?.invalid && subject?.touched">Subject</label>
+                            <input
+                                id="contactSubject"
+                                type="text"
+                                formControlName="subject"
+                                placeholder="What is this about?"
+                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                [class.border-red-500]="subject?.invalid && subject?.touched"
+                                [attr.aria-invalid]="subject?.invalid && subject?.touched"
+                                aria-describedby="contactSubjectError"
+                            >
+                            <p *ngIf="subject?.invalid && subject?.touched" id="contactSubjectError" class="text-red-600 text-sm mt-1" role="alert">
+                                Subject is required.
+                            </p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactMessage" class="block mb-1 text-sm font-medium" [class.text-red-600]="message?.invalid && message?.touched">Message</label>
+                            <textarea
+                                id="contactMessage"
+                                formControlName="message"
+                                rows="5"
+                                placeholder="Tell us briefly what you need help with."
+                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-y"
+                                [class.border-red-500]="message?.invalid && message?.touched"
+                                [attr.aria-invalid]="message?.invalid && message?.touched"
+                                aria-describedby="contactMessageError"
+                            ></textarea>
+                            <p *ngIf="message?.invalid && message?.touched" id="contactMessageError" class="text-red-600 text-sm mt-1" role="alert">
+                                <span *ngIf="message?.errors?.['required']">Message is required.</span>
+                                <span *ngIf="message?.errors?.['minlength']">Please enter at least 10 characters.</span>
+                            </p>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="w-full min-h-[44px] bg-primary hover:bg-primary/90 text-white font-medium py-2 rounded-lg transition"
+                        >
+                            Send Message
+                        </button>
+                    </form>
+                </ng-container>
+
+                <ng-template #successState>
+                    <div class="text-center py-6" role="status">
+                        <app-icon-badge icon="ti ti-check" variant="tinted"></app-icon-badge>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Message Received</h3>
+                        <p class="text-gray-600 text-sm max-w-sm mx-auto">
+                            Thank you for reaching out. We'll get back to you as soon as we can.
+                        </p>
+                        <p class="text-xs text-gray-500 max-w-sm mx-auto mt-3 bg-gray-50 border border-gray-200 rounded-md px-3 py-2">
+                            <strong>Demo System:</strong> this site has no live backend, so your message was saved locally in this browser rather than sent to our office.
+                        </p>
+                        <button
+                            type="button"
+                            (click)="resetForm()"
+                            class="mt-5 text-primary font-semibold hover:underline text-sm"
+                        >
+                            Send another message
+                        </button>
+                    </div>
+                </ng-template>
+            </div>
+
+            <!-- Contact info -->
+            <div class="space-y-4">
+                <div *ngFor="let channel of contactChannels" appReveal class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4 hover:border-primary/30 transition">
+                    <app-icon-badge [icon]="channel.icon" variant="solid" size="sm"></app-icon-badge>
+                    <div class="min-w-0">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-0.5">{{ channel.label }}</p>
+                        <ng-container *ngIf="channel.href; else plainValue">
+                            <a [href]="channel.href" class="text-gray-800 font-medium hover:text-primary transition break-words">{{ channel.value }}</a>
+                        </ng-container>
+                        <ng-template #plainValue>
+                            <p class="text-gray-800 font-medium break-words">{{ channel.value }}</p>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <app-faq-section
+        eyebrow="Questions"
+        heading="Contact "
+        accent="FAQ"
+        [items]="faqs"
+    ></app-faq-section>
+</main>

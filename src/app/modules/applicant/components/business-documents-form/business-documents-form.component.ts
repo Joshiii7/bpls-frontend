@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 })
 export class BusinessDocumentsFormComponent implements OnInit {
   @Output() formDataChange = new EventEmitter<any>();
+  @Input() initialValue: { documents?: Record<string, { title: string; previewUrl: string }>; location?: { lat: number; lng: number } | null } | null = null;
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -34,8 +35,25 @@ export class BusinessDocumentsFormComponent implements OnInit {
     file7: { title: 'Occupancy Permit', previewUrl: null },
   };
 
+  // Drives the *ngFor in the template so the six near-identical upload rows
+  // don't have to be hand-written out one by one.
+  documentFields = ['file1', 'file2', 'file3', 'file4', 'file6', 'file7'];
+
   ngOnInit(): void {
-    
+    if (this.initialValue?.documents) {
+      Object.entries(this.initialValue.documents).forEach(([key, doc]) => {
+        if (this.documents[key] && doc?.previewUrl) {
+          this.documents[key] = { ...this.documents[key], previewUrl: doc.previewUrl };
+        }
+      });
+    }
+    if (this.initialValue?.location) {
+      this.selectedLocation = this.initialValue.location;
+    }
+    // Emit the starting state immediately (not just after an upload/location pick) so
+    // the parent step's "are the requirements complete?" check has something to read
+    // even before the applicant touches anything on this step.
+    this.emitFormData();
   }
 
   onLocationSelected(location: { lng: number; lat: number }) {

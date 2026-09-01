@@ -1,0 +1,12 @@
+<div
+    class="flex items-center justify-center rounded-full flex-shrink-0"
+    [ngClass]="[
+        size === 'lg' ? 'w-20 h-20 mx-auto mb-5 text-3xl' : 'w-12 h-12 text-lg',
+        variant === 'solid' ? 'bg-primary text-white' : '',
+        variant === 'tinted' ? 'bg-primary/10 text-primary ring-8 ring-primary/5' : '',
+        variant === 'white' ? 'bg-white text-primary shadow-sm ring-1 ring-primary/15' : '',
+        variant === 'muted' ? 'bg-gray-100 text-gray-400' : ''
+    ]"
+>
+    <i class="{{ icon }}" aria-hidden="true"></i>
+</div>

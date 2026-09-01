@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApplicantService } from '../../services/applicant.service';
+import { UserProfileService } from 'src/app/core/services/user-profile.service';
 
 @Component({
   selector: 'app-applicant-dashboard',
@@ -16,6 +17,8 @@ export class ApplicantDashboardComponent {
   filteredApplications: any[] = [];
   paginatedApplications: any[] = [];
 
+  stats = { total: 0, drafts: 0, pending: 0, approved: 0 };
+
   searchQuery: string = '';
   currentPage: number = 1;
   pageSize: number = 5;
@@ -25,11 +28,12 @@ export class ApplicantDashboardComponent {
 
   constructor(
     private router: Router,
-    private api: ApplicantService
+    private api: ApplicantService,
+    private profileApi: UserProfileService,
   ) {
     document.title = 'BPLS | Applications';
   }
-  
+
   ngOnInit() {
     this.emitNavigationState.emit(true);
     this.initApplications();
@@ -37,10 +41,12 @@ export class ApplicantDashboardComponent {
   }
 
   initUserInformation() {
-    this.api.getUserProfile().subscribe({
+    this.profileApi.getUserProfile().subscribe({
       next: (response: any) => {
-        
-        const fieldsToCheck = ['first_name', 'middle_name', 'last_name', 'suffix', 'number', 'email', 'signature'];
+        // middle_name/suffix are legitimately optional (most applicants have no
+        // suffix at all), so only the fields actually needed to identify and
+        // reach the applicant gate the "complete your profile" nudge.
+        const fieldsToCheck = ['first_name', 'last_name', 'number', 'email', 'signature'];
         this.showProfileWarning = fieldsToCheck.some(field => !response[field]);
       },
       error: (err: any) => {
@@ -53,20 +59,33 @@ export class ApplicantDashboardComponent {
     this.router.navigate(['/applications/apply-permit']);
   }
 
+  continueDraft(uuid: string) {
+    this.router.navigate(['/applications/apply-permit'], { queryParams: { draft: uuid } });
+  }
+
   initApplications() {
     this.api.getApplications().subscribe({
       next: (response: any) => {
-        if (response) {
-          this.isLoading = false;
-        }
-        this.applications = response;
+        this.isLoading = false;
+        this.applications = response || [];
         this.filteredApplications = [...this.applications];
+        this.updateStats();
         this.updatePagination();
       },
       error: (error: any) => {
+        this.isLoading = false;
         console.log('Error fetching applications:', error);
       }
     });
+  }
+
+  updateStats() {
+    this.stats = {
+      total: this.applications.length,
+      drafts: this.applications.filter(a => a.status === 'Draft').length,
+      pending: this.applications.filter(a => a.status === 'Pending').length,
+      approved: this.applications.filter(a => a.status === 'Approved').length,
+    };
   }
 
   getShowingRange(): string {
@@ -76,8 +95,11 @@ export class ApplicantDashboardComponent {
   }
 
   filterApplications() {
+    const query = this.searchQuery.toLowerCase().trim();
     this.filteredApplications = this.applications.filter(app =>
-      app.business_name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      !query ||
+      app.business_name?.toLowerCase().includes(query) ||
+      app.tracking_number?.toLowerCase().includes(query)
     );
     this.currentPage = 1;
     this.updatePagination();
@@ -121,13 +143,30 @@ export class ApplicantDashboardComponent {
   getBadgeClass(status: string): string {
     switch (status) {
       case 'Approved':
-        return 'bg-green-200 text-green-800';
+        return 'bg-green-100 text-green-800';
       case 'Pending':
-        return 'bg-blue-200 text-blue-800';
+        return 'bg-blue-100 text-blue-800';
       case 'Declined':
-        return 'bg-red-200 text-red-800';
+        return 'bg-red-100 text-red-800';
+      case 'Draft':
+        return 'bg-gray-200 text-gray-700';
       default:
-        return 'bg-gray-200 text-gray-800';
+        return 'bg-gray-100 text-gray-800';
+    }
+  }
+
+  getStatusIcon(status: string): string {
+    switch (status) {
+      case 'Approved':
+        return 'ti ti-circle-check';
+      case 'Pending':
+        return 'ti ti-hourglass';
+      case 'Declined':
+        return 'ti ti-circle-x';
+      case 'Draft':
+        return 'ti ti-pencil';
+      default:
+        return 'ti ti-circle';
     }
   }
 

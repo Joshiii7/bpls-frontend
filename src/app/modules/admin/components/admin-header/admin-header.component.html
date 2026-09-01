@@ -3,17 +3,28 @@
         <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
             
             <!-- Left Section -->
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 min-w-0 w-full md:w-auto">
 
-                <p-breadcrumb 
-                    [model]="items" 
-                    [home]="home" 
-                    class="text-white/90 font-medium text-sm md:text-base">
-                </p-breadcrumb>
+                <button
+                    type="button"
+                    class="md:hidden flex-shrink-0 w-9 h-9 flex items-center justify-center text-white rounded hover:bg-white/10"
+                    (click)="toggleSidebar()"
+                    aria-label="Toggle navigation menu"
+                >
+                    <i class="ti ti-menu-2" aria-hidden="true"></i>
+                </button>
+
+                <div class="min-w-0 overflow-x-auto">
+                    <p-breadcrumb
+                        [model]="items"
+                        [home]="home"
+                        class="text-white/90 font-medium text-sm md:text-base whitespace-nowrap">
+                    </p-breadcrumb>
+                </div>
             </div>
 
             <!-- Right Section -->
-            <div class="flex flex-col text-white/90 text-xs md:text-sm leading-tight">
+            <div class="flex flex-col text-white/90 text-xs md:text-sm leading-tight flex-shrink-0">
                 <span class="text-start md:text-end font-medium">Philippine Standard Time</span>
                 <span class="text-start md:text-end tracking-wide">{{ currentTime }}</span>
             </div>

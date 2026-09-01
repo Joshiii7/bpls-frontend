@@ -1,201 +1,157 @@
-<main class="py-6 md:px-8 px-3 bg-gray-50 min-h-screen">
-    <h2 class="text-2xl font-bold uppercase">Review Business Applications</h2>
-    
-    <section class="bg-white rounded-lg shadow px-5 py-7 my-6">
+<main class="py-6 md:px-8 px-4 bg-gray-50 min-h-screen">
+  <div class="max-w-screen-2xl mx-auto">
 
-        <!-- Filters -->
-        <div class="grid grid-cols-12 gap-4 w-full justify-between items-center">
+    <div class="mb-5">
+      <h1 class="text-xl font-bold text-gray-800">{{ pageTitle }}</h1>
+      <p class="text-sm text-gray-500 mt-0.5">{{ pageDescription }}</p>
+    </div>
 
-            <!-- Filter Buttons -->
-            <div class="lg:col-span-3 col-span-6 relative h-10 flex justify-between bg-white shadow-inner border boder-gray-100 rounded-lg lg:items-center w-full">
-                
-                <!-- Tab Indicator -->
-                <div
-                    class="absolute top-0 left-0 h-9 bg-blue-200 rounded-lg transition-all duration-300 ease-in-out"
-                    [ngStyle]="{
-                    'transform': 'translateX(' + (currentTab - 1) * 100 + '%)',
-                    'width': '33.33%',
-                    'box-shadow': '0px 4px 8px rgba(0, 0, 0, 0.15), 0px 10px 20px rgba(0, 0, 0, 0.1)',
-                    'transform-origin': 'center'
-                    }">
-                </div>
+    <section class="bg-white rounded-lg border px-5 py-6">
 
-                <!-- Tabs -->
-                <ul class="flex justify-between text-sm text-center w-full relative z-10">
-                    <li class="w-[33.33%]" role="tab">
-                        <button
-                            (click)="tabIndex(1)"
-                            class="text-sm lg:text-md font-semibold h-10 py-1 flex flex-col justify-center items-center w-full">
-                            All
-                        </button>
-                    </li>
-                    <li class="w-[33.33%]" role="tab">
-                        <button
-                            (click)="tabIndex(2)"
-                            class="text-sm lg:text-md font-semibold h-10 py-1 flex flex-col justify-center items-center w-full">
-                            New
-                        </button>
-                    </li>
-                    <li class="w-[33.33%]" role="tab">
-                        <button
-                            (click)="tabIndex(3)"
-                            class="text-sm lg:text-md font-semibold h-10 py-1 flex flex-col justify-center items-center w-full">
-                            Renewal
-                        </button>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- business type filter -->
-            <div class="lg:col-span-3 col-span-6 w-full">
-                <select [(ngModel)]="selectedBusinessType" (change)="filterBusinesses()" class="bg-white border border-gray-300 text-sm rounded-lg focus:border-blue-500 block w-full p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-800 cursor-pointer">
-                    <option value="">All</option>
-                    <option *ngFor="let businessType of businessTypes" [value]="businessType.id">{{ businessType.business_name }}</option>
-                </select>
-            </div>
-
-            <!-- pagination row count selector -->
-            <div class="lg:col-span-1 col-span-2 w-full">
-                <select (change)="detectRowValue($event)" class="w-full bg-white border border-gray-300 text-sm rounded-lg focus:border-blue-500 block p-2.5 text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-gray-800 cursor-pointer">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                </select>
-            </div>
-
-            <!-- Search Bar -->
-            <div class="lg:col-span-5 col-span-10 relative w-full">
-                <input
-                    class="bg-white w-full rounded-md pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded transition duration-200 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md"
-                    placeholder="Search"
-                    (input)="filterBusinesses($event)"
-                />
-                <i class="fa fa-search absolute top-1/2 right-3 transform -translate-y-1/2 text-slate-400"></i>
-            </div>
+      <!-- Filters -->
+      <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-5">
+        <div class="sm:col-span-5 relative">
+          <label for="applicationSearch" class="sr-only">Search applications</label>
+          <i class="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true"></i>
+          <input
+            id="applicationSearch"
+            type="search"
+            [(ngModel)]="searchText"
+            (ngModelChange)="filterApplications()"
+            placeholder="Search by business name, owner, or tracking number"
+            class="w-full pl-9 pr-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          >
         </div>
 
-        <!-- Table -->
-        <div class="overflow-scroll my-5">
-            <table class="w-full text-left table-auto min-w-max">
-                <thead>
-                    <tr>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Tracking #
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Business Owner
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Business Name
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Business Type
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Application Type
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Date Filed
-                            </p>
-                        </th>
-                        <th class="px-4 py-3 border-b border-slate-200 bg-blue-100">
-                            <p class="block font-semibold text-sm text-slate-800">
-                                Action
-                            </p>
-                        </th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr *ngIf="filteredBusinesses.length === 0 && !isLoading" class="text-center">
-                        <td colspan="7" class="p-4 py-4 text-sm text-slate-500">
-                            No new business permit applications available.
-                        </td>
-                    </tr>
-                    <tr *ngFor="let business of filteredBusinesses.slice((currentPage - 1) * perPage, currentPage * perPage); let i = index" class="hover:bg-slate-50 border-b border-slate-200">
-                        <td class="px-4 py-2 border-b">
-                            <p class="text-sm text-slate-900 font-semibold">{{ business.tracking_number }}</p>
-                        </td>
-                        <td class="px-4 py-2 border-b">
-                            <p class="text-sm text-slate-900 font-semibold">{{ business.owner }}</p>
-                        </td>
-                        <td class="px-4 py-2 border-b">
-                            <p class="text-sm text-slate-500">{{ business.business_name }}</p>
-                        </td>
-                        <td class="px-4 py-2 border-b">
-                            <p class="text-sm text-slate-500">{{ business.business_type }}</p>
-                        </td>
-                        <td class="px-4 py-2 border-b">
-                            <span [ngClass]="getBadgeClass(business.application_type)" class="px-2 py-1 text-sm font-semibold rounded">
-                              {{ business.application_type }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-2 border-b">
-                            <p class="text-sm text-slate-500">{{ business.date_filed }}</p>
-                        </td>
-                        <td class="px-4 py-2 border-b flex gap-1">
-                            <!-- View Button -->
-                            <div class="relative group">
-                                <button
-                                    (click)="viewButton(business.uuid)"
-                                    class="bg-blue-600 hover:bg-blue-900 text-white p-1 rounded-md w-10">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="sm:col-span-2">
+          <label for="applicationTypeFilter" class="sr-only">Filter by application type</label>
+          <select
+            id="applicationTypeFilter"
+            [(ngModel)]="selectedApplicationType"
+            (ngModelChange)="filterApplications()"
+            class="w-full bg-white border text-sm rounded-md p-2.5 text-gray-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <option value="">All Types</option>
+            <option value="New">New</option>
+            <option value="Renewal">Renewal</option>
+          </select>
         </div>
 
-        <!-- Previous and Next Button -->
-        <div class="flex lg:flex-row flex-col gap-4 justify-between lg:items-center">
-
-            <!-- Current Tab -->
-            <div class="text-sm text-slate-500">
-                Showing 
-                <span class="font-semibold">
-                    {{ total > 0 ? start + ' to ' + end : '0' }} 
-                </span> 
-                of {{ total > 0 ? total : '0' }} entries
-            </div>
-
-            <!-- Buttons -->
-            <div class="flex">
-                <!-- Prev Button -->
-                <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded-bl-md rounded-tl-md hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed">
-                    Prev
-                </button>
-    
-                <!-- Page Numbers -->
-                <ng-container *ngFor="let page of getVisiblePages();">
-                    <button 
-                        (click)="changePage(page)" 
-                        [class]="page === currentPage 
-                            ? 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-white bg-slate-800 border border-slate-800' 
-                            : 'px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease'"
-                    >
-                        {{ page }}
-                    </button>
-                </ng-container>
-    
-                <!-- Next Button -->
-                <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === Math.ceil(total / perPage)" class="px-3 py-1 min-w-9 min-h-9 text-sm font-normal text-slate-500 bg-white border border-slate-200 rounded-br-md rounded-tr-md hover:bg-slate-50 hover:border-slate-400 transition duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed">
-                    Next
-                </button>
-            </div>
+        <div class="sm:col-span-3">
+          <label for="scheduleFilter" class="sr-only">Filter by permit schedule</label>
+          <select
+            id="scheduleFilter"
+            [(ngModel)]="selectedSchedule"
+            (ngModelChange)="filterApplications()"
+            class="w-full bg-white border text-sm rounded-md p-2.5 text-gray-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <option value="">All Schedules</option>
+            <option value="New Business Permit Period">New Business Permit Period</option>
+            <option value="Business Permit Renewal Period">Business Permit Renewal Period</option>
+            <option value="Amendment / Update">Amendment / Update</option>
+            <option value="Others">Others</option>
+          </select>
         </div>
+
+        <div class="sm:col-span-2 flex sm:justify-end">
+          <p class="text-sm text-gray-500 self-center">
+            <span class="font-semibold text-gray-800">{{ totalEntries }}</span>
+            application{{ totalEntries === 1 ? '' : 's' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="isLoading" class="text-center py-14 text-sm text-slate-600" role="status">
+        Loading applications...
+      </div>
+
+      <!-- Empty state -->
+      <div *ngIf="!isLoading && allApplications.length === 0" class="text-center py-14">
+        <i class="ti ti-inbox text-4xl text-gray-300 mb-3" aria-hidden="true"></i>
+        <h2 class="text-lg font-semibold text-gray-800">No applications here yet</h2>
+        <p class="text-sm text-gray-500 mt-1 max-w-sm mx-auto">
+          {{ status === 'All' ? 'No applications have been submitted yet.' : 'No applications currently have this status.' }}
+        </p>
+      </div>
+
+      <ng-container *ngIf="!isLoading && allApplications.length > 0">
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <caption class="sr-only">{{ pageTitle }}</caption>
+            <thead class="bg-gray-100">
+              <tr>
+                <th scope="col" class="px-4 py-3 border-b border-slate-200 text-left"><p class="font-semibold text-sm text-slate-800">Tracking #</p></th>
+                <th scope="col" class="px-4 py-3 border-b border-slate-200 text-left"><p class="font-semibold text-sm text-slate-800">Business Name</p></th>
+                <th scope="col" class="px-4 py-3 border-b border-slate-200 text-left"><p class="font-semibold text-sm text-slate-800">Owner</p></th>
+                <th scope="col" class="px-4 py-3 border-b border-slate-200 text-left"><p class="font-semibold text-sm text-slate-800">Type</p></th>
+                <th scope="col" class="px-4 py-3 border-b border-slate-200 text-left"><p class="font-semibold text-sm text-slate-800">Schedule</p></th>
+                <th scope="col" class="px-4 py-3 border-b border-slate-200 text-left"><p class="font-semibold text-sm text-slate-800">Status</p></th>
+                <th scope="col" class="px-4 py-3 border-b border-slate-200 text-left"><p class="font-semibold text-sm text-slate-800">Date Filed</p></th>
+                <th scope="col" class="px-4 py-3 border-b border-slate-200 text-right"><p class="font-semibold text-sm text-slate-800">Action</p></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="paginatedApplications.length === 0">
+                <td colspan="8" class="px-4 py-6 text-center text-sm text-slate-600">
+                  No applications match "{{ searchText }}".
+                </td>
+              </tr>
+              <tr *ngFor="let app of paginatedApplications" class="hover:bg-slate-50 border-b border-slate-200">
+                <td class="px-4 py-3"><p class="text-sm text-slate-900 font-semibold">{{ app.tracking_number }}</p></td>
+                <td class="px-4 py-3"><p class="text-sm text-slate-700">{{ app.business_name }}</p></td>
+                <td class="px-4 py-3"><p class="text-sm text-slate-600">{{ app.owner }}</p></td>
+                <td class="px-4 py-3">
+                  <span [ngClass]="getTypeBadgeClass(app.application_type)" class="inline-flex px-2 py-1 text-xs font-semibold rounded">{{ app.application_type }}</span>
+                </td>
+                <td class="px-4 py-3"><p class="text-sm text-slate-600">{{ app.permit_schedule || 'Not set' }}</p></td>
+                <td class="px-4 py-3">
+                  <span [ngClass]="getStatusBadgeClass(app.status)" class="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-semibold rounded">
+                    <i [ngClass]="getStatusIcon(app.status)" aria-hidden="true"></i>
+                    {{ app.status }}
+                  </span>
+                </td>
+                <td class="px-4 py-3"><p class="text-sm text-slate-500">{{ app.created_at }}</p></td>
+                <td class="px-4 py-3 text-right">
+                  <button
+                    (click)="viewApplication(app.uuid)"
+                    class="min-h-[36px] bg-primary hover:bg-primary-dark text-white text-sm px-3 py-1.5 rounded-md"
+                    [attr.aria-label]="'View ' + app.business_name"
+                  >
+                    View
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-4 flex flex-col md:flex-row items-center justify-between gap-3" *ngIf="totalEntries > 0">
+          <div class="text-sm text-slate-500">
+            Showing <span class="font-semibold">{{ getShowingRange() }}</span> of {{ totalEntries }} entries
+          </div>
+
+          <nav class="flex" aria-label="Applications pagination">
+            <button (click)="prevPage()" [disabled]="currentPage === 1" class="px-3 py-1 min-w-9 min-h-9 text-sm text-slate-500 bg-white border border-slate-200 rounded-bl-md rounded-tl-md hover:bg-slate-50 hover:border-slate-400 transition disabled:opacity-50 disabled:cursor-not-allowed">
+              Prev
+            </button>
+            <button
+              *ngFor="let page of visiblePages"
+              (click)="goToPage(page)"
+              [attr.aria-current]="page === currentPage ? 'page' : null"
+              [class]="page === currentPage
+                ? 'px-3 py-1 min-w-9 min-h-9 text-sm text-white bg-slate-800 border border-slate-800'
+                : 'px-3 py-1 min-w-9 min-h-9 text-sm text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-400 transition'"
+            >
+              {{ page }}
+            </button>
+            <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="px-3 py-1 min-w-9 min-h-9 text-sm text-slate-500 bg-white border border-slate-200 rounded-br-md rounded-tr-md hover:bg-slate-50 hover:border-slate-400 transition disabled:opacity-50 disabled:cursor-not-allowed">
+              Next
+            </button>
+          </nav>
+        </div>
+      </ng-container>
     </section>
+  </div>
 </main>

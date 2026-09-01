@@ -33,8 +33,8 @@
     <!-- Uploading of Documents -->
     <div class="col-span-12">
         <h3 class="text-2xl font-bold mb-3">Upload Supporting Documents</h3>
-        <p class="text-md text-gray-700 mb-3">
-            Please upload the required supporting documents. Ensure that the uploaded images meet the following criteria:
+        <p class="text-md text-gray-700 mb-1">
+            All six documents below are required. Ensure that the uploaded images meet the following criteria:
         </p>
         <ul class="list-disc ps-7 space-y-2 text-sm text-gray-700 mb-6">
             <li>The images must not be blurry and should have readable text.</li>
@@ -43,91 +43,34 @@
         </ul>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <!-- Proof of Registration -->
-            <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
-                <span 
-                    class="text-gray-800 font-medium truncate" 
-                    [title]="documents['file1'].fileName || documents['file1'].title"
-                >
-                    {{ documents['file1'].fileName || documents['file1'].title }}
-                    <span *ngIf="!documents['file1'].file" class="text-red-600">*</span>
-                </span>
+            <div
+                *ngFor="let key of documentFields"
+                class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border"
+                [ngClass]="documents[key].previewUrl ? 'border-green-200' : 'border-gray-200'"
+            >
+                <div class="min-w-0">
+                    <p class="text-gray-800 font-medium truncate" [title]="documents[key].title">
+                        {{ documents[key].title }}
+                        <span *ngIf="!documents[key].previewUrl" class="text-red-600" aria-label="required">*</span>
+                    </p>
+                    <p class="text-xs mt-0.5 truncate" [ngClass]="documents[key].previewUrl ? 'text-green-700' : 'text-gray-500'">
+                        <i
+                            [ngClass]="documents[key].previewUrl ? 'ti ti-circle-check' : 'ti ti-circle'"
+                            aria-hidden="true"
+                        ></i>
+                        {{ documents[key].previewUrl ? (documents[key].fileName || 'Uploaded') : 'Not uploaded yet' }}
+                    </p>
+                </div>
 
-                <button (click)="openUploadModal('Proof of Registration (DTI/SEC/CDA)', 'file1')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
-                    <i class="fa-solid fa-upload text-white text-lg"></i>
+                <button
+                    (click)="openUploadModal(documents[key].title, key)"
+                    class="flex-shrink-0 bg-gray-700 hover:bg-gray-900 text-white text-sm px-3 py-2 rounded-md min-h-[40px]"
+                    [attr.aria-label]="(documents[key].previewUrl ? 'Replace ' : 'Upload ') + documents[key].title"
+                >
+                    <i [ngClass]="documents[key].previewUrl ? 'ti ti-refresh' : 'ti ti-upload'" aria-hidden="true"></i>
+                    {{ documents[key].previewUrl ? 'Replace' : 'Upload' }}
                 </button>
             </div>
-
-            <!-- Authority to Use of Place of Business -->
-            <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
-                <span 
-                    class="text-gray-800 font-medium truncate" 
-                    [title]="documents['file2'].fileName || documents['file2'].title"
-                >
-                    {{ documents['file2'].fileName || documents['file2'].title }}
-                    <span *ngIf="!documents['file2'].file" class="text-red-600">*</span>
-                </span>
-                <button (click)="openUploadModal('Authority to Use of Place of Business (Proof of Ownership/Contract of Lease)', 'file2')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
-                    <i class="fa-solid fa-upload text-white text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Fire Safety Inspection Certificate -->
-            <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
-                <span 
-                    class="text-gray-800 font-medium truncate" 
-                    [title]="documents['file3'].fileName || documents['file3'].title"
-                >
-                    {{ documents['file3'].fileName || documents['file3'].title }}
-                    <span *ngIf="!documents['file3'].file" class="text-red-600">*</span>
-                </span>
-                <button (click)="openUploadModal('Fire Safety Inspection Certificate', 'file3')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
-                    <i class="fa-solid fa-upload text-white text-lg"></i>
-                </button>
-            </div>
-
-            <!-- >Sanitary Permit / Health Clearance -->
-            <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
-                <span 
-                    class="text-gray-800 font-medium truncate" 
-                    [title]="documents['file4'].fileName || documents['file4'].title"
-                >
-                    {{ documents['file4'].fileName || documents['file4'].title }}
-                    <span *ngIf="!documents['file4'].file" class="text-red-600">*</span>
-                </span>
-                <button (click)="openUploadModal('Sanitary Permit / Health Clearance', 'file4')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
-                    <i class="fa-solid fa-upload text-white text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Environmental Clearance / Barangay Clearance -->
-            <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
-                <span 
-                    class="text-gray-800 font-medium truncate" 
-                    [title]="documents['file6'].fileName || documents['file6'].title"
-                >
-                    {{ documents['file6'].fileName || documents['file6'].title }}
-                    <span *ngIf="!documents['file6'].file" class="text-red-600">*</span>
-                </span>
-                <button (click)="openUploadModal('Environmental Clearance / Barangay Clearance', 'file6')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
-                    <i class="fa-solid fa-upload text-white text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Occupancy Permit -->
-            <div class="flex justify-between items-center gap-3 bg-white p-3 rounded-md border">
-                <span 
-                    class="text-gray-800 font-medium truncate" 
-                    [title]="documents['file7'].fileName || documents['file7'].title"
-                >
-                    {{ documents['file7'].fileName || documents['file7'].title }}
-                    <span *ngIf="!documents['file7'].file" class="text-red-600">*</span>
-                </span>
-                <button (click)="openUploadModal('Occupancy Permit', 'file7')" class="bg-gray-700 hover:bg-gray-900 p-2 rounded-md">
-                    <i class="fa-solid fa-upload text-white text-lg"></i>
-                </button>
-            </div>
-
         </div>
 
         <div 
@@ -148,7 +91,7 @@
                     <h4 class="text-lg font-semibold mb-2 uppercase">{{ modalTitle }}</h4>
 
                     <div
-                        class="border-2 border-dashed border-gray-300 rounded-lg h-60 flex justify-center items-center text-gray-400 text-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition relative"
+                        class="border-2 border-dashed border-gray-300 rounded-lg h-60 flex justify-center items-center text-gray-400 text-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition relative select-none"
                         (click)="triggerFileInput()"
                         (drop)="onFileDrop($event)"
                         (dragover)="onDragOver($event)"

@@ -2,7 +2,12 @@ import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ApplicantService } from '../../services/applicant.service';
-import { map, catchError, of } from 'rxjs';
+import { UserProfileService } from 'src/app/core/services/user-profile.service';
+
+interface CompletionField {
+  key: 'first_name' | 'last_name' | 'number' | 'email' | 'signature';
+  label: string;
+}
 
 @Component({
   selector: 'app-applicant-profile',
@@ -20,37 +25,53 @@ export class ApplicantProfileComponent {
   signatureMode: 'draw' | 'upload' = 'draw';
   signatureError = false;
   dragHover = false;
+  showSignatureEditor = false;
+
+  isLoading = true;
+  isSaving = false;
+  accountTypeLabel = 'Applicant Account';
+  private lastSavedValue: any = null;
+
+  // What "complete profile" means for an applicant, kept in sync with the
+  // dashboard's own nudge (fieldsToCheck in applicant-dashboard.component.ts).
+  // middle_name/suffix are intentionally excluded: they're genuinely optional.
+  private readonly completionFields: CompletionField[] = [
+    { key: 'first_name', label: 'First Name' },
+    { key: 'last_name', label: 'Last Name' },
+    { key: 'number', label: 'Contact Number' },
+    { key: 'email', label: 'Email' },
+    { key: 'signature', label: 'Signature' },
+  ];
+  completionPercent = 0;
+  missingFieldLabels: string[] = [];
 
   constructor(
     private fb: FormBuilder,
     private api: ApplicantService,
+    private profileApi: UserProfileService,
   ) {}
 
   ngOnInit() {
     this.profileForm = this.fb.group({
       id: [''],
-      first_name: ['', [Validators.pattern(/^[A-Za-z\s]+$/)]],
+      first_name: ['', [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]],
       middle_name: [''],
-      last_name: ['', [Validators.pattern(/^[A-Za-z\s]+$/)]],
+      last_name: ['', [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]],
       suffix: [''],
-      number: ['', [Validators.pattern(/^\+63\s?\d{3}\s?\d{3}\s?\d{4}$/)]],
-      email: ['', [Validators.email]],
+      number: ['', [Validators.required, Validators.pattern(/^\+63\s?\d{3}\s?\d{3}\s?\d{4}$/)]],
+      email: ['', [Validators.required, Validators.email]],
       signature: ['']
     });
 
+    this.profileForm.valueChanges.subscribe(() => this.updateCompletion());
     this.initUserProfile();
   }
 
-  ngAfterViewInit() {
-    if (this.signatureMode === 'draw') {
-      this.initCanvas();
-    }
-  }
-
   initUserProfile() {
-    this.api.getUserProfile().subscribe({
+    this.isLoading = true;
+    this.profileApi.getUserProfile().subscribe({
       next: (response: any) => {
-
+        this.isLoading = false;
         this.profileForm.patchValue({
           id: response.id || '',
           first_name: response.first_name || '',
@@ -61,9 +82,85 @@ export class ApplicantProfileComponent {
           email: response.email || '',
           signature: response.signature || '',
         });
+        this.lastSavedValue = this.profileForm.getRawValue();
+        // Applicants without a signature yet land straight in the editor; those
+        // who already have one see a preview first instead of a blank canvas.
+        this.showSignatureEditor = !response.signature;
+        this.updateCompletion();
+
+        // The whole form (canvas included) sits behind *ngIf="!isLoading", so
+        // the canvas only just entered the DOM, this is the first point it
+        // can actually be initialized, not ngAfterViewInit.
+        if (this.showSignatureEditor && this.signatureMode === 'draw') {
+          setTimeout(() => this.initCanvas(), 0);
+        }
       },
       error: (err: any) => {
+        this.isLoading = false;
         console.error("error fetching user profile data: ", err)
+      }
+    });
+
+    this.api.getUserRole().subscribe({
+      next: (response: any) => {
+        const role = response?.user?.[0]?.user_role?.role_name;
+        this.accountTypeLabel = role === 'admin' ? 'Administrator Account' : 'Business Owner Account';
+      },
+      error: () => {
+        // Non-critical: the page still works with the generic label.
+      }
+    });
+  }
+
+  get displayName(): string {
+    const name = [this.profileForm?.value?.first_name, this.profileForm?.value?.last_name].filter(Boolean).join(' ');
+    return name || 'Complete your name below';
+  }
+
+  get initials(): string {
+    const first = this.profileForm?.value?.first_name?.[0] || '';
+    const last = this.profileForm?.value?.last_name?.[0] || '';
+    return (first + last).toUpperCase() || '?';
+  }
+
+  get hasSignatureOnFile(): boolean {
+    return !!this.profileForm?.value?.signature;
+  }
+
+  private updateCompletion(): void {
+    if (!this.profileForm) return;
+    const values = this.profileForm.value;
+    const missing = this.completionFields.filter(f => !values[f.key]);
+    this.missingFieldLabels = missing.map(f => f.label);
+    this.completionPercent = Math.round(((this.completionFields.length - missing.length) / this.completionFields.length) * 100);
+  }
+
+  editSignature(): void {
+    this.showSignatureEditor = true;
+    setTimeout(() => this.initCanvas(), 0);
+  }
+
+  cancelSignatureEdit(): void {
+    if (!this.hasSignatureOnFile) return;
+    this.showSignatureEditor = false;
+  }
+
+  discardChanges(): void {
+    if (!this.profileForm.dirty) return;
+
+    Swal.fire({
+      title: 'Discard unsaved changes?',
+      text: 'Your edits since the last save will be lost.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, discard',
+      cancelButtonText: 'Keep editing'
+    }).then((result) => {
+      if (result.isConfirmed && this.lastSavedValue) {
+        this.profileForm.reset(this.lastSavedValue);
+        this.showSignatureEditor = !this.lastSavedValue.signature;
       }
     });
   }
@@ -183,6 +280,7 @@ export class ApplicantProfileComponent {
         if (this.ctx) {
           this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
           this.profileForm.patchValue({ signature: '' });
+          this.profileForm.markAsDirty();
         }
         Swal.fire({
           title: 'Signature Cleared!',
@@ -201,47 +299,66 @@ export class ApplicantProfileComponent {
     const dataUrl = this.canvas.nativeElement.toDataURL();
     if (!dataUrl) {
       this.signatureError = true;
-      alert('Please provide a signature.');
+      Swal.fire({
+        icon: 'warning',
+        title: 'No Signature',
+        text: 'Please draw or upload a signature first.',
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Understood'
+      });
       return;
     }
     this.signatureError = false;
     this.profileForm.patchValue({ signature: dataUrl });
-    console.log('Signature saved', dataUrl);
+    this.profileForm.markAsDirty();
+    // Attached, not yet saved, collapses to the preview so it reads as
+    // captured, while the "unsaved changes" note below still points to
+    // Save Changes as the step that actually persists it.
+    this.showSignatureEditor = false;
   }
 
   onSubmitProfile() {
     if (this.profileForm.invalid) {
       this.profileForm.markAllAsTouched();
+      Swal.fire({
+        icon: 'warning',
+        title: 'Incomplete Profile',
+        text: 'Please complete all required fields before saving.',
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Understood'
+      });
+      return;
     }
 
-    if (this.profileForm.valid) {
-      console.log('Profile submitted', this.profileForm.value);
+    const userID = this.profileForm.value.id;
+    this.isSaving = true;
 
-      const userID = this.profileForm.value.id;
-      
-      this.api.patchUserProfile(this.profileForm.value, userID).subscribe({
-        next: (response: any) => {
-          Swal.fire({
-            title: 'Profile Updated',
-            text: 'Your profile has been successfully updated.',
-            icon: 'success',
-            confirmButtonColor: '#008900',
-            confirmButtonText: 'OK'
-          });
-        },
-        error: (err: any) => {
-          console.error("Error patching value to your profile: ", err);
-          Swal.fire({
-            title: 'Error',
-            text: 'There was an error updating your profile.',
-            icon: 'error',
-            confirmButtonColor: '#FF0000',
-            confirmButtonText: 'Understood'
-          });
-        }
+    this.profileApi.patchUserProfile(this.profileForm.value, userID).subscribe({
+      next: () => {
+        this.isSaving = false;
+        this.lastSavedValue = this.profileForm.getRawValue();
+        this.profileForm.markAsPristine();
+        this.profileApi.notifyProfileUpdated();
+        Swal.fire({
+          title: 'Profile Updated',
+          text: 'Your profile has been successfully updated.',
+          icon: 'success',
+          confirmButtonColor: '#008900',
+          confirmButtonText: 'OK'
+        });
+      },
+      error: (err: any) => {
+        this.isSaving = false;
+        console.error("Error patching value to your profile: ", err);
+        Swal.fire({
+          title: 'Error',
+          text: 'There was an error updating your profile. Please try again.',
+          icon: 'error',
+          confirmButtonColor: '#d33',
+          confirmButtonText: 'Understood'
+        });
+      }
     });
-
-    }
   }
 
   // Drag & drop
@@ -256,20 +373,24 @@ export class ApplicantProfileComponent {
     this.dragHover = true;
   }
 
+  // Stores the uploaded image's data URL directly as the signature. This
+  // intentionally never touches the drawing <canvas>, that element only
+  // exists in the DOM while signatureMode is 'draw' (see the *ngIf in the
+  // template), so reaching into it here would throw once a user actually
+  // switched to Upload mode to select a file.
+  private useUploadedImage(dataUrl: string): void {
+    this.signatureError = false;
+    this.profileForm.patchValue({ signature: dataUrl });
+    this.profileForm.markAsDirty();
+    this.showSignatureEditor = false;
+  }
+
   onFileSelect(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
-      reader.onload = e => {
-        const img = new Image();
-        img.onload = () => {
-          this.clearCanvas();
-          this.ctx?.drawImage(img, 0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
-          this.profileForm.patchValue({ signature: this.canvas.nativeElement.toDataURL() });
-        };
-        img.src = e.target?.result as string;
-      };
+      reader.onload = e => this.useUploadedImage(e.target?.result as string);
       reader.readAsDataURL(file);
     }
   }
@@ -280,15 +401,7 @@ export class ApplicantProfileComponent {
     const file = event.dataTransfer?.files[0];
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
-      reader.onload = e => {
-        const img = new Image();
-        img.onload = () => {
-          this.clearCanvas();
-          this.ctx?.drawImage(img, 0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
-          this.profileForm.patchValue({ signature: this.canvas.nativeElement.toDataURL() });
-        };
-        img.src = e.target?.result as string;
-      };
+      reader.onload = e => this.useUploadedImage(e.target?.result as string);
       reader.readAsDataURL(file);
     }
   }

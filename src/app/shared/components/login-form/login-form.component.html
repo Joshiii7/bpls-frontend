@@ -1,0 +1,99 @@
+<h2 class="text-2xl font-bold text-gray-800 text-center mb-1">{{ variant === 'admin' ? 'Admin Sign In' : 'Sign In' }}</h2>
+<p class="text-gray-500 text-sm text-center mb-5">
+    {{ variant === 'admin' ? 'Sign in to the administration dashboard.' : 'Access your business permit account' }}
+</p>
+
+<div class="mb-5 p-3 bg-green-50 border-l-4 border-primary text-sm text-gray-700 rounded">
+    Sign in using the sample account: <strong>{{ sampleCredentials.email }}</strong> / <strong>{{ sampleCredentials.password }}</strong>.
+</div>
+
+<form [formGroup]="loginForm" (ngSubmit)="submit()" class="space-y-4" novalidate>
+
+    <!-- Email Field -->
+    <div class="form-group">
+        <label for="loginEmail" class="block mb-1 text-sm font-medium" [class.text-red-600]="email?.invalid && email?.touched">Email</label>
+        <input
+            id="loginEmail"
+            type="email"
+            formControlName="email"
+            placeholder="Enter your email"
+            autocomplete="email"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            [class.border-red-500]="email?.invalid && email?.touched"
+            [attr.aria-invalid]="email?.invalid && email?.touched"
+            aria-describedby="loginEmailError"
+        >
+        <p *ngIf="email?.invalid && email?.touched" id="loginEmailError" class="text-red-600 text-sm mt-1" role="alert">
+            <span *ngIf="email?.errors?.['required']">Email is required.</span>
+            <span *ngIf="email?.errors?.['email']">Enter a valid email address.</span>
+        </p>
+    </div>
+
+    <!-- Password Field -->
+    <div class="form-group relative">
+        <label for="loginPassword" class="block mb-1 text-sm font-medium" [class.text-red-600]="password?.invalid && password?.touched">Password</label>
+        <div class="relative">
+            <input
+                id="loginPassword"
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                [class.border-red-500]="password?.invalid && password?.touched"
+                [attr.aria-invalid]="password?.invalid && password?.touched"
+                aria-describedby="loginPasswordError"
+            >
+            <button
+                type="button"
+                (click)="togglePassword()"
+                class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 text-sm px-1"
+                [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+            >
+                {{ showPassword ? 'Hide' : 'Show' }}
+            </button>
+        </div>
+        <p *ngIf="password?.invalid && password?.touched" id="loginPasswordError" class="text-red-600 text-sm mt-1" role="alert">
+            Password is required.
+        </p>
+    </div>
+
+    <!-- Submit Button -->
+    <button
+        type="submit"
+        class="w-full min-h-[44px] bg-primary hover:bg-primary/90 text-white font-medium py-2 rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-70"
+        [disabled]="isLoading"
+    >
+        <i *ngIf="isLoading" class="ti ti-loader ti-spin" aria-hidden="true"></i>
+        {{ isLoading ? 'Signing In...' : 'Sign In' }}
+    </button>
+
+</form>
+
+<!-- Public-only affordances: an admin account isn't something visitors sign up for -->
+<div *ngIf="variant === 'public'" class="mt-5 text-center">
+    <p class="text-gray-600 text-sm">
+        Don't have an account yet?
+        <a routerLink="/auth/register" class="text-green-600 hover:underline font-medium">Sign up</a>
+    </p>
+
+    <!-- OR Divider -->
+    <div class="flex items-center my-4">
+        <hr class="flex-grow border-t border-gray-300">
+        <span class="mx-3 text-gray-500 text-sm">or</span>
+        <hr class="flex-grow border-t border-gray-300">
+    </div>
+
+    <!-- Google Login Button (shows an explanatory modal instead of a real auth flow) -->
+    <button
+        type="button"
+        (click)="showGoogleSignInNotice()"
+        class="w-full min-h-[44px] flex items-center justify-center gap-2 border border-gray-300 rounded-lg py-2 hover:bg-gray-100 transition disabled:opacity-70"
+        [disabled]="isLoading"
+    >
+        <img src="https://cdn-icons-png.flaticon.com/512/300/300221.png" alt="" width="20" height="20" class="w-5 h-5">
+        <span class="font-medium text-gray-700 text-sm">Sign in with Google</span>
+    </button>
+</div>
+
+<app-loader *ngIf="isLoading"></app-loader>

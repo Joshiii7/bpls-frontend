@@ -1,6 +1,7 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApplicantService } from '../../services/applicant.service';
+import { UserProfileService } from 'src/app/core/services/user-profile.service';
 
 @Component({
   selector: 'app-business-information-form',
@@ -9,6 +10,10 @@ import { ApplicantService } from '../../services/applicant.service';
 })
 export class BusinessInformationFormComponent implements OnInit {
   @Output() formValueChange = new EventEmitter<{ formType: string; form: FormGroup }>();
+  // When resuming a saved draft, the parent passes back the same field shape the
+  // form emits on submit (see ApplyPermitComponent.mapDetailToFormValues), so a
+  // draft can be continued without re-typing everything already saved.
+  @Input() initialValue: any = null;
   @ViewChild('orgList') orgListRef!: ElementRef;
   @ViewChild('genderList') genderListRef!: ElementRef;
   @ViewChild('provinceList') provinceListRef!: ElementRef;
@@ -54,6 +59,7 @@ export class BusinessInformationFormComponent implements OnInit {
 
   constructor(
     private api: ApplicantService,
+    private profileApi: UserProfileService,
     private fb: FormBuilder,
   ) {}
 
@@ -106,7 +112,12 @@ export class BusinessInformationFormComponent implements OnInit {
     });
 
     this.initAddress();
-    this.initUserProfile();
+
+    if (this.initialValue) {
+      this.applyInitialValue(this.initialValue);
+    } else {
+      this.initUserProfile();
+    }
   }
 
   initAddress() {
@@ -120,8 +131,76 @@ export class BusinessInformationFormComponent implements OnInit {
     });
   }
 
+  private applyInitialValue(value: any) {
+    this.businessInfoForm.patchValue({
+      businessName: value.businessName,
+      tradeName: value.tradeName,
+      registrationNumber: value.registrationNumber,
+      registrationDate: value.registrationDate,
+      tin: value.tin,
+      organizationType: value.organizationType,
+      gender: value.gender,
+      givenName: value.givenName,
+      middleName: value.middleName,
+      surname: value.surname,
+      suffix: value.suffix,
+      contactNumber: value.contactNumber,
+      email: value.email,
+      zipCode: value.zipCode,
+      streetAddress: value.streetAddress,
+      houseNumber: value.houseNumber,
+      buildingName: value.buildingName,
+      lotNumber: value.lotNumber,
+      blockNumber: value.blockNumber,
+      subdivision: value.subdivision,
+    }, { emitEvent: false });
+
+    // patchValue above is silenced (province/city/barangay still need to resolve
+    // against their code-matched lists first) so emit once now to hand the parent
+    // what's already known, instead of waiting on the applicant to touch a field.
+    this.formValueChange.emit({ formType: 'businessInfo', form: this.businessInfoForm });
+
+    if (!value.province) return;
+
+    // Re-run the same province -> city -> barangay lookup chain selectProvince()/
+    // selectCity() use, so the saved address resolves back to the matching codes
+    // instead of just sitting there as plain, disconnected text.
+    this.api.getProvinces().subscribe({
+      next: (provinces: any[]) => {
+        this.allProvinces = provinces;
+        const province = provinces.find(p => p.province_name === value.province);
+        if (!province) return;
+
+        this.businessInfoForm.get('province')?.setValue(province.province_name, { emitEvent: false });
+
+        this.api.getCities().subscribe({
+          next: (cities: any[]) => {
+            this.allCities = cities.filter(c => c.province_code === province.province_code);
+            const city = value.city ? this.allCities.find(c => c.city_name === value.city) : null;
+            if (!city) return;
+
+            this.businessInfoForm.get('city')?.setValue(city.city_name, { emitEvent: false });
+
+            this.api.getBaranggays().subscribe({
+              next: (barangays: any[]) => {
+                this.allBarangays = barangays.filter(b => b.city_code === city.city_code);
+                if (value.barangay) {
+                  this.businessInfoForm.get('barangay')?.setValue(value.barangay, { emitEvent: false });
+                }
+                this.formValueChange.emit({ formType: 'businessInfo', form: this.businessInfoForm });
+              },
+              error: (err) => console.error('Error fetching barangays:', err)
+            });
+          },
+          error: (err) => console.error('Error fetching cities:', err)
+        });
+      },
+      error: (err) => console.error('Error fetching provinces:', err)
+    });
+  }
+
   initUserProfile() {
-    this.api.getUserProfile().subscribe({
+    this.profileApi.getUserProfile().subscribe({
       next: (response: any) => {
         this.businessInfoForm.patchValue({
           givenName: response.first_name,

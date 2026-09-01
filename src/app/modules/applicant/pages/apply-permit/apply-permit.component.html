@@ -1,16 +1,53 @@
-<main class="grid grid-cols-12 gap-3 relative">
-    
+<!-- Loading a saved draft -->
+<div *ngIf="isLoadingDraft" class="text-center py-16 text-sm text-slate-600" role="status">
+    Loading your saved draft...
+</div>
+
+<!-- Application form -->
+<main *ngIf="!isLoadingDraft" id="main" tabindex="-1" class="grid grid-cols-12 gap-3 relative">
+
+    <!-- Stepper -->
+    <nav class="col-span-12" aria-label="Application progress">
+        <ol class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-0 bg-white rounded-2xl border p-4 sm:p-5">
+            <li *ngFor="let tab of tabs; let i = index; let last = last" class="flex-1 flex sm:flex-col items-center sm:items-stretch gap-3 sm:gap-0">
+                <div class="flex sm:flex-col items-center sm:items-center w-full">
+                    <button
+                        type="button"
+                        (click)="goToStep(tab.key)"
+                        [attr.aria-current]="activeTab === tab.key ? 'step' : null"
+                        [attr.aria-label]="'Step ' + (i + 1) + ' of ' + tabs.length + ': ' + tab.label + (i < activeTabIndex ? ' (completed)' : activeTab === tab.key ? ' (current)' : '')"
+                        class="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold border-2 transition"
+                        [ngClass]="{
+                            'bg-primary border-primary text-white': activeTab === tab.key,
+                            'bg-primary/10 border-primary text-primary': i < activeTabIndex ,
+                            'bg-white border-gray-300 text-gray-500': !(activeTab === tab.key) && !(i < activeTabIndex)
+                        }"
+                    >
+                        <i *ngIf="i < activeTabIndex" class="ti ti-check" aria-hidden="true"></i>
+                        <span *ngIf="!(i < activeTabIndex)" aria-hidden="true">{{ i + 1 }}</span>
+                    </button>
+                    <span *ngIf="!last" aria-hidden="true" class="hidden sm:block flex-1 h-0.5 mt-4 -mx-1" [ngClass]="i < activeTabIndex ? 'bg-primary' : 'bg-gray-200'"></span>
+                </div>
+                <div class="sm:mt-2 sm:text-center">
+                    <p class="text-sm font-semibold" [ngClass]="activeTab === tab.key ? 'text-primary' : 'text-gray-700'">{{ tab.label }}</p>
+                    <p class="text-xs text-gray-500 hidden sm:block">{{ tab.description }}</p>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
     <!-- Payment and Type of Application Section -->
-    <section class="col-span-12 lg:col-span-3 bg-white sticky top-[12.1rem] grid grid-cols-12 gap-3 self-start z-50">
-        
-        <div class="col-span-6 lg:col-span-12 bg-white rounded-2xl z-50 border p-6">
-            
+    <section class="col-span-12 lg:col-span-3 bg-white sticky top-[10.25rem] grid grid-cols-12 gap-3 self-start z-40 mt-3">
+
+        <div class="col-span-6 lg:col-span-12 bg-white rounded-2xl z-40 border p-6">
+
             <!-- Type of Application Form -->
             <form [formGroup]="applicationTypeForm" class="mb-6">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4">
+                <h2 class="text-lg font-semibold text-gray-700 mb-1">
                     Type of Application <span class="text-red-600">*</span>
                 </h2>
-    
+                <p class="text-xs text-gray-500 mb-4">Choose "New" for a first-time permit, or "Renewal" if you already hold one.</p>
+
                 <div class="grid grid-cols-12 gap-3">
                     <label class="col-span-6 flex items-center gap-2 cursor-pointer">
                         <input
@@ -22,7 +59,7 @@
                         />
                         <span>New</span>
                     </label>
-    
+
                     <label class="col-span-6 flex items-center gap-2 cursor-pointer">
                         <input
                             type="radio"
@@ -35,15 +72,16 @@
                     </label>
                 </div>
             </form>
-    
+
             <hr class="my-5 border-gray-300" />
-    
+
             <!-- Payment Option Form -->
             <form [formGroup]="paymentOptionForm">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4">
+                <h2 class="text-lg font-semibold text-gray-700 mb-1">
                     Payment Option <span class="text-red-600">*</span>
                 </h2>
-    
+                <p class="text-xs text-gray-500 mb-4">How often you'd like to pay your permit fees.</p>
+
                 <div class="grid grid-cols-12 gap-3">
                     <label class="col-span-6 flex items-center gap-2 cursor-pointer">
                         <input
@@ -55,7 +93,7 @@
                         />
                         <span>Annual</span>
                     </label>
-    
+
                     <label class="col-span-6 flex items-center gap-2 cursor-pointer">
                         <input
                             type="radio"
@@ -66,7 +104,7 @@
                         />
                         <span>Bi-Annual</span>
                     </label>
-    
+
                     <label class="col-span-6 flex items-center gap-2 cursor-pointer">
                         <input
                             type="radio"
@@ -79,65 +117,129 @@
                     </label>
                 </div>
             </form>
+
+            <hr class="my-5 border-gray-300" />
+
+            <!-- Permit Schedule Form -->
+            <form [formGroup]="permitScheduleForm">
+                <h2 class="text-lg font-semibold text-gray-700 mb-1">
+                    Permit Schedule <span class="text-red-600">*</span>
+                </h2>
+                <p class="text-xs text-gray-500 mb-4">What is this application for?</p>
+
+                <label for="scheduleType" class="sr-only">Permit Schedule</label>
+                <select
+                    id="scheduleType"
+                    formControlName="scheduleType"
+                    class="w-full bg-white border text-sm rounded-md p-2.5 text-gray-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+                    [ngClass]="{'border-red-500': permitScheduleForm.get('scheduleType')?.invalid && permitScheduleForm.get('scheduleType')?.touched}"
+                >
+                    <option value="" disabled>Please select</option>
+                    <option value="new">New Business Permit Period</option>
+                    <option value="renewal">Business Permit Renewal Period</option>
+                    <option value="amendment">Amendment / Update</option>
+                    <option value="others">Others</option>
+                </select>
+                <p
+                    *ngIf="permitScheduleForm.get('scheduleType')?.invalid && permitScheduleForm.get('scheduleType')?.touched"
+                    class="text-red-600 text-xs mt-1"
+                >
+                    Please select a permit schedule.
+                </p>
+
+                <!-- "Please specify" shows only when Others is selected -->
+                <div *ngIf="showScheduleOtherField" class="mt-3">
+                    <label for="scheduleOther" class="block text-sm font-medium text-gray-700 mb-1">
+                        Please specify what this schedule is for <span class="text-red-600">*</span>
+                    </label>
+                    <input
+                        id="scheduleOther"
+                        type="text"
+                        formControlName="scheduleOther"
+                        placeholder="e.g. Change of business name"
+                        maxlength="120"
+                        class="w-full bg-white border text-sm rounded-md p-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                        [ngClass]="{'border-red-500': permitScheduleForm.get('scheduleOther')?.invalid && permitScheduleForm.get('scheduleOther')?.touched}"
+                    />
+                    <p
+                        *ngIf="permitScheduleForm.get('scheduleOther')?.invalid && permitScheduleForm.get('scheduleOther')?.touched"
+                        class="text-red-600 text-xs mt-1"
+                    >
+                        Please specify what this schedule is for.
+                    </p>
+                </div>
+            </form>
         </div>
 
         <div class="col-span-6 lg:col-span-12 space-y-3">
+            <!-- Save as Draft -->
+            <button
+                type="button"
+                (click)="saveDraft()"
+                [disabled]="isLoading"
+                class="w-full min-h-[44px] border border-primary text-primary font-medium rounded-lg hover:bg-primary/5 transition disabled:opacity-60"
+            >
+                <i class="ti ti-device-floppy" aria-hidden="true"></i>
+                Save as Draft
+            </button>
+            <p class="text-xs text-gray-500 px-1">
+                You can save your progress and come back to finish this application anytime from your dashboard.
+            </p>
+
             <!-- Required Fields Note -->
-            <div class="bg-red-50 border-l-4 border-red-600 p-4 text-sm text-gray-800">
-                <strong>Note:</strong> 
+            <div class="bg-green-50 border-l-4 border-primary p-4 text-sm text-gray-800">
+                <strong>Note:</strong>
                 All fields marked with <span class="text-red-600">*</span> are required.
             </div>
 
             <!-- Renewal Reminder -->
-            <div class="bg-red-50 border-l-4 border-red-600 p-4 text-sm text-gray-800">
-                <strong>For Renewal Applications:</strong> 
-                If your business is already registered in the system, go to your dashboard, select your business, and click 
-                <strong>Renew Permit</strong>. This will automatically reuse your existing business details.
+            <div class="bg-green-50 border-l-4 border-primary p-4 text-sm text-gray-800">
+                <strong>Renewing a permit?</strong>
+                Choose <strong>Renewal</strong> above and fill in your business details the same way as a new
+                application. Your existing application history stays on your dashboard either way.
             </div>
         </div>
     </section>
 
-    <section class="col-span-12 lg:col-span-9 bg-white">
-        
-        <!-- Tabs -->
-        <div class="flex border-b mb-5">
-            <button
-                *ngFor="let tab of tabs"
-                (click)="switchTab(tab.key)"
-                [ngClass]="{
-                    'text-primary border-primary': activeTab === tab.key,
-                    'text-gray-500 border-transparent': activeTab !== tab.key
-                }"
-                class="px-4 py-2 border-b-2 font-semibold transition w-full">
-                {{ tab.label }}
-            </button>
-        </div>
+    <section class="col-span-12 lg:col-span-9 bg-white mt-3">
 
         <!-- Business Information -->
         <div [hidden]="activeTab !== 'businessInfo'" class="space-y-4">
-            <app-business-information-form (formValueChange)="onBusinessInfoFormChange($event)"></app-business-information-form>
+            <app-business-information-form
+                [initialValue]="businessInfoInitialValue"
+                (formValueChange)="onBusinessInfoFormChange($event)"
+            ></app-business-information-form>
         </div>
 
         <!-- Business Operation -->
         <div [hidden]="activeTab !== 'businessOperation'" class="space-y-4">
-            <app-business-operation-form (formValueChange)="onBusinessInfoFormChange($event)" [mainAddressForm]="businessInfoForm"></app-business-operation-form>
+            <app-business-operation-form
+                [initialValue]="businessOperationInitialValue"
+                (formValueChange)="onBusinessInfoFormChange($event)"
+                [mainAddressForm]="businessInfoForm"
+            ></app-business-operation-form>
         </div>
 
         <!-- Business Documents & Location -->
         <div [hidden]="activeTab !== 'documentsLocation'">
-            <app-business-documents-form (formDataChange)="handleBusinessOperationData($event)"></app-business-documents-form>
+            <app-business-documents-form
+                [initialValue]="documentsInitialValue"
+                (formDataChange)="handleBusinessOperationData($event)"
+            ></app-business-documents-form>
         </div>
 
         <!-- Reviewal of Documents -->
         <div [hidden]="activeTab !== 'review'">
             <app-application-review
                 [applicationData]="applicationData"
+                (editStep)="switchTab($event)"
             ></app-application-review>
 
             <button
                 type="button"
                 (click)="submitData()"
-                class="mt-4 px-8 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-white font-medium tracking-wide w-full"
+                [disabled]="isLoading"
+                class="mt-4 min-h-[44px] px-8 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-white font-medium tracking-wide w-full disabled:opacity-60"
             >
                 Submit Application
             </button>

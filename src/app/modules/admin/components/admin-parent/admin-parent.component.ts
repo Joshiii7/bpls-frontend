@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 
@@ -12,11 +12,21 @@ export class AdminParentComponent {
   isSidebarOpen: boolean = true;
   showHeader: boolean = true;
   showSidebar: boolean = true;
+  showScrollTop: boolean = false;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
+
+  @HostListener('window:scroll')
+  onScroll() {
+    this.showScrollTop = window.scrollY > 200;
+  }
+
+  scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   ngOnInit(): void {
     this.router.events

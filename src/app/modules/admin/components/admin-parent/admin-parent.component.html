@@ -2,8 +2,22 @@
     <aside class="sticky top-0 h-screen z-20">
         <app-admin-sidebar></app-admin-sidebar>
     </aside>
-    <div class="w-full">
+    <div class="w-full min-w-0">
         <app-admin-header></app-admin-header>
         <router-outlet (activate)="onRouteChange($event)"></router-outlet>
     </div>
 </div>
+
+<button
+    type="button"
+    class="fixed bottom-6 right-4 sm:right-6 z-40 w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-full shadow-lg bg-gray-700 text-white hover:bg-gray-800 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary transition-all duration-300"
+    (click)="scrollToTop()"
+    [class.opacity-0]="!showScrollTop"
+    [class.pointer-events-none]="!showScrollTop"
+    [attr.aria-hidden]="!showScrollTop"
+    [attr.tabindex]="showScrollTop ? 0 : -1"
+    aria-label="Back to top"
+    title="Back to top"
+>
+    <i class="ti ti-arrow-up" aria-hidden="true"></i>
+</button>

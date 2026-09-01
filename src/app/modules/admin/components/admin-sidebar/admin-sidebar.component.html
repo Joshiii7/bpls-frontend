@@ -1,119 +1,142 @@
-<div class="flex h-screen">
-    
-    <!-- Sidebar -->
-    <div class="w-64 bg-gray-900 text-white flex flex-col">
-        
-        <!-- Logo -->
-        <div class="flex flex-col gap-4 justify-between items-center">
-            <div class="mt-5">
-                <img src="../../../assets/images/logo/bislig lgu logo.png" alt="Bislig Logo" width="70">
-            </div>
-            <div class="w-full ps-5 h-10">
-                <h1 class="text-primary text-md font-semibold">Business Permit</h1>
-                <p class="text-xs">City of Bislig, Surigao del Sur</p>
-            </div>
-        </div>
-        
-        <!-- Menu -->
-        <nav class="flex-1 px-4 py-6">
-            <ul class="">
-                
-                <!-- Dashboard -->
-                <li class="relative group">
-                    <a 
-                        [routerLink]="'/admin/admin-report-dashboard'" 
-                        [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/admin/admin-report-dashboard'}"
-                        class="flex items-center p-3 rounded relative overflow-hidden transition-colors"
-                    >
-                        <!-- Hover bar -->
-                        <span class="absolute left-0 top-0 h-full w-0 bg-[#008900] transition-all duration-300 ease-out group-hover:w-full"></span>
-                        <i class="fas fa-tachometer-alt w-5 z-10"></i>
-                        <span class="ml-3 z-10 relative">Dashboard</span>
-                    </a>
-                </li>
+<!-- Mobile backdrop -->
+<div
+    *ngIf="isMobileOpen"
+    class="fixed inset-0 bg-black/50 z-40 md:hidden"
+    (click)="closeMobileSidebar()"
+></div>
 
-                <!-- Applications Dropdown -->
-                <li class="relative group">
-                    <button 
-                        (click)="toggleApplicationsDropdown()" 
-                        class="w-full flex justify-between items-center p-3 rounded relative overflow-hidden transition-colors group"
-                    >
-                        <span class="absolute left-0 top-0 h-full w-0 bg-[#008900] transition-all duration-300 ease-out group-hover:w-full"></span>
-                        <span class="flex items-center z-10 relative">
-                            <i class="fas fa-file-alt w-5"></i>
-                            <span class="ml-3">Applications</span>
-                        </span>
-                        <svg class="w-4 h-4 transform z-10 relative" [ngClass]="{'rotate-180': isApplicationsOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </button>
+<div
+    class="w-64 bg-gray-900 text-white flex flex-col h-screen fixed inset-y-0 left-0 z-50 transition-transform duration-300 md:static md:translate-x-0"
+    [ngClass]="isMobileOpen ? 'translate-x-0' : '-translate-x-full'"
+>
+    <button
+        type="button"
+        class="md:hidden absolute top-3 right-3 w-8 h-8 rounded bg-white/10 hover:bg-white/20 flex items-center justify-center"
+        (click)="closeMobileSidebar()"
+        aria-label="Close menu"
+    >
+        <i class="ti ti-x" aria-hidden="true"></i>
+    </button>
 
-                    <ul *ngIf="isApplicationsOpen" class="mt-2 space-y-1 pl-6">
-                        <li class="relative group">
-                            <a 
-                                [routerLink]="'/admin/review-permit'" 
-                                [ngClass]="{'bg-gray-700 font-bold': currentRoute.includes('/admin/review-permit')}" 
-                                class="flex items-center p-3 rounded relative overflow-hidden transition-colors hover:bg-primary"
-                            >
-                                <span class="ml-2 z-10 relative">Review Application</span>
-                            </a>
-                        </li>
-                        <li class="relative group">
-                            <a 
-                                [routerLink]="'/admin/approved-applications'" 
-                                [ngClass]="{'bg-gray-700 font-bold': currentRoute.includes('/admin/approved-applications')}" 
-                                class="flex items-center p-3 rounded relative overflow-hidden transition-colors hover:bg-primary"
-                            >
-                                <span class="ml-2 z-10 relative">Approved Applications</span>
-                            </a>
-                        </li>
-                        <li class="relative group">
-                            <a 
-                                [routerLink]="'/admin/declined-applications'" 
-                                [ngClass]="{'bg-gray-700 font-bold': currentRoute.includes('/admin/declined-applications')}" 
-                                class="flex items-center p-3 rounded relative overflow-hidden transition-colors hover:bg-primary"
-                            >
-                                <span class="ml-2 z-10 relative">Declined Applications</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+    <!-- Branding -->
+    <a routerLink="/admin/dashboard" class="flex items-center gap-3 px-5 py-5 border-b border-white/10 hover:bg-white/5 transition">
+        <img
+            src="assets/images/logo/bislig-lgu-logo.webp"
+            alt="Business Permit and Licensing System"
+            width="36"
+            height="36"
+            class="w-9 h-9 rounded-full bg-white p-1 flex-shrink-0"
+        >
+        <span class="min-w-0">
+            <span class="block text-sm font-bold leading-tight truncate">BPLS Admin</span>
+            <span class="block text-[11px] text-white/60 leading-tight truncate">Bislig City, Surigao del Sur</span>
+        </span>
+    </a>
 
-                <!-- Schedules -->
-                <li class="relative group">
-                    <a 
-                        [routerLink]="'/schedules'" 
-                        [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/schedules'}" 
-                        class="flex items-center p-3 rounded relative overflow-hidden transition-colors"
-                    >
-                        <span class="absolute left-0 top-0 h-full w-0 bg-[#008900] transition-all duration-300 ease-out group-hover:w-full"></span>
-                        <i class="fas fa-calendar-alt w-5 z-10"></i>
-                        <span class="ml-3 z-10 relative">Schedules</span>
-                    </a>
-                </li>
+    <!-- Navigation -->
+    <nav class="flex-1 px-3 py-4 overflow-y-auto" aria-label="Admin navigation">
+        <p class="px-3 text-[11px] font-semibold uppercase tracking-wider text-white/40 mb-1">Overview</p>
+        <ul>
+            <li>
+                <a
+                    routerLink="/admin/dashboard"
+                    routerLinkActive="bg-primary/15 text-white border-primary"
+                    [routerLinkActiveOptions]="{exact: true}"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-md border-l-[3px] border-transparent text-white/70 hover:bg-white/5 hover:text-white transition-colors"
+                >
+                    <i class="ti ti-dashboard w-5 text-center" aria-hidden="true"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+        </ul>
 
-                <!-- Logout -->
-                <li class="relative group">
-                    <a 
-                        (click)="logout()"
-                        [ngClass]="{'bg-gray-700 font-bold': currentRoute === '/logout'}" 
-                        class="flex items-center p-3 rounded relative overflow-hidden transition-colors cursor-pointer"
-                    >
-                        <span class="absolute left-0 top-0 h-full w-0 bg-red-700 transition-all duration-300 ease-out group-hover:w-full"></span>
-                        <i class="fas fa-sign-out-alt w-5 z-10"></i>
-                        <span class="ml-3 z-10 relative">Logout</span>
-                    </a>
-                </li>
+        <p class="px-3 text-[11px] font-semibold uppercase tracking-wider text-white/40 mt-5 mb-1">Applications</p>
+        <ul>
+            <li>
+                <button
+                    type="button"
+                    (click)="toggleApplicationsDropdown()"
+                    [attr.aria-expanded]="isApplicationsOpen"
+                    aria-controls="adminApplicationsSubmenu"
+                    [ngClass]="isApplicationsOpen ? 'text-white' : 'text-white/70'"
+                    class="w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-md border-l-[3px] border-transparent hover:bg-white/5 hover:text-white transition-colors"
+                >
+                    <span class="flex items-center gap-3">
+                        <i class="ti ti-file-text w-5 text-center" aria-hidden="true"></i>
+                        <span>Applications</span>
+                    </span>
+                    <i class="ti ti-chevron-down text-xs transition-transform" [ngClass]="{'rotate-180': isApplicationsOpen}" aria-hidden="true"></i>
+                </button>
 
-            </ul>
-        </nav>
+                <ul *ngIf="isApplicationsOpen" id="adminApplicationsSubmenu" class="mt-1 space-y-0.5 pl-8 pr-1">
+                    <li>
+                        <a
+                            routerLink="/admin/applications"
+                            routerLinkActive="bg-primary/15 text-white border-primary font-medium"
+                            [routerLinkActiveOptions]="{exact: true}"
+                            class="flex items-center gap-2 px-3 py-2 rounded-md border-l-[3px] border-transparent text-sm text-white/60 hover:bg-white/5 hover:text-white transition-colors"
+                        >
+                            All Applications
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            routerLink="/admin/applications/pending"
+                            routerLinkActive="bg-primary/15 text-white border-primary font-medium"
+                            class="flex items-center gap-2 px-3 py-2 rounded-md border-l-[3px] border-transparent text-sm text-white/60 hover:bg-white/5 hover:text-white transition-colors"
+                        >
+                            Pending Review
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            routerLink="/admin/applications/approved"
+                            routerLinkActive="bg-primary/15 text-white border-primary font-medium"
+                            class="flex items-center gap-2 px-3 py-2 rounded-md border-l-[3px] border-transparent text-sm text-white/60 hover:bg-white/5 hover:text-white transition-colors"
+                        >
+                            Approved
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            routerLink="/admin/applications/declined"
+                            routerLinkActive="bg-primary/15 text-white border-primary font-medium"
+                            class="flex items-center gap-2 px-3 py-2 rounded-md border-l-[3px] border-transparent text-sm text-white/60 hover:bg-white/5 hover:text-white transition-colors"
+                        >
+                            Declined
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
 
-        <!-- Footer -->
-        <div class="px-4 py-4 border-t border-gray-800 text-xs text-center">
-            <p>&copy; 2024 Joshi Angelo Adlawan</p>
-            <p>All Rights Reserved</p>
-        </div>
-        
+        <p class="px-3 text-[11px] font-semibold uppercase tracking-wider text-white/40 mt-5 mb-1">Management</p>
+        <ul>
+            <li>
+                <a
+                    routerLink="/admin/schedule"
+                    routerLinkActive="bg-primary/15 text-white border-primary"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-md border-l-[3px] border-transparent text-white/70 hover:bg-white/5 hover:text-white transition-colors"
+                >
+                    <i class="ti ti-calendar-event w-5 text-center" aria-hidden="true"></i>
+                    <span>Permit Schedule</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Account / logout -->
+    <div class="border-t border-white/10 px-3 py-3">
+        <p *ngIf="fullName" class="px-3 text-xs text-white/50 mb-2 truncate">
+            Signed in as <span class="text-white/80 font-medium">{{ fullName }}</span>
+        </p>
+        <button
+            type="button"
+            (click)="logout()"
+            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-white/70 hover:bg-red-500/10 hover:text-red-300 transition-colors"
+        >
+            <i class="ti ti-logout w-5 text-center" aria-hidden="true"></i>
+            <span>Logout</span>
+        </button>
     </div>
-    
 </div>

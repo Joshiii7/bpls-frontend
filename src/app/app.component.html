@@ -7,3 +7,13 @@
         <router-outlet (activate)="onRouteChange($event)"></router-outlet>
     </div>
 </div>
+
+<button
+    type="button"
+    (click)="resetDemoData()"
+    class="fixed bottom-4 left-4 z-[9999] flex items-center gap-2 bg-gray-800/90 hover:bg-gray-900 text-white text-xs font-medium px-3 py-2 rounded-full shadow-lg transition"
+    title="Restore the original demo applications, schedules, and notifications"
+>
+    <i class="ti ti-arrow-back-up"></i>
+    Reset Demo Data
+</button>
